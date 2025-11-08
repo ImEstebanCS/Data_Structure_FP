@@ -1,18 +1,13 @@
 package co.edu.uniquindio.syncup.Model.Trie;
 
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Árbol de Prefijos (Trie) para autocompletado eficiente
- * RF-023: Implementado como Árbol de Prefijos (Trie)
- * RF-024: Devuelve todas las palabras que comienzan con un prefijo dado
+ * TrieAutocompletado - RF-023, RF-024
+ * Árbol de Prefijos para búsquedas eficientes con autocompletado
  */
-
-import java.util.*;
-
 public class TrieAutocompletado {
     private NodoTrie raiz;
 
@@ -20,8 +15,15 @@ public class TrieAutocompletado {
         this.raiz = new NodoTrie();
     }
 
+    /**
+     * Inserta una canción en el Trie usando su título como clave
+     */
     public void insertarCancion(String titulo, Cancion cancion) {
-        String clave = titulo.toLowerCase();
+        if (titulo == null || titulo.isEmpty() || cancion == null) {
+            return;
+        }
+
+        String clave = titulo.toLowerCase().trim();
         NodoTrie nodo = raiz;
 
         for (char c : clave.toCharArray()) {
@@ -35,8 +37,14 @@ public class TrieAutocompletado {
         nodo.setCancion(cancion);
     }
 
+    /**
+     * Elimina una canción del Trie
+     */
     public void eliminarCancion(String titulo) {
-        eliminarRecursivo(raiz, titulo.toLowerCase(), 0);
+        if (titulo == null || titulo.isEmpty()) {
+            return;
+        }
+        eliminarRecursivo(raiz, titulo.toLowerCase().trim(), 0);
     }
 
     private boolean eliminarRecursivo(NodoTrie nodo, String titulo, int indice) {
@@ -46,7 +54,7 @@ public class TrieAutocompletado {
             }
             nodo.setEsFinPalabra(false);
             nodo.setCancion(null);
-            return nodo.getHijos().isEmpty();
+            return !nodo.tieneHijos();
         }
 
         char c = titulo.charAt(indice);
@@ -60,24 +68,34 @@ public class TrieAutocompletado {
 
         if (debeEliminar) {
             nodo.getHijos().remove(c);
-            return nodo.getHijos().isEmpty() && !nodo.isEsFinPalabra();
+            return !nodo.tieneHijos() && !nodo.isEsFinPalabra();
         }
 
         return false;
     }
 
+    /**
+     * RF-024: Busca todas las canciones que comienzan con el prefijo dado
+     */
     public List<Cancion> buscarPorPrefijo(String prefijo) {
         List<Cancion> resultado = new ArrayList<>();
-        String clave = prefijo.toLowerCase();
+
+        if (prefijo == null || prefijo.isEmpty()) {
+            return resultado;
+        }
+
+        String clave = prefijo.toLowerCase().trim();
         NodoTrie nodo = raiz;
 
+        // Navegar hasta el final del prefijo
         for (char c : clave.toCharArray()) {
             if (!nodo.tieneHijo(c)) {
-                return resultado;
+                return resultado; // No hay coincidencias
             }
             nodo = nodo.obtenerHijo(c);
         }
 
+        // Recolectar todas las palabras desde este nodo
         buscarRecursivo(nodo, resultado);
         return resultado;
     }
@@ -92,8 +110,15 @@ public class TrieAutocompletado {
         }
     }
 
+    /**
+     * Busca una canción exacta por título
+     */
     public Cancion buscarCancionExacta(String titulo) {
-        String clave = titulo.toLowerCase();
+        if (titulo == null || titulo.isEmpty()) {
+            return null;
+        }
+
+        String clave = titulo.toLowerCase().trim();
         NodoTrie nodo = raiz;
 
         for (char c : clave.toCharArray()) {
@@ -103,14 +128,20 @@ public class TrieAutocompletado {
             nodo = nodo.obtenerHijo(c);
         }
 
-        if (nodo.isEsFinPalabra()) {
-            return nodo.getCancion();
-        }
-
-        return null;
+        return nodo.isEsFinPalabra() ? nodo.getCancion() : null;
     }
 
+    /**
+     * Verifica si existe un título en el Trie
+     */
     public boolean existe(String titulo) {
         return buscarCancionExacta(titulo) != null;
+    }
+
+    /**
+     * Limpia todo el Trie
+     */
+    public void limpiar() {
+        this.raiz = new NodoTrie();
     }
 }

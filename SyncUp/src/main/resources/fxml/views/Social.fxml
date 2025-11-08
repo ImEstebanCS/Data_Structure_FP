@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="co.edu.uniquindio.syncup.view.controllers.SocialViewController"
+      spacing="20.0" style="-fx-background-color: #121212;">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <Label text="Red Social 👥" style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+        <font><Font size="32.0"/></font>
+    </Label>
+    
+    <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="seguidoresLabel" text="Seguidores" style="-fx-text-fill: #1DB954; -fx-font-weight: bold;"><font><Font size="18.0"/></font></Label>
+            <ListView fx:id="seguidoresListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+        
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="siguiendoLabel" text="Siguiendo" style="-fx-text-fill: #1DB954; -fx-font-weight: bold;"><font><Font size="18.0"/></font></Label>
+            <ListView fx:id="siguiendoListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+        
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <Label text="Sugerencias (BFS)" style="-fx-text-fill: #1DB954; -fx-font-weight: bold;"><font><Font size="18.0"/></font></Label>
+            <ListView fx:id="sugerenciasListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </HBox>
+</VBox>

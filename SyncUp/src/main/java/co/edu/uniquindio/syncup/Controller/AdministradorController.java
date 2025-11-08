@@ -1,11 +1,10 @@
 package co.edu.uniquindio.syncup.Controller;
 
-
 import co.edu.uniquindio.syncup.Model.Entidades.Administrador;
 import co.edu.uniquindio.syncup.Service.SyncUpService;
 
 public class AdministradorController {
-    private SyncUpService service;
+    private final SyncUpService service;
 
     public AdministradorController(SyncUpService service) {
         this.service = service;

@@ -1,17 +1,13 @@
 package co.edu.uniquindio.syncup.Model.Trie;
 
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Nodo del Árbol de Prefijos (Trie)
- * RF-023: Parte de la implementación del Árbol de Prefijos
+ * NodoTrie - RF-023
+ * Nodo del árbol de prefijos para autocompletado
  */
-
-import java.util.*;
-
 public class NodoTrie {
     private Map<Character, NodoTrie> hijos;
     private boolean esFinPalabra;
@@ -57,5 +53,9 @@ public class NodoTrie {
 
     public boolean tieneHijo(char c) {
         return hijos.containsKey(c);
+    }
+
+    public boolean tieneHijos() {
+        return !hijos.isEmpty();
     }
 }

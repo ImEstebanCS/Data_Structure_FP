@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="scrollPane" xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.syncup.view.controllers.HomeViewController"
+            fitToWidth="true"
+            style="-fx-background: #121212; -fx-background-color: #121212;">
+
+    <VBox fx:id="mainContent" spacing="30.0" style="-fx-background-color: #121212;">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Header -->
+        <Label fx:id="welcomeLabel" text="Bienvenido"
+               style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+            <font>
+                <Font size="32.0"/>
+            </font>
+        </Label>
+
+        <!-- Sección: Escuchado recientemente -->
+        <VBox spacing="15.0">
+            <Label text="Escuchado recientemente"
+                   style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+                <font>
+                    <Font size="24.0"/>
+                </font>
+            </Label>
+
+            <FlowPane fx:id="recentSongsPane" hgap="15.0" vgap="15.0">
+                <!-- Cards de canciones recientes se agregan dinámicamente -->
+            </FlowPane>
+        </VBox>
+
+        <!-- Sección: Hecho para ti -->
+        <VBox spacing="15.0">
+            <Label text="Hecho para ti"
+                   style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+                <font>
+                    <Font size="24.0"/>
+                </font>
+            </Label>
+
+            <FlowPane fx:id="recommendationsPane" hgap="15.0" vgap="15.0">
+                <!-- Cards de recomendaciones se agregan dinámicamente -->
+            </FlowPane>
+        </VBox>
+
+    </VBox>
+
+</ScrollPane>

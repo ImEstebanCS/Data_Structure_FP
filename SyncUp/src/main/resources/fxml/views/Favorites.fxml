@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="co.edu.uniquindio.syncup.view.controllers.FavoritesViewController"
+      spacing="20.0" style="-fx-background-color: #121212;">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <Label text="Canciones Favoritas 💜" style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+        <font><Font size="32.0"/></font>
+    </Label>
+    
+    <Label fx:id="totalLabel" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+    
+    <TableView fx:id="favoritosTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="tituloColumn" text="Título" prefWidth="300"/>
+            <TableColumn fx:id="artistaColumn" text="Artista" prefWidth="250"/>
+            <TableColumn fx:id="duracionColumn" text="Duración" prefWidth="100"/>
+        </columns>
+    </TableView>
+    
+    <Button text="Eliminar Seleccionada" onAction="#eliminarFavorito"
+           style="-fx-background-color: #FF4444; -fx-text-fill: #FFFFFF; -fx-cursor: hand;"/>
+</VBox>
