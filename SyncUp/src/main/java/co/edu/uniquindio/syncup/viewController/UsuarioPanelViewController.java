@@ -1,7 +1,9 @@
-package co.edu.uniquindio.syncup.Controller;
+package co.edu.uniquindio.syncup.viewController;
 
 
 
+import co.edu.uniquindio.syncup.Controller.CancionController;
+import co.edu.uniquindio.syncup.Controller.PlaylistController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Playlist;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
@@ -11,7 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
-public class UsuarioPanelController {
+public class UsuarioPanelViewController {
     @FXML private TextArea busquedaField;
     @FXML private ListView<String> resultadosList;
     @FXML private ListView<String> favoritosList;

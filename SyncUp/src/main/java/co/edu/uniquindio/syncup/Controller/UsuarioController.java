@@ -5,6 +5,8 @@ import co.edu.uniquindio.syncup.Service.SyncUpService;
 
 import java.util.List;
 
+
+
 public class UsuarioController {
     private SyncUpService service;
 
@@ -64,5 +66,9 @@ public class UsuarioController {
 
     public int getCantidadUsuarios() {
         return service.getCantidadUsuarios();
+    }
+
+    public List<Usuario> obtenerTodosUsuarios() {
+        return service.listarUsuarios();
     }
 }

@@ -5,6 +5,7 @@ import co.edu.uniquindio.syncup.Service.SyncUpService;
 
 import java.util.List;
 
+
 public class CancionController {
     private SyncUpService service;
 
@@ -57,5 +58,12 @@ public class CancionController {
 
     public int getCantidadCanciones() {
         return service.getCantidadCanciones();
+    }
+
+    public int obtenerTotal() {
+        return service.getCantidadCanciones();
+    }
+    public List<Usuario> obtenerTodas() {
+        return service.listarUsuarios();
     }
 }

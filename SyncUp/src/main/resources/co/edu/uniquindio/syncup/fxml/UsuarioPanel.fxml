@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.syncup.viewController.UsuarioPanelViewController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="Archivo">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Salir" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Ayuda">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Acerca de" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="20.0" style="-fx-background-color: #f0f0f0;">
+               <children>
+                  <Label fx:id="usuarioLabel" text="Bienvenido: Usuario">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Búsqueda">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Buscar Canciones" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Tipo de búsqueda:" />
+                        <ComboBox fx:id="tipoBusquedaCombo" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <TextArea fx:id="busquedaField" prefHeight="60.0" promptText="Ingresa el criterio de búsqueda..." wrapText="true" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="buscarButton" mnemonicParsing="false" onAction="#manejarBusqueda" prefHeight="30.0" prefWidth="100.0" text="Buscar" />
+                     </children>
+                  </HBox>
+                  <Label text="Resultados:" />
+                  <ListView fx:id="resultadosList" prefHeight="200.0" prefWidth="200.0" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="agregarFavoritoButton" mnemonicParsing="false" onAction="#agregarFavorito" prefHeight="30.0" prefWidth="150.0" text="Agregar a Favoritos" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+          </Tab>
+          <Tab text="Favoritos">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Mis Canciones Favoritas" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <ListView fx:id="favoritosList" prefHeight="300.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+          </Tab>
+          <Tab text="Playlists">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Mis Playlists" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="crearPlaylistButton" mnemonicParsing="false" onAction="#crearPlaylist" prefHeight="30.0" prefWidth="150.0" text="Crear Nueva Playlist" />
+                  <ListView fx:id="playlistList" prefHeight="300.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+          </Tab>
+          <Tab text="Red Social">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Conexiones Sociales" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label text="Amigos:" />
+                  <ListView prefHeight="150.0" prefWidth="200.0" />
+                  <Label text="Sugerencias de Amigos:" />
+                  <ListView prefHeight="150.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

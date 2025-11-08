@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.syncup.Controller.AdministradorController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="Archivo">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Salir" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Ayuda">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Acerca de" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="20.0" style="-fx-background-color: #f0f0f0;">
+               <children>
+                  <Label text="Panel de Administrador">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Gestionar Canciones">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Gestión de Catálogo de Canciones" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Título:" />
+                        <TextField prefWidth="200.0" promptText="Título de la canción" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Artista:" />
+                        <TextField prefWidth="200.0" promptText="Nombre del artista" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Género:" />
+                        <TextField prefWidth="200.0" promptText="Género musical" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Año:" />
+                        <TextField prefWidth="100.0" promptText="2024" />
+                        <Label text="Duración:" />
+                        <TextField prefWidth="100.0" promptText="3.5" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Agregar" />
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Actualizar" />
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Eliminar" />
+                     </children>
+                  </HBox>
+                  <Label text="Canciones en el Catálogo:" />
+                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Cargar desde Archivo (CSV)" />
+               </children>
+            </VBox>
+          </Tab>
+          <Tab text="Gestionar Usuarios">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Gestión de Usuarios" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Usuario:" />
+                        <TextField prefWidth="200.0" promptText="Nombre de usuario" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Nombre Completo:" />
+                        <TextField prefWidth="200.0" promptText="Nombre del usuario" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Ver Detalles" />
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Eliminar Usuario" />
+                     </children>
+                  </HBox>
+                  <Label text="Lista de Usuarios:" />
+                  <ListView prefHeight="300.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+          </Tab>
+          <Tab text="Estadísticas">
+            <VBox spacing="10.0" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Estadísticas del Sistema" textFill="#1e88e5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label text="Total de Usuarios: " />
+                  <Label text="Total de Canciones: " />
+                  <Label text="Total de Playlists: " />
+                  <Label text="Usuarios Activos Hoy: " />
+                  <Label text="Canciones Reproducidas Hoy: " />
+                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Actualizar Estadísticas" />
+               </children>
+            </VBox>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

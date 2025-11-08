@@ -54,7 +54,7 @@ public class Administrador {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        Administrator admin = (Administrator) obj;
+        Administrador admin = (Administrador) obj;
         return username.equals(admin.username);
     }
 }
