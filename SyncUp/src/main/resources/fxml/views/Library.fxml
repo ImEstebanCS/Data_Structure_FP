@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="co.edu.uniquindio.syncup.view.controllers.LibraryViewController"
+      spacing="20.0" style="-fx-background-color: #121212;">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <Label text="Tu Biblioteca" style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
+        <font><Font size="32.0"/></font>
+    </Label>
+    
+    <Label fx:id="totalLabel" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+    
+    <TableView fx:id="cancionesTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="tituloColumn" text="Título" prefWidth="250"/>
+            <TableColumn fx:id="artistaColumn" text="Artista" prefWidth="200"/>
+            <TableColumn fx:id="generoColumn" text="Género" prefWidth="150"/>
+            <TableColumn fx:id="añoColumn" text="Año" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox>

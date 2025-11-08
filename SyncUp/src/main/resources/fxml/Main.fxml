@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainContainer" xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.syncup.view.controllers.MainViewController"
+            prefHeight="700.0" prefWidth="1200.0"
+            style="-fx-background-color: #000000;">
+
+    <!-- SIDEBAR IZQUIERDO -->
+    <left>
+        <VBox fx:id="sidebar" prefWidth="250.0" spacing="5.0"
+              style="-fx-background-color: #000000; -fx-border-color: #282828; -fx-border-width: 0 1 0 0;">
+            <padding>
+                <Insets top="20" right="10" bottom="20" left="10"/>
+            </padding>
+
+            <!-- Logo -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <padding>
+                    <Insets bottom="20" left="10"/>
+                </padding>
+                <Label text="SyncUp" style="-fx-text-fill: #1DB954; -fx-font-weight: bold;">
+                    <font>
+                        <Font size="28.0"/>
+                    </font>
+                </Label>
+            </HBox>
+
+            <!-- Navegación Principal -->
+            <VBox spacing="8.0">
+                <Button text="🏠 Inicio" onAction="#cargarHome"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
+                <Button text="🔍 Buscar" onAction="#cargarSearch"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
+                <Button text="📚 Tu Biblioteca" onAction="#cargarLibrary"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+            </VBox>
+
+            <Separator style="-fx-background-color: #282828;">
+                <VBox.margin>
+                    <Insets top="15" bottom="15"/>
+                </VBox.margin>
+            </Separator>
+
+            <!-- Navegación Secundaria -->
+            <VBox spacing="8.0">
+                <Button text="💜 Canciones Favoritas" onAction="#cargarFavorites"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
+                <Button text="👥 Red Social" onAction="#cargarSocial"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
+                <Button text="🎵 Descubrimiento" onAction="#cargarRecommendations"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
+                <Button text="👤 Perfil" onAction="#cargarProfile"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+            </VBox>
+
+            <!-- Spacer -->
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Usuario y Logout -->
+            <VBox spacing="10.0">
+                <Separator style="-fx-background-color: #282828;"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <padding>
+                        <Insets left="10" top="10"/>
+                    </padding>
+                    <Label text="👤" style="-fx-text-fill: #FFFFFF; -fx-font-size: 18px;"/>
+                    <Label fx:id="usernameLabel" text="Usuario" style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px;"/>
+                </HBox>
+
+                <Button text="🚪 Cerrar Sesión" onAction="#cerrarSesion"
+                        prefWidth="230.0" prefHeight="35.0"
+                        style="-fx-background-color: #282828; -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-radius: 20;"/>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+    <center>
+        <BorderPane fx:id="contentArea" style="-fx-background-color: #121212;">
+            <!-- Aquí se cargan las vistas dinámicamente -->
+        </BorderPane>
+    </center>
+
+    <!-- PLAYER BAR INFERIOR -->
+    <bottom>
+        <HBox prefHeight="80.0" spacing="20.0" alignment="CENTER"
+              style="-fx-background-color: #181818; -fx-border-color: #282828; -fx-border-width: 1 0 0 0;">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <!-- Canción actual -->
+            <VBox spacing="5.0" prefWidth="300.0">
+                <Label fx:id="currentSongLabel" text="♫ No hay canción en reproducción"
+                       style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px;"/>
+                <Label text="SyncUp Player" style="-fx-text-fill: #B3B3B3; -fx-font-size: 12px;"/>
+            </VBox>
+
+            <!-- Spacer -->
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Controles de reproducción (visual) -->
+            <HBox spacing="15.0" alignment="CENTER">
+                <Button text="⏮" prefWidth="40.0" prefHeight="40.0"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 20px; -fx-cursor: hand;"/>
+                <Button text="⏯" prefWidth="50.0" prefHeight="50.0"
+                        style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-font-size: 24px; -fx-background-radius: 50; -fx-cursor: hand;"/>
+                <Button text="⏭" prefWidth="40.0" prefHeight="40.0"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 20px; -fx-cursor: hand;"/>
+            </HBox>
+
+            <!-- Spacer -->
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Volumen -->
+            <HBox spacing="10.0" alignment="CENTER" prefWidth="200.0">
+                <Label text="🔊" style="-fx-text-fill: #B3B3B3; -fx-font-size: 18px;"/>
+                <Slider prefWidth="150.0" value="75"
+                        style="-fx-background-color: #282828;"/>
+            </HBox>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

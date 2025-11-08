@@ -1,11 +1,18 @@
 package co.edu.uniquindio.syncup.Model.Entidades;
 
+import java.util.Objects;
 
-
+/**
+ * Entidad Administrador
+ * Representa un administrador del sistema con permisos especiales
+ */
 public class Administrador {
     private String username;
     private String password;
     private String nombre;
+
+    public Administrador() {
+    }
 
     public Administrador(String username, String password, String nombre) {
         this.username = username;
@@ -38,16 +45,8 @@ public class Administrador {
     }
 
     @Override
-    public String toString() {
-        return "Administrator{" +
-                "username='" + username + '\'' +
-                ", nombre='" + nombre + '\'' +
-                '}';
-    }
-
-    @Override
     public int hashCode() {
-        return username.hashCode();
+        return Objects.hash(username);
     }
 
     @Override
@@ -55,6 +54,11 @@ public class Administrador {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Administrador admin = (Administrador) obj;
-        return username.equals(admin.username);
+        return Objects.equals(username, admin.username);
+    }
+
+    @Override
+    public String toString() {
+        return "Administrador: " + nombre + " (@" + username + ")";
     }
 }
