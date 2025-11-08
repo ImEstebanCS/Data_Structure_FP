@@ -5,14 +5,11 @@ import co.edu.uniquindio.syncup.Model.Grafos.GrafoDeSimilitud;
 import co.edu.uniquindio.syncup.Model.Grafos.GrafoSocial;
 import co.edu.uniquindio.syncup.Model.Trie.TrieAutocompletado;
 
-import java.io.*;
 import java.util.*;
 
 /**
  * Servicio principal que integra todas las funcionalidades de SyncUp
  */
-
-import java.util.*;
 
 public class SyncUpService {
     private CatalogoCanciones catalogoCanciones;

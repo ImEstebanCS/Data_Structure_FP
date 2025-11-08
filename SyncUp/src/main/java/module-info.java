@@ -12,5 +12,7 @@ module co.edu.uniquindio.syncup {
     requires com.almasb.fxgl.all;
 
     opens co.edu.uniquindio.syncup to javafx.fxml;
+    opens co.edu.uniquindio.syncup.Controller to javafx.fxml;
+    opens co.edu.uniquindio.syncup.viewController to javafx.fxml;
     exports co.edu.uniquindio.syncup;
 }

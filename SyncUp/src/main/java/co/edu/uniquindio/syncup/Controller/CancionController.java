@@ -13,11 +13,12 @@ public class CancionController {
         this.service = service;
     }
 
-    public void agregarCancion(int id, String titulo, String artista, String genero, int año, double duracion) {
+    public Cancion agregarCancion(int id, String titulo, String artista, String genero, int año, double duracion) {
         if (titulo == null || titulo.isEmpty() || artista == null || artista.isEmpty()) {
-            return;
+            return null;
         }
         service.agregarCancion(id, titulo, artista, genero, año, duracion);
+        return new Cancion(id, titulo, artista, genero, año, duracion);
     }
 
     public void actualizarCancion(int id, String titulo, String artista, String genero, int año, double duracion) {
@@ -63,7 +64,8 @@ public class CancionController {
     public int obtenerTotal() {
         return service.getCantidadCanciones();
     }
-    public List<Usuario> obtenerTodas() {
-        return service.listarUsuarios();
+    
+    public List<Cancion> obtenerTodas() {
+        return service.getCatalogoCanciones().getCanciones();
     }
 }

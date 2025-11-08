@@ -1,7 +1,5 @@
 package co.edu.uniquindio.syncup.Model.Entidades;
 
-import java.util.Objects;
-
 
 public class Cancion {
     private int id;

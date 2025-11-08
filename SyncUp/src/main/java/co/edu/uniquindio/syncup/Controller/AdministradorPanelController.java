@@ -259,10 +259,10 @@ public class AdministradorPanelController {
         ObservableList<String> usuarios = FXCollections.observableArrayList();
 
         if (usuarioController != null) {
-            java.util.List<co.edu.uniquindio.syncup.model.Usuario> todosUsuarios =
+            java.util.List<co.edu.uniquindio.syncup.Model.Entidades.Usuario> todosUsuarios =
                     usuarioController.obtenerTodosUsuarios();
-            for (co.edu.uniquindio.syncup.model.Usuario u : todosUsuarios) {
-                usuarios.add(u.getNombre() + " - " + u.getNombre());
+            for (co.edu.uniquindio.syncup.Model.Entidades.Usuario u : todosUsuarios) {
+                usuarios.add(u.getUsername() + " - " + u.getNombre());
             }
         } else {
             // Datos de prueba

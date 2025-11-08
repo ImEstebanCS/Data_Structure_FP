@@ -166,7 +166,7 @@ public class LoginViewController {
             Parent root = loader.load();
 
             // Obtener el controller del panel
-            UsuarioPanelController controller = loader.getController();
+            UsuarioPanelViewController controller = loader.getController();
             controller.setUsuarioActual(usuario);
             controller.setControllers(null, null); // Aquí inyectarías los controllers
 
@@ -199,7 +199,7 @@ public class LoginViewController {
             Parent root = loader.load();
 
             // Obtener el controller del panel
-            AdministradorPanelController controller = loader.getController();
+            co.edu.uniquindio.syncup.Controller.AdministradorPanelController controller = loader.getController();
             controller.setControllers(null, null); // Aquí inyectarías los controllers
 
             // Crear nueva ventana

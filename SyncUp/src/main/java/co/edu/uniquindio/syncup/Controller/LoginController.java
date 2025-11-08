@@ -4,7 +4,6 @@ import co.edu.uniquindio.syncup.Model.Entidades.Administrador;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 
 
 public class LoginController {
@@ -36,6 +35,10 @@ public class LoginController {
         }
 
         if ("Usuario".equals(tipo)) {
+            if (usuarioController == null) {
+                errorLabel.setText("Error: Controller no inicializado");
+                return;
+            }
             Usuario usuario = usuarioController.autenticar(username, password);
             if (usuario != null) {
                 errorLabel.setText("Login exitoso");
@@ -44,6 +47,10 @@ public class LoginController {
                 errorLabel.setText("Usuario o contraseña incorrectos");
             }
         } else {
+            if (administratorController == null) {
+                errorLabel.setText("Error: Controller no inicializado");
+                return;
+            }
             Administrador admin = administratorController.autenticar(username, password);
             if (admin != null) {
                 errorLabel.setText("Login administrador exitoso");
@@ -66,6 +73,10 @@ public class LoginController {
         }
 
         if ("Usuario".equals(tipo)) {
+            if (usuarioController == null) {
+                errorLabel.setText("Error: Controller no inicializado");
+                return;
+            }
             if (usuarioController.registrar(username, password, username)) {
                 errorLabel.setText("Registro exitoso. Puedes ingresar ahora.");
                 usuarioField.clear();
@@ -74,6 +85,10 @@ public class LoginController {
                 errorLabel.setText("El usuario ya existe");
             }
         } else {
+            if (administratorController == null) {
+                errorLabel.setText("Error: Controller no inicializado");
+                return;
+            }
             if (administratorController.registrar(username, password, username)) {
                 errorLabel.setText("Administrador registrado exitosamente");
                 usuarioField.clear();

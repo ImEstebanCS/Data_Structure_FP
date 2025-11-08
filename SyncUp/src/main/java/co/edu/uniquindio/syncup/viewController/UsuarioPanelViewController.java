@@ -49,6 +49,11 @@ public class UsuarioPanelViewController {
             return;
         }
 
+        if (cancionController == null) {
+            resultados.add("Error: Controller no inicializado");
+            return;
+        }
+
         resultados.clear();
 
         java.util.List<Cancion> canciones = null;
@@ -60,10 +65,12 @@ public class UsuarioPanelViewController {
             canciones = cancionController.buscarPorGenero(criterio);
         }
 
-        if (canciones != null) {
+        if (canciones != null && !canciones.isEmpty()) {
             for (Cancion cancion : canciones) {
                 resultados.add(cancion.getTitulo() + " - " + cancion.getArtista());
             }
+        } else {
+            resultados.add("No se encontraron canciones");
         }
     }
 
@@ -75,11 +82,17 @@ public class UsuarioPanelViewController {
             return;
         }
 
+        if (cancionController == null) {
+            return;
+        }
+
         resultados.clear();
         java.util.List<Cancion> canciones = cancionController.autocompletar(prefijo);
 
-        for (Cancion cancion : canciones) {
-            resultados.add(cancion.getTitulo() + " - " + cancion.getArtista());
+        if (canciones != null) {
+            for (Cancion cancion : canciones) {
+                resultados.add(cancion.getTitulo() + " - " + cancion.getArtista());
+            }
         }
     }
 
@@ -94,6 +107,14 @@ public class UsuarioPanelViewController {
 
     @FXML
     public void crearPlaylist() {
+        if (playlistController == null || usuarioActual == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText("Controller o usuario no inicializado");
+            alert.showAndWait();
+            return;
+        }
+
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nueva Playlist");
         dialog.setHeaderText("Crear nueva Playlist");
