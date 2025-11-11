@@ -14,11 +14,10 @@ public class ProfileViewController {
     @FXML private Label seguidoresLabel;
     @FXML private Label siguiendoLabel;
 
-    private UsuarioController usuarioController;
     private Usuario usuarioActual;
 
     public void setControllers(UsuarioController usuarioController) {
-        this.usuarioController = usuarioController;
+        // Campo no usado actualmente, pero mantenido para futuras funcionalidades
         inicializar();
     }
 

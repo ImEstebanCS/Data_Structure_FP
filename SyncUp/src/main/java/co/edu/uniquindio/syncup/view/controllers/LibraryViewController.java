@@ -21,11 +21,9 @@ public class LibraryViewController {
     @FXML private Label totalLabel;
 
     private CancionController cancionController;
-    private PlaylistController playlistController;
 
     public void setControllers(CancionController cancionController, PlaylistController playlistController) {
         this.cancionController = cancionController;
-        this.playlistController = playlistController;
         inicializar();
     }
 

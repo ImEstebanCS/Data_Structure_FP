@@ -67,18 +67,29 @@ public class SyncUpService {
 
     /**
      * Configura similitudes iniciales entre canciones del mismo género
+     * Optimizado: solo calcula similitudes para canciones del mismo género o artista
      */
     private void configurarSimilitudesIniciales() {
         List<Cancion> canciones = catalogoCanciones.getCanciones();
 
+        // Optimización: solo comparar canciones que comparten género o artista
         for (int i = 0; i < canciones.size(); i++) {
+            Cancion c1 = canciones.get(i);
+            
             for (int j = i + 1; j < canciones.size(); j++) {
-                Cancion c1 = canciones.get(i);
                 Cancion c2 = canciones.get(j);
 
-                double similitud = calcularSimilitud(c1, c2);
-                if (similitud < 0.7) { // Solo agregar si son suficientemente similares
-                    grafoDeSimilitud.agregarArista(c1, c2, similitud);
+                // Filtrar: solo calcular si comparten género o artista
+                boolean mismoGenero = c1.getGenero().equalsIgnoreCase(c2.getGenero());
+                boolean mismoArtista = c1.getArtista().equalsIgnoreCase(c2.getArtista());
+                
+                if (mismoGenero || mismoArtista) {
+                    double similitud = calcularSimilitud(c1, c2);
+                    // Umbral ajustado: menor distancia = más similar
+                    // Solo agregar si la distancia es menor a 0.6 (más similares)
+                    if (similitud < 0.6) {
+                        grafoDeSimilitud.agregarArista(c1, c2, similitud);
+                    }
                 }
             }
         }

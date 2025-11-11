@@ -26,18 +26,14 @@ public class HomeViewController {
     @FXML private FlowPane recentSongsPane;
     @FXML private FlowPane recommendationsPane;
 
-    private UsuarioController usuarioController;
     private CancionController cancionController;
     private PlaylistController playlistController;
-    private RadioController radioController;
     private Usuario usuarioActual;
 
     public void setControllers(UsuarioController usuarioController, CancionController cancionController,
                                PlaylistController playlistController, RadioController radioController) {
-        this.usuarioController = usuarioController;
         this.cancionController = cancionController;
         this.playlistController = playlistController;
-        this.radioController = radioController;
 
         inicializar();
     }
