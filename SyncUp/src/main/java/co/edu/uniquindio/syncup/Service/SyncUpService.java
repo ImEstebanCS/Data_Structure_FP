@@ -367,10 +367,23 @@ public class SyncUpService {
     }
 
     public void actualizarCancion(int id, String titulo, String artista, String genero, int año, double duracion) {
-        Cancion cancion = new Cancion(id, titulo, artista, genero, año, duracion);
-        catalogoCanciones.actualizarCancion(cancion);
-    }
+        Cancion existente = catalogoCanciones.buscarPorId(id);
 
+        if (existente != null) {
+            // Actualizar solo los campos editables, manteniendo el resto
+            existente.setTitulo(titulo);
+            existente.setArtista(artista);
+            existente.setGenero(genero);
+            existente.setAño(año);
+            existente.setDuracion(duracion);
+
+            // No es necesario llamar a actualizarCancion porque ya modificamos el objeto existente
+            // Pero si quieres mantener consistencia con tu diseño:
+            catalogoCanciones.actualizarCancion(existente);
+        } else {
+            throw new IllegalArgumentException("No se encontró la canción con ID: " + id);
+        }
+    }
     public void eliminarCancion(int id) {
         Cancion cancion = catalogoCanciones.buscarPorId(id);
         if (cancion != null) {
