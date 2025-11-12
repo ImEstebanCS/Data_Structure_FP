@@ -31,6 +31,15 @@ public class UsuarioController {
         return service.autenticarUsuario(username.trim(), password);
     }
 
+    public void actualizar(String usernameAntiguo, String usernameNuevo, String password, String nombre) {
+        if (usernameNuevo == null || usernameNuevo.trim().isEmpty() ||
+                password == null || password.trim().isEmpty() ||
+                nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("Los datos no pueden estar vacíos");
+        }
+        service.actualizarUsuario(usernameAntiguo.trim(), usernameNuevo.trim(), password, nombre.trim());
+    }
+
     public List<Usuario> listarUsuarios() {
         return service.listarUsuarios();
     }

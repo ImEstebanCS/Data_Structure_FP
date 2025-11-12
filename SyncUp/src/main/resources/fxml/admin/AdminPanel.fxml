@@ -35,7 +35,7 @@
                         <Button text="Agregar" onAction="#agregarCancion" style="-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF;"/>
                         <Button text="Actualizar" onAction="#actualizarCancion" style="-fx-background-color: #FFA500; -fx-text-fill: #FFFFFF;"/>
                         <Button text="Eliminar Seleccionada" onAction="#eliminarCancion" style="-fx-background-color: #FF4444; -fx-text-fill: #FFFFFF;"/>
-                        <Button text="Limpiar Campos" onAction="#limpiarCampos" style="-fx-background-color: #555555; -fx-text-fill: #FFFFFF;"/>
+                        <Button text="Limpiar Campos" onAction="#limpiarCamposCanciones" style="-fx-background-color: #555555; -fx-text-fill: #FFFFFF;"/>
                     </HBox>
 
                     <TableView fx:id="cancionesTable" VBox.vgrow="ALWAYS">
@@ -52,7 +52,18 @@
                 <VBox spacing="15.0">
                     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
-                    <Button text="Eliminar Usuario Seleccionado" onAction="#eliminarUsuario" style="-fx-background-color: #FF4444; -fx-text-fill: #FFFFFF;"/>
+                    <HBox spacing="10.0">
+                        <TextField fx:id="usernameField" promptText="Username" prefWidth="200"/>
+                        <PasswordField fx:id="passwordField" promptText="Password" prefWidth="200"/>
+                        <TextField fx:id="nombreUsuarioField" promptText="Nombre completo" prefWidth="250"/>
+                    </HBox>
+
+                    <HBox spacing="10.0">
+                        <Button text="Agregar Usuario" onAction="#agregarUsuario" style="-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF;"/>
+                        <Button text="Actualizar Usuario" onAction="#actualizarUsuario" style="-fx-background-color: #FFA500; -fx-text-fill: #FFFFFF;"/>
+                        <Button text="Eliminar Usuario Seleccionado" onAction="#eliminarUsuario" style="-fx-background-color: #FF4444; -fx-text-fill: #FFFFFF;"/>
+                        <Button text="Limpiar Campos" onAction="#limpiarCamposUsuarios" style="-fx-background-color: #555555; -fx-text-fill: #FFFFFF;"/>
+                    </HBox>
 
                     <TableView fx:id="usuariosTable" VBox.vgrow="ALWAYS">
                         <columns>

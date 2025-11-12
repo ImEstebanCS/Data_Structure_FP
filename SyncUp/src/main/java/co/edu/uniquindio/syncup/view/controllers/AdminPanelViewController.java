@@ -5,28 +5,36 @@ import co.edu.uniquindio.syncup.Controller.CancionController;
 import co.edu.uniquindio.syncup.Controller.UsuarioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class AdminPanelViewController {
+    private String usernameOriginal = null;
 
+    // Tabla y columnas de canciones
     @FXML private TableView<Cancion> cancionesTable;
     @FXML private TableColumn<Cancion, Integer> idColumn;
     @FXML private TableColumn<Cancion, String> tituloColumn;
     @FXML private TableColumn<Cancion, String> artistaColumn;
 
+    // Tabla y columnas de usuarios
     @FXML private TableView<Usuario> usuariosTable;
     @FXML private TableColumn<Usuario, String> usernameColumn;
     @FXML private TableColumn<Usuario, String> nombreColumn;
 
+    // Campos para canciones
     @FXML private TextField idField;
     @FXML private TextField tituloField;
     @FXML private TextField artistaField;
     @FXML private TextField generoField;
     @FXML private TextField añoField;
     @FXML private TextField duracionField;
+
+    // Campos para usuarios
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private TextField nombreUsuarioField;
 
     private CancionController cancionController;
     private UsuarioController usuarioController;
@@ -50,6 +58,11 @@ public class AdminPanelViewController {
                 (observable, oldValue, newValue) -> cargarCancionEnCampos(newValue)
         );
 
+        // Listener para cargar datos al seleccionar un usuario
+        usuariosTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> cargarUsuarioEnCampos(newValue)
+        );
+
         cargarDatos();
     }
 
@@ -58,9 +71,8 @@ public class AdminPanelViewController {
         usuariosTable.getItems().setAll(usuarioController.listarUsuarios());
     }
 
-    /**
-     * Carga los datos de la canción seleccionada en los campos de texto
-     */
+    // ==================== GESTIÓN DE CANCIONES ====================
+
     private void cargarCancionEnCampos(Cancion cancion) {
         if (cancion != null) {
             idField.setText(String.valueOf(cancion.getId()));
@@ -82,18 +94,22 @@ public class AdminPanelViewController {
             int año = Integer.parseInt(añoField.getText());
             double duracion = Double.parseDouble(duracionField.getText());
 
+            if (titulo.isEmpty() || artista.isEmpty() || genero.isEmpty()) {
+                mostrarAlerta("Error", "Todos los campos deben estar llenos");
+                return;
+            }
+
             cancionController.agregarCancion(id, titulo, artista, genero, año, duracion);
             cargarDatos();
-            limpiarCampos();
+            limpiarCamposCanciones();
             mostrarAlerta("Éxito", "Canción agregada correctamente");
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Los campos ID, Año y Duración deben ser números válidos");
         } catch (Exception e) {
-            mostrarAlerta("Error", "Datos inválidos: " + e.getMessage());
+            mostrarAlerta("Error", "Error al agregar: " + e.getMessage());
         }
     }
 
-    /**
-     * Actualiza la canción seleccionada con los datos de los campos
-     */
     @FXML
     private void actualizarCancion() {
         Cancion seleccionada = cancionesTable.getSelectionModel().getSelectedItem();
@@ -111,16 +127,14 @@ public class AdminPanelViewController {
             int año = Integer.parseInt(añoField.getText());
             double duracion = Double.parseDouble(duracionField.getText());
 
-            // Validar que los campos no estén vacíos
             if (titulo.isEmpty() || artista.isEmpty() || genero.isEmpty()) {
                 mostrarAlerta("Error", "Todos los campos deben estar llenos");
                 return;
             }
 
-            // Actualizar la canción
             cancionController.actualizarCancion(id, titulo, artista, genero, año, duracion);
             cargarDatos();
-            limpiarCampos();
+            limpiarCamposCanciones();
             mostrarAlerta("Éxito", "Canción actualizada correctamente");
         } catch (NumberFormatException e) {
             mostrarAlerta("Error", "Los campos ID, Año y Duración deben ser números válidos");
@@ -141,11 +155,101 @@ public class AdminPanelViewController {
             if (confirmacion.showAndWait().get() == ButtonType.OK) {
                 cancionController.eliminarCancion(seleccionada.getId());
                 cargarDatos();
-                limpiarCampos();
+                limpiarCamposCanciones();
                 mostrarAlerta("Éxito", "Canción eliminada");
             }
         } else {
             mostrarAlerta("Advertencia", "Debe seleccionar una canción para eliminar");
+        }
+    }
+
+    @FXML
+    private void limpiarCamposCanciones() {
+        idField.clear();
+        tituloField.clear();
+        artistaField.clear();
+        generoField.clear();
+        añoField.clear();
+        duracionField.clear();
+        cancionesTable.getSelectionModel().clearSelection();
+    }
+
+    // ==================== GESTIÓN DE USUARIOS ====================
+
+    private void cargarUsuarioEnCampos(Usuario usuario) {
+        if (usuario != null) {
+            usernameOriginal = usuario.getUsername();
+            usernameField.setText(usuario.getUsername());
+            usernameField.setEditable(true);
+            passwordField.setText(usuario.getPassword());
+            nombreUsuarioField.setText(usuario.getNombre());
+        } else {
+            usernameOriginal = null;
+            usernameField.setEditable(true);
+        }
+    }
+
+    @FXML
+    private void agregarUsuario() {
+        try {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText();
+            String nombre = nombreUsuarioField.getText().trim();
+
+            if (username.isEmpty() || password.isEmpty() || nombre.isEmpty()) {
+                mostrarAlerta("Error", "Todos los campos deben estar llenos");
+                return;
+            }
+
+            if (password.length() < 4) {
+                mostrarAlerta("Error", "La contraseña debe tener al menos 4 caracteres");
+                return;
+            }
+
+            boolean exito = usuarioController.registrar(username, password, nombre);
+
+            if (exito) {
+                cargarDatos();
+                limpiarCamposUsuarios();
+                mostrarAlerta("Éxito", "Usuario agregado correctamente");
+            } else {
+                mostrarAlerta("Error", "El username ya existe o los datos son inválidos");
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al agregar usuario: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void actualizarUsuario() {
+        Usuario seleccionado = usuariosTable.getSelectionModel().getSelectedItem();
+
+        if (seleccionado == null) {
+            mostrarAlerta("Advertencia", "Debe seleccionar un usuario de la tabla para actualizar");
+            return;
+        }
+
+        try {
+            String usernameNuevo = usernameField.getText().trim();
+            String password = passwordField.getText();
+            String nombre = nombreUsuarioField.getText().trim();
+
+            if (usernameNuevo.isEmpty() || password.isEmpty() || nombre.isEmpty()) {
+                mostrarAlerta("Error", "Todos los campos deben estar llenos");
+                return;
+            }
+
+            if (password.length() < 4) {
+                mostrarAlerta("Error", "La contraseña debe tener al menos 4 caracteres");
+                return;
+            }
+
+            usuarioController.actualizar(usernameOriginal, usernameNuevo, password, nombre);
+            cargarDatos();
+            limpiarCamposUsuarios();
+            mostrarAlerta("Éxito", "Usuario actualizado correctamente");
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al actualizar usuario: " + e.getMessage());
         }
     }
 
@@ -161,6 +265,7 @@ public class AdminPanelViewController {
             if (confirmacion.showAndWait().get() == ButtonType.OK) {
                 usuarioController.eliminar(seleccionado.getUsername());
                 cargarDatos();
+                limpiarCamposUsuarios();
                 mostrarAlerta("Éxito", "Usuario eliminado");
             }
         } else {
@@ -169,15 +274,16 @@ public class AdminPanelViewController {
     }
 
     @FXML
-    private void limpiarCampos() {
-        idField.clear();
-        tituloField.clear();
-        artistaField.clear();
-        generoField.clear();
-        añoField.clear();
-        duracionField.clear();
-        cancionesTable.getSelectionModel().clearSelection();
+    private void limpiarCamposUsuarios() {
+        usernameOriginal = null;
+        usernameField.clear();
+        usernameField.setEditable(true);
+        passwordField.clear();
+        nombreUsuarioField.clear();
+        usuariosTable.getSelectionModel().clearSelection();
     }
+
+    // ==================== UTILIDADES ====================
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(
@@ -189,21 +295,5 @@ public class AdminPanelViewController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-    // Métodos que puedes eliminar si no los usas
-    @FXML
-    void removeUser(ActionEvent event) {
-        eliminarUsuario();
-    }
-
-    @FXML
-    void updateSONG(ActionEvent event) {
-        actualizarCancion();
-    }
-
-    @FXML
-    void updateUser(ActionEvent event) {
-        // Implementar si necesitas actualizar usuarios
     }
 }

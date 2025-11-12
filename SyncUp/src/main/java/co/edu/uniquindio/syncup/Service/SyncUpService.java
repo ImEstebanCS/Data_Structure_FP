@@ -393,7 +393,7 @@ public class SyncUpService {
     }
 
     /**
-     * RF-011: Listar y eliminar usuarios
+     * RF-011: Listar y eliminar usuarios,actualizar
      */
     public List<Usuario> listarUsuarios() {
         return new ArrayList<>(usuarios.values());
@@ -407,6 +407,43 @@ public class SyncUpService {
             return true;
         }
         return false;
+    }
+    /**
+     * Actualizar datos de un usuario existente
+     * Si se cambia el username, se elimina el viejo y se crea uno nuevo
+     */
+    public void actualizarUsuario(String usernameAntiguo, String usernameNuevo, String password, String nombre) {
+        Usuario usuario = usuarios.get(usernameAntiguo);
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado: " + usernameAntiguo);
+        }
+
+        // Si el username cambió, hay que manejar el HashMap
+        if (!usernameAntiguo.equals(usernameNuevo)) {
+            // Verificar que el nuevo username no exista
+            if (usuarios.containsKey(usernameNuevo)) {
+                throw new IllegalArgumentException("El username '" + usernameNuevo + "' ya existe");
+            }
+
+            // Remover el usuario con la clave antigua
+            usuarios.remove(usernameAntiguo);
+
+            // Actualizar el username del objeto
+            usuario.setUsername(usernameNuevo);
+            usuario.setPassword(password);
+            usuario.setNombre(nombre);
+
+            // Agregar con la nueva clave
+            usuarios.put(usernameNuevo, usuario);
+
+            // Actualizar el grafo social si es necesario
+            // (esto depende de cómo esté implementado tu grafoSocial)
+        } else {
+            // Solo actualizar password y nombre
+            usuario.setPassword(password);
+            usuario.setNombre(nombre);
+        }
     }
 
     // ==================== GETTERS ====================
