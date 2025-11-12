@@ -5,6 +5,7 @@ import co.edu.uniquindio.syncup.Controller.CancionController;
 import co.edu.uniquindio.syncup.Controller.UsuarioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,6 +30,23 @@ public class AdminPanelViewController {
 
     private CancionController cancionController;
     private UsuarioController usuarioController;
+
+
+
+    @FXML
+    void removeUser(ActionEvent event) {
+
+    }
+
+    @FXML
+    void updateSONG(ActionEvent event) {
+
+    }
+
+    @FXML
+    void updateUser(ActionEvent event) {
+
+    }
 
     @FXML
     public void initialize() {
