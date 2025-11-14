@@ -2,6 +2,7 @@ package co.edu.uniquindio.syncup.view.controllers;
 
 import co.edu.uniquindio.syncup.Controller.CancionController;
 import co.edu.uniquindio.syncup.Controller.PlaylistController;
+import co.edu.uniquindio.syncup.Controller.RadioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import co.edu.uniquindio.syncup.utils.SessionManager;
@@ -9,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -23,20 +25,34 @@ public class SearchViewController {
     @FXML private FlowPane resultadosPane;
     @FXML private Label resultadosLabel;
     @FXML private ListView<String> sugerenciasListView;
+    
+    // RF-004: Búsqueda avanzada
+    @FXML private TextField artistaField;
+    @FXML private TextField generoField;
+    @FXML private TextField añoField;
+    @FXML private ComboBox<String> logicaCombo;
 
     private CancionController cancionController;
     private PlaylistController playlistController;
+    private RadioController radioController;
     private Usuario usuarioActual;
 
     public void setControllers(CancionController cancionController, PlaylistController playlistController) {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
+        this.radioController = co.edu.uniquindio.syncup.SyncUpApp.getRadioController();
 
         inicializar();
     }
 
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
+
+        // RF-004: Configurar ComboBox de lógica
+        if (logicaCombo != null) {
+            logicaCombo.getItems().addAll("AND", "OR");
+            logicaCombo.setValue("AND");
+        }
 
         // Configurar autocompletado en tiempo real - RF-003
         searchField.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -109,8 +125,8 @@ public class SearchViewController {
 
     private VBox crearCancionCard(Cancion cancion) {
         VBox card = new VBox(8);
-        card.setPrefSize(150, 200);
-        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;");
+        card.setPrefSize(150, 220);
+        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8;");
         card.setPadding(new Insets(10));
 
         // Imagen placeholder
@@ -134,23 +150,79 @@ public class SearchViewController {
         Label duracion = new Label(cancion.getDuracionFormateada());
         duracion.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 11px;");
 
-        card.getChildren().addAll(imagePlaceholder, titulo, artista, duracion);
-
-        // Evento de click - Agregar a favoritos
-        card.setOnMouseClicked(e -> {
+        // Botones de acción - RF-006
+        HBox botonesBox = new HBox(5);
+        botonesBox.setAlignment(javafx.geometry.Pos.CENTER);
+        
+        Button favoritoBtn = new Button("❤️");
+        favoritoBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        favoritoBtn.setPrefSize(30, 30);
+        favoritoBtn.setOnAction(e -> {
             playlistController.agregarFavorito(usuarioActual, cancion);
             mostrarAlerta("Agregado", cancion.getTitulo() + " agregada a favoritos");
         });
 
+        Button radioBtn = new Button("📻");
+        radioBtn.setStyle("-fx-background-color: #FFA500; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        radioBtn.setPrefSize(30, 30);
+        radioBtn.setOnAction(e -> {
+            // RF-006: Iniciar Radio desde canción
+            radioController.iniciarRadio(usuarioActual, cancion);
+            mostrarAlerta("Radio Iniciada", "Radio iniciada desde: " + cancion.getTitulo() + "\n" +
+                    "Se generó una cola de reproducción con canciones similares");
+        });
+
+        botonesBox.getChildren().addAll(favoritoBtn, radioBtn);
+
+        card.getChildren().addAll(imagePlaceholder, titulo, artista, duracion, botonesBox);
+
         // Hover effect
         card.setOnMouseEntered(e ->
-                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8; -fx-cursor: hand;")
+                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8;")
         );
         card.setOnMouseExited(e ->
-                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;")
+                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8;")
         );
 
         return card;
+    }
+
+    /**
+     * RF-004: Búsqueda avanzada con lógica AND y OR
+     */
+    @FXML
+    private void buscarAvanzada() {
+        String artista = artistaField.getText().trim();
+        String genero = generoField.getText().trim();
+        String añoTexto = añoField.getText().trim();
+        int año = 0;
+
+        // Validar y convertir año
+        if (!añoTexto.isEmpty()) {
+            try {
+                año = Integer.parseInt(añoTexto);
+            } catch (NumberFormatException e) {
+                mostrarAlerta("Error", "El año debe ser un número válido");
+                return;
+            }
+        }
+
+        // Obtener lógica seleccionada
+        boolean usarOR = logicaCombo.getValue() != null && logicaCombo.getValue().equals("OR");
+
+        // Realizar búsqueda avanzada
+        List<Cancion> resultados = cancionController.buscarAvanzada(
+                artista.isEmpty() ? null : artista,
+                genero.isEmpty() ? null : genero,
+                año,
+                usarOR
+        );
+
+        mostrarResultados(resultados);
+        
+        // Mostrar información de la búsqueda
+        String logicaTexto = usarOR ? "OR" : "AND";
+        resultadosLabel.setText(resultados.size() + " resultados encontrados (Lógica: " + logicaTexto + ")");
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

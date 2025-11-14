@@ -13,7 +13,33 @@
     
     <VBox spacing="15.0" alignment="CENTER">
         <Label fx:id="usernameLabel" text="@username" style="-fx-text-fill: #1DB954; -fx-font-size: 24px; -fx-font-weight: bold;"/>
-        <Label fx:id="nombreLabel" text="Nombre" style="-fx-text-fill: #FFFFFF; -fx-font-size: 20px;"/>
+    </VBox>
+    
+    <Separator style="-fx-background-color: #282828;"/>
+    
+    <!-- RF-002: Formulario de edición de perfil -->
+    <VBox spacing="15.0" prefWidth="400.0" style="-fx-background-color: #181818; -fx-background-radius: 10; -fx-padding: 25;">
+        <Label text="Editar Perfil" style="-fx-text-fill: #FFFFFF; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+        
+        <VBox spacing="10.0">
+            <Label text="Nombre:" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+            <TextField fx:id="nombreField" promptText="Nombre completo"
+                       style="-fx-background-color: #282828; -fx-text-fill: #FFFFFF; -fx-background-radius: 5;"/>
+            
+            <Label text="Contraseña:" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+            <PasswordField fx:id="passwordField" promptText="Nueva contraseña"
+                         style="-fx-background-color: #282828; -fx-text-fill: #FFFFFF; -fx-background-radius: 5;"/>
+            
+            <Label text="Confirmar Contraseña:" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+            <PasswordField fx:id="confirmPasswordField" promptText="Confirmar nueva contraseña"
+                         style="-fx-background-color: #282828; -fx-text-fill: #FFFFFF; -fx-background-radius: 5;"/>
+        </VBox>
+        
+        <Button text="💾 Guardar Cambios" onAction="#guardarCambios"
+                prefWidth="200.0" prefHeight="40.0"
+                style="-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;"/>
+        
+        <Label fx:id="mensajeLabel" text="" style="-fx-text-fill: #1DB954; -fx-font-size: 12px;"/>
     </VBox>
     
     <Separator style="-fx-background-color: #282828;"/>

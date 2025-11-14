@@ -7,9 +7,12 @@ import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import co.edu.uniquindio.syncup.utils.SessionManager;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -28,12 +31,14 @@ public class HomeViewController {
 
     private CancionController cancionController;
     private PlaylistController playlistController;
+    private RadioController radioController;
     private Usuario usuarioActual;
 
     public void setControllers(UsuarioController usuarioController, CancionController cancionController,
                                PlaylistController playlistController, RadioController radioController) {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
+        this.radioController = radioController;
 
         inicializar();
     }
@@ -86,15 +91,14 @@ public class HomeViewController {
 
     private VBox crearCancionCard(Cancion cancion) {
         VBox card = new VBox(8);
-        card.setPrefSize(150, 180);
-        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;");
+        card.setPrefSize(150, 200);
+        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8;");
         card.setPadding(new Insets(10));
 
         // Imagen placeholder
         Label imagePlaceholder = new Label("🎵");
-        imagePlaceholder.setStyle("-fx-font-size: 50px; -fx-text-fill: #1DB954;");
+        imagePlaceholder.setStyle("-fx-font-size: 50px; -fx-text-fill: #1DB954; -fx-alignment: center;");
         imagePlaceholder.setMaxWidth(Double.MAX_VALUE);
-        imagePlaceholder.setStyle(imagePlaceholder.getStyle() + "-fx-alignment: center;");
 
         // Título
         Label titulo = new Label(cancion.getTitulo());
@@ -108,22 +112,47 @@ public class HomeViewController {
         artista.setWrapText(true);
         artista.setMaxWidth(130);
 
-        card.getChildren().addAll(imagePlaceholder, titulo, artista);
-
-        // Evento de click
-        card.setOnMouseClicked(e -> {
-            System.out.println("Reproduciendo: " + cancion.getTitulo());
+        // Botones de acción - RF-006
+        HBox botonesBox = new HBox(5);
+        botonesBox.setAlignment(javafx.geometry.Pos.CENTER);
+        
+        Button favoritoBtn = new Button("❤️");
+        favoritoBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        favoritoBtn.setPrefSize(30, 30);
+        favoritoBtn.setOnAction(e -> {
             playlistController.agregarFavorito(usuarioActual, cancion);
         });
 
+        Button radioBtn = new Button("📻");
+        radioBtn.setStyle("-fx-background-color: #FFA500; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        radioBtn.setPrefSize(30, 30);
+        radioBtn.setOnAction(e -> {
+            // RF-006: Iniciar Radio desde canción
+            radioController.iniciarRadio(usuarioActual, cancion);
+            mostrarAlerta("Radio Iniciada", "Radio iniciada desde: " + cancion.getTitulo() + "\n" +
+                    "Se generó una cola de reproducción con canciones similares");
+        });
+
+        botonesBox.getChildren().addAll(favoritoBtn, radioBtn);
+
+        card.getChildren().addAll(imagePlaceholder, titulo, artista, botonesBox);
+
         // Hover effect
         card.setOnMouseEntered(e ->
-                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8; -fx-cursor: hand;")
+                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8;")
         );
         card.setOnMouseExited(e ->
-                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;")
+                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8;")
         );
 
         return card;
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

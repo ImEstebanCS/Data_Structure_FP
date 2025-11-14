@@ -198,24 +198,58 @@ public class SyncUpService {
     }
 
     /**
-     * RF-004: Búsqueda avanzada por múltiples atributos
+     * RF-004: Búsqueda avanzada por múltiples atributos con lógica AND y OR
+     * @param artista Filtro por artista (puede ser null o vacío)
+     * @param genero Filtro por género (puede ser null o vacío)
+     * @param año Filtro por año (0 significa sin filtro)
+     * @param usarOR true para usar lógica OR, false para usar lógica AND
      */
-    public List<Cancion> buscarAvanzadaPorAtributos(String artista, String genero, int año) {
+    public List<Cancion> buscarAvanzadaPorAtributos(String artista, String genero, int año, boolean usarOR) {
         List<Cancion> resultado = new ArrayList<>();
 
-        for (Cancion cancion : catalogoCanciones.getCanciones()) {
-            boolean cumpleArtista = artista == null || artista.isEmpty() ||
-                    cancion.getArtista().toLowerCase().contains(artista.toLowerCase());
-            boolean cumpleGenero = genero == null || genero.isEmpty() ||
-                    cancion.getGenero().toLowerCase().contains(genero.toLowerCase());
-            boolean cumpleAño = año == 0 || cancion.getAño() == año;
+        // Normalizar valores vacíos
+        boolean tieneArtista = artista != null && !artista.trim().isEmpty();
+        boolean tieneGenero = genero != null && !genero.trim().isEmpty();
+        boolean tieneAño = año > 0;
 
-            if (cumpleArtista && cumpleGenero && cumpleAño) {
+        // Si no hay ningún filtro, retornar todas las canciones
+        if (!tieneArtista && !tieneGenero && !tieneAño) {
+            return new ArrayList<>(catalogoCanciones.getCanciones());
+        }
+
+        for (Cancion cancion : catalogoCanciones.getCanciones()) {
+            boolean cumpleArtista = !tieneArtista ||
+                    cancion.getArtista().toLowerCase().contains(artista.toLowerCase().trim());
+            boolean cumpleGenero = !tieneGenero ||
+                    cancion.getGenero().toLowerCase().contains(genero.toLowerCase().trim());
+            boolean cumpleAño = !tieneAño || cancion.getAño() == año;
+
+            boolean cumpleCriterios;
+            if (usarOR) {
+                // Lógica OR: cumple si al menos uno de los criterios especificados se cumple
+                cumpleCriterios = (tieneArtista && cumpleArtista) ||
+                                 (tieneGenero && cumpleGenero) ||
+                                 (tieneAño && cumpleAño);
+            } else {
+                // Lógica AND: cumple si todos los criterios especificados se cumplen
+                cumpleCriterios = (!tieneArtista || cumpleArtista) &&
+                                 (!tieneGenero || cumpleGenero) &&
+                                 (!tieneAño || cumpleAño);
+            }
+
+            if (cumpleCriterios) {
                 resultado.add(cancion);
             }
         }
 
         return resultado;
+    }
+
+    /**
+     * RF-004: Búsqueda avanzada por múltiples atributos (método legacy con AND por defecto)
+     */
+    public List<Cancion> buscarAvanzadaPorAtributos(String artista, String genero, int año) {
+        return buscarAvanzadaPorAtributos(artista, genero, año, false);
     }
 
     public List<Cancion> buscarCancionesPorTitulo(String titulo) {
