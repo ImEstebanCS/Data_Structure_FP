@@ -137,6 +137,14 @@ public class HomeViewController {
 
         card.getChildren().addAll(imagePlaceholder, titulo, artista, botonesBox);
 
+        // Click en la tarjeta - solo muestra información, NO agrega a favoritos
+        card.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // Doble clic para reproducir (solo visual)
+                mostrarAlerta("Reproduciendo", "Reproduciendo: " + cancion.getTitulo());
+            }
+        });
+
         // Hover effect
         card.setOnMouseEntered(e ->
                 card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8;")

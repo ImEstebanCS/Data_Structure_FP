@@ -61,12 +61,6 @@
             </VBox>
             
             <VBox spacing="5.0">
-                <Label text="Lógica:" style="-fx-text-fill: #B3B3B3; -fx-font-size: 12px;"/>
-                <ComboBox fx:id="logicaCombo" prefWidth="120.0"
-                         style="-fx-background-color: #282828; -fx-text-fill: #FFFFFF;"/>
-            </VBox>
-            
-            <VBox spacing="5.0">
                 <Region prefHeight="20.0"/>
                 <Button text="🔎 Buscar Avanzada" onAction="#buscarAvanzada"
                         prefWidth="150.0" prefHeight="35.0"

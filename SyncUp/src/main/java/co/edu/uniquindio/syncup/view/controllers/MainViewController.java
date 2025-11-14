@@ -102,6 +102,14 @@ public class MainViewController {
     }
 
     /**
+     * Navegación a Radio
+     */
+    @FXML
+    public void cargarRadio() {
+        cargarVista("/fxml/views/Radio.fxml");
+    }
+
+    /**
      * Navegación a Profile
      */
     @FXML
@@ -147,6 +155,10 @@ public class MainViewController {
             } else if (controller instanceof ProfileViewController) {
                 ((ProfileViewController) controller).setControllers(
                         usuarioController
+                );
+            } else if (controller instanceof RadioViewController) {
+                ((RadioViewController) controller).setControllers(
+                        radioController, playlistController
                 );
             }
 

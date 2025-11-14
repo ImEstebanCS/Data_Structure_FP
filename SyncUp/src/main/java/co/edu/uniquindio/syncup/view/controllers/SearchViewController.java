@@ -30,7 +30,6 @@ public class SearchViewController {
     @FXML private TextField artistaField;
     @FXML private TextField generoField;
     @FXML private TextField añoField;
-    @FXML private ComboBox<String> logicaCombo;
 
     private CancionController cancionController;
     private PlaylistController playlistController;
@@ -47,12 +46,6 @@ public class SearchViewController {
 
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
-
-        // RF-004: Configurar ComboBox de lógica
-        if (logicaCombo != null) {
-            logicaCombo.getItems().addAll("AND", "OR");
-            logicaCombo.setValue("AND");
-        }
 
         // Configurar autocompletado en tiempo real - RF-003
         searchField.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -188,7 +181,8 @@ public class SearchViewController {
     }
 
     /**
-     * RF-004: Búsqueda avanzada con lógica AND y OR
+     * RF-004: Búsqueda avanzada con lógica automática
+     * Usa AND si hay múltiples criterios, OR si solo hay uno
      */
     @FXML
     private void buscarAvanzada() {
@@ -207,8 +201,14 @@ public class SearchViewController {
             }
         }
 
-        // Obtener lógica seleccionada
-        boolean usarOR = logicaCombo.getValue() != null && logicaCombo.getValue().equals("OR");
+        // Determinar lógica automáticamente
+        // Si hay múltiples criterios, usar AND; si solo hay uno, usar OR
+        boolean tieneArtista = !artista.isEmpty();
+        boolean tieneGenero = !genero.isEmpty();
+        boolean tieneAño = año > 0;
+        
+        int criteriosCount = (tieneArtista ? 1 : 0) + (tieneGenero ? 1 : 0) + (tieneAño ? 1 : 0);
+        boolean usarOR = criteriosCount <= 1; // Si hay 1 o menos criterios, usar OR; si hay más, usar AND
 
         // Realizar búsqueda avanzada
         List<Cancion> resultados = cancionController.buscarAvanzada(
@@ -222,7 +222,7 @@ public class SearchViewController {
         
         // Mostrar información de la búsqueda
         String logicaTexto = usarOR ? "OR" : "AND";
-        resultadosLabel.setText(resultados.size() + " resultados encontrados (Lógica: " + logicaTexto + ")");
+        resultadosLabel.setText(resultados.size() + " resultados encontrados (Lógica automática: " + logicaTexto + ")");
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

@@ -79,4 +79,8 @@ public class UsuarioController {
     public int getCantidadUsuarios() {
         return service.getCantidadUsuarios();
     }
+
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        return service.obtenerUsuarioPorUsername(username);
+    }
 }

@@ -66,6 +66,10 @@
                         prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
                         style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
 
+                <Button text="📻 Mi Radio" onAction="#cargarRadio"
+                        prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
+                        style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
                 <Button text="👤 Perfil" onAction="#cargarProfile"
                         prefWidth="230.0" prefHeight="40.0" alignment="CENTER_LEFT"
                         style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-cursor: hand;"/>

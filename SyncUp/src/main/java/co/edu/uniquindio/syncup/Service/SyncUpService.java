@@ -164,6 +164,13 @@ public class SyncUpService {
     }
 
     /**
+     * Obtiene un usuario por su username
+     */
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        return usuarios.get(username);
+    }
+
+    /**
      * RF-002: Gestionar favoritos
      */
     public void agregarFavorito(Usuario usuario, Cancion cancion) {
@@ -477,6 +484,13 @@ public class SyncUpService {
             // Solo actualizar password y nombre
             usuario.setPassword(password);
             usuario.setNombre(nombre);
+            
+            // Actualizar referencias en playlists y radios (usando el mismo objeto Usuario)
+            // Las referencias se mantienen porque usamos el mismo objeto, pero actualizamos el nombre
+            if (radios.containsKey(usuario)) {
+                Radio radio = radios.get(usuario);
+                radio.setNombre(nombre + "'s Radio");
+            }
         }
     }
 

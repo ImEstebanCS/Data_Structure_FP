@@ -78,21 +78,32 @@ public class ProfileViewController {
         }
 
         try {
+            // Guardar el username antes de actualizar
+            String usernameActual = usuarioActual.getUsername();
+            
             // Si no se cambió la contraseña, usar la actual
             String passwordFinal = nuevaPassword.isEmpty() ? usuarioActual.getPassword() : nuevaPassword;
 
-            // Actualizar usuario
+            // Actualizar usuario en el sistema (esto actualiza el objeto en el HashMap)
             usuarioController.actualizar(
-                    usuarioActual.getUsername(),  // username no cambia
-                    usuarioActual.getUsername(),  // mantener el mismo username
+                    usernameActual,  // username no cambia
+                    usernameActual,  // mantener el mismo username
                     passwordFinal,
                     nuevoNombre
             );
 
-            // Actualizar usuario en sesión
-            usuarioActual.setNombre(nuevoNombre);
-            usuarioActual.setPassword(passwordFinal);
-            SessionManager.getInstance().setUsuarioActual(usuarioActual);
+            // Obtener el usuario actualizado del HashMap para asegurar que tenemos la referencia correcta
+            // Esto es importante porque el objeto en el HashMap es el que se actualizó
+            Usuario usuarioActualizado = usuarioController.obtenerUsuarioPorUsername(usernameActual);
+            
+            if (usuarioActualizado != null) {
+                // Actualizar la sesión con el usuario actualizado del HashMap
+                SessionManager.getInstance().setUsuarioActual(usuarioActualizado);
+                usuarioActual = usuarioActualizado;
+                
+                // Actualizar el campo de nombre en la UI
+                nombreField.setText(usuarioActual.getNombre());
+            }
 
             // Actualizar etiquetas
             favoritosLabel.setText(usuarioActual.getListaFavoritos().size() + " canciones favoritas");

@@ -5,9 +5,14 @@ import co.edu.uniquindio.syncup.Controller.CancionController;
 import co.edu.uniquindio.syncup.Controller.UsuarioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
+import co.edu.uniquindio.syncup.utils.SessionManager;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.io.IOException;
 
 public class AdminPanelViewController {
     private String usernameOriginal = null;
@@ -284,6 +289,29 @@ public class AdminPanelViewController {
     }
 
     // ==================== UTILIDADES ====================
+
+    /**
+     * Cerrar sesión del administrador
+     */
+    @FXML
+    private void cerrarSesion() {
+        // Cerrar sesión en SessionManager
+        SessionManager.getInstance().cerrarSesion();
+
+        try {
+            // Cargar vista de Login
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+            Parent loginView = loader.load();
+
+            // Obtener la escena actual y cambiar la raíz
+            usernameField.getScene().setRoot(loginView);
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar Login");
+            e.printStackTrace();
+            mostrarAlerta("Error", "Error al cerrar sesión: " + e.getMessage());
+        }
+    }
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(
