@@ -6,6 +6,9 @@ import java.util.Objects;
  * Entidad Cancion - RF-016, RF-017, RF-018
  * Representa una pista musical en el catálogo
  */
+
+import java.util.Objects;
+
 public class Cancion {
     private int id;
     private String titulo;
@@ -17,6 +20,7 @@ public class Cancion {
     private String portadaUrl;
     private int popularidad; // 0-100
     private AudioFeatures audioFeatures;
+    private String rutaArchivo; // ⭐ NUEVO CAMPO PARA AUDIO
 
     public Cancion() {
     }
@@ -28,6 +32,22 @@ public class Cancion {
         this.genero = genero;
         this.año = año;
         this.duracion = duracion;
+        this.album = "";
+        this.portadaUrl = "";
+        this.popularidad = 50;
+        this.audioFeatures = new AudioFeatures();
+        this.rutaArchivo = ""; // ⭐ NUEVO
+    }
+
+    // ⭐ NUEVO CONSTRUCTOR con rutaArchivo
+    public Cancion(int id, String titulo, String artista, String genero, int año, double duracion, String rutaArchivo) {
+        this.id = id;
+        this.titulo = titulo;
+        this.artista = artista;
+        this.genero = genero;
+        this.año = año;
+        this.duracion = duracion;
+        this.rutaArchivo = rutaArchivo;
         this.album = "";
         this.portadaUrl = "";
         this.popularidad = 50;
@@ -48,6 +68,7 @@ public class Cancion {
         this.portadaUrl = portadaUrl;
         this.popularidad = popularidad;
         this.audioFeatures = audioFeatures != null ? audioFeatures : new AudioFeatures();
+        this.rutaArchivo = ""; // ⭐ NUEVO
     }
 
     // Getters y Setters
@@ -129,6 +150,15 @@ public class Cancion {
 
     public void setAudioFeatures(AudioFeatures audioFeatures) {
         this.audioFeatures = audioFeatures;
+    }
+
+    // ⭐ NUEVO getter y setter para rutaArchivo
+    public String getRutaArchivo() {
+        return rutaArchivo;
+    }
+
+    public void setRutaArchivo(String rutaArchivo) {
+        this.rutaArchivo = rutaArchivo;
     }
 
     /**
