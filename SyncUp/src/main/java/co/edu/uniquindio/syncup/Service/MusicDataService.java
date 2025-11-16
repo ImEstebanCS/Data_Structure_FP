@@ -14,7 +14,6 @@ import java.util.List;
  * MusicDataService
  * Servicio para cargar datos de canciones desde archivos JSON locales
  */
-
 public class MusicDataService {
     private final Gson gson;
     private static final String CANCIONES_JSON = "/data/canciones.json";
@@ -58,67 +57,64 @@ public class MusicDataService {
     private List<Cancion> crearCancionesPorDefecto() {
         List<Cancion> canciones = new ArrayList<>();
 
-        // ⭐ MODIFICADO - Ahora con rutas de audio
+        // Canciones de prueba
         canciones.add(crearCancion(1, "Bohemian Rhapsody", "Queen", "A Night at the Opera",
-                "Rock", 1975, 355, 95, "/music/bohemian_rhapsody.mp3"));
+                "Rock", 1975, 355, 95));
         canciones.add(crearCancion(2, "Imagine", "John Lennon", "Imagine",
-                "Rock", 1971, 187, 92, "/music/imagine.mp3"));
+                "Rock", 1971, 187, 92));
         canciones.add(crearCancion(3, "Hotel California", "Eagles", "Hotel California",
-                "Rock", 1976, 390, 90, "/music/hotel_california.mp3"));
+                "Rock", 1976, 390, 90));
         canciones.add(crearCancion(4, "Stairway to Heaven", "Led Zeppelin", "Led Zeppelin IV",
-                "Rock", 1971, 482, 93, "/music/stairway_to_heaven.mp3"));
+                "Rock", 1971, 482, 93));
         canciones.add(crearCancion(5, "Billie Jean", "Michael Jackson", "Thriller",
-                "Pop", 1982, 294, 94, "/music/billie_jean.mp3"));
+                "Pop", 1982, 294, 94));
         canciones.add(crearCancion(6, "Like a Rolling Stone", "Bob Dylan", "Highway 61 Revisited",
-                "Rock", 1965, 373, 88, "/music/like_a_rolling_stone.mp3"));
+                "Rock", 1965, 373, 88));
         canciones.add(crearCancion(7, "Smells Like Teen Spirit", "Nirvana", "Nevermind",
-                "Grunge", 1991, 301, 91, "/music/smells_like_teen_spirit.mp3"));
+                "Grunge", 1991, 301, 91));
         canciones.add(crearCancion(8, "What's Going On", "Marvin Gaye", "What's Going On",
-                "Soul", 1971, 233, 89, "/music/whats_going_on.mp3"));
+                "Soul", 1971, 233, 89));
         canciones.add(crearCancion(9, "Yesterday", "The Beatles", "Help!",
-                "Pop", 1965, 123, 90, "/music/yesterday.mp3"));
+                "Pop", 1965, 123, 90));
         canciones.add(crearCancion(10, "Hey Jude", "The Beatles", "Hey Jude",
-                "Rock", 1968, 431, 92, "/music/hey_jude.mp3"));
+                "Rock", 1968, 431, 92));
 
         // Reggaeton moderno
         canciones.add(crearCancion(11, "MAÑANA SERÁ BONITO", "KAROL G", "Mañana Será Bonito",
-                "Reggaeton", 2023, 210, 95, "/music/manana_sera_bonito.mp3"));
+                "Reggaeton", 2023, 210, 95));
         canciones.add(crearCancion(12, "+57", "KAROL G, Feid", "+57",
-                "Reggaeton", 2024, 195, 98, "/music/mas57.mp3"));
+                "Reggaeton", 2024, 195, 98));
         canciones.add(crearCancion(13, "la luz(Fin)", "Kali Uchis, JHAYCO", "ORQUÍDEAS",
-                "Reggaeton", 2024, 180, 89, "/music/la_luz.mp3"));
+                "Reggaeton", 2024, 180, 89));
         canciones.add(crearCancion(14, "TQG", "KAROL G, Shakira", "Mañana Será Bonito",
-                "Reggaeton", 2023, 200, 96, "/music/tqg.mp3"));
+                "Reggaeton", 2023, 200, 96));
         canciones.add(crearCancion(15, "Un x100to", "Bad Bunny, Grupo Frontera", "nadie sabe lo que va a pasar mañana",
-                "Regional Mexicano", 2023, 193, 94, "/music/un_x100to.mp3"));
+                "Regional Mexicano", 2023, 193, 94));
 
         // Pop actual
         canciones.add(crearCancion(16, "Flowers", "Miley Cyrus", "Endless Summer Vacation",
-                "Pop", 2023, 200, 93, "/music/flowers.mp3"));
+                "Pop", 2023, 200, 93));
         canciones.add(crearCancion(17, "Anti-Hero", "Taylor Swift", "Midnights",
-                "Pop", 2022, 200, 91, "/music/anti_hero.mp3"));
+                "Pop", 2022, 200, 91));
         canciones.add(crearCancion(18, "As It Was", "Harry Styles", "Harry's House",
-                "Pop", 2022, 167, 92, "/music/as_it_was.mp3"));
+                "Pop", 2022, 167, 92));
         canciones.add(crearCancion(19, "Blinding Lights", "The Weeknd", "After Hours",
-                "Pop", 2019, 200, 95, "/music/blinding_lights.mp3"));
+                "Pop", 2019, 200, 95));
         canciones.add(crearCancion(20, "levitating", "Dua Lipa", "Future Nostalgia",
-                "Pop", 2020, 203, 93, "/music/levitating.mp3"));
+                "Pop", 2020, 203, 93));
 
         System.out.println("✓ Cargadas " + canciones.size() + " canciones por defecto");
         return canciones;
     }
 
-    // ⭐ MODIFICADO - Constructor con rutaArchivo
     private Cancion crearCancion(int id, String titulo, String artista, String album,
-                                 String genero, int año, int duracion, int popularidad, String rutaArchivo) {
+                                 String genero, int año, int duracion, int popularidad) {
         Cancion.AudioFeatures features = new Cancion.AudioFeatures(120, 0.75, 0.80);
         String portadaUrl = "https://via.placeholder.com/300x300/1DB954/FFFFFF?text=" +
                 titulo.replaceAll(" ", "+");
 
-        Cancion cancion = new Cancion(id, titulo, artista, album, genero, año, duracion,
+        return new Cancion(id, titulo, artista, album, genero, año, duracion,
                 portadaUrl, popularidad, features);
-        cancion.setRutaArchivo(rutaArchivo); // ⭐ NUEVO - Asignar ruta de audio
-        return cancion;
     }
 
     /**

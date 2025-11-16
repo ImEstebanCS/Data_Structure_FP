@@ -21,17 +21,6 @@ import java.util.List;
  * HomeViewController
  * Vista de inicio con recomendaciones y contenido personalizado
  */
-
-
-import co.edu.uniquindio.syncup.Controller.CancionController;
-import co.edu.uniquindio.syncup.Controller.PlaylistController;
-import co.edu.uniquindio.syncup.Controller.RadioController;
-
-import co.edu.uniquindio.syncup.Service.MusicPlayer;
-import co.edu.uniquindio.syncup.SyncUpApp;
-
-
-
 public class HomeViewController {
 
     @FXML private ScrollPane scrollPane;
@@ -44,14 +33,12 @@ public class HomeViewController {
     private PlaylistController playlistController;
     private RadioController radioController;
     private Usuario usuarioActual;
-    private MusicPlayer musicPlayer; // ⭐ NUEVO
 
     public void setControllers(UsuarioController usuarioController, CancionController cancionController,
                                PlaylistController playlistController, RadioController radioController) {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
         this.radioController = radioController;
-        this.musicPlayer = SyncUpApp.getMusicPlayer(); // ⭐ NUEVO
 
         inicializar();
     }
@@ -125,24 +112,15 @@ public class HomeViewController {
         artista.setWrapText(true);
         artista.setMaxWidth(130);
 
-        // Botones de acción
+        // Botones de acción - RF-006
         HBox botonesBox = new HBox(5);
         botonesBox.setAlignment(javafx.geometry.Pos.CENTER);
-
-        // ⭐ NUEVO - Botón de reproducir
-        Button playBtn = new Button("▶");
-        playBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
-        playBtn.setPrefSize(30, 30);
-        playBtn.setOnAction(e -> {
-            reproducirCancion(cancion);
-        });
-
+        
         Button favoritoBtn = new Button("❤️");
-        favoritoBtn.setStyle("-fx-background-color: #E91429; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        favoritoBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
         favoritoBtn.setPrefSize(30, 30);
         favoritoBtn.setOnAction(e -> {
             playlistController.agregarFavorito(usuarioActual, cancion);
-            mostrarAlerta("Favorito", "Agregado a favoritos: " + cancion.getTitulo());
         });
 
         Button radioBtn = new Button("📻");
@@ -155,15 +133,15 @@ public class HomeViewController {
                     "Se generó una cola de reproducción con canciones similares");
         });
 
-        botonesBox.getChildren().addAll(playBtn, favoritoBtn, radioBtn); // ⭐ MODIFICADO
+        botonesBox.getChildren().addAll(favoritoBtn, radioBtn);
 
         card.getChildren().addAll(imagePlaceholder, titulo, artista, botonesBox);
 
-        // ⭐ MODIFICADO - Click en la tarjeta reproduce la canción
+        // Click en la tarjeta - solo muestra información, NO agrega a favoritos
         card.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
-                // Doble clic para reproducir
-                reproducirCancion(cancion);
+                // Doble clic para reproducir (solo visual)
+                mostrarAlerta("Reproduciendo", "Reproduciendo: " + cancion.getTitulo());
             }
         });
 
@@ -176,19 +154,6 @@ public class HomeViewController {
         );
 
         return card;
-    }
-
-    // ⭐ NUEVO - Método para reproducir canción
-    private void reproducirCancion(Cancion cancion) {
-        if (musicPlayer != null) {
-            musicPlayer.reproducir(cancion);
-            mostrarAlerta("Reproduciendo",
-                    "▶ " + cancion.getTitulo() + "\n" +
-                            "🎤 " + cancion.getArtista() + "\n" +
-                            "🎸 " + cancion.getGenero());
-        } else {
-            mostrarAlerta("Error", "El reproductor no está disponible");
-        }
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
