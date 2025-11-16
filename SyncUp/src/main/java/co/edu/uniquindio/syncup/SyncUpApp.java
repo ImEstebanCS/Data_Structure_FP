@@ -16,6 +16,18 @@ import javafx.stage.Stage;
  * @author SyncUp Team
  * @version 1.0
  */
+
+
+import co.edu.uniquindio.syncup.Controller.*;
+import co.edu.uniquindio.syncup.Service.MusicPlayer;
+import co.edu.uniquindio.syncup.Service.SyncUpService;
+import co.edu.uniquindio.syncup.utils.NavigationManager;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 public class SyncUpApp extends Application {
     private static SyncUpService syncUpService;
     private static UsuarioController usuarioController;
@@ -23,6 +35,7 @@ public class SyncUpApp extends Application {
     private static CancionController cancionController;
     private static PlaylistController playlistController;
     private static RadioController radioController;
+    private static MusicPlayer musicPlayer; // ⭐ NUEVO
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,7 +53,11 @@ public class SyncUpApp extends Application {
         playlistController = new PlaylistController(syncUpService);
         radioController = new RadioController(syncUpService);
 
+        // ⭐ NUEVO - Inicializar MusicPlayer
+        musicPlayer = new MusicPlayer();
+
         System.out.println("✓ Controladores inicializados");
+        System.out.println("✓ Reproductor de YouTube inicializado"); // ⭐ NUEVO
         System.out.println("✓ Catálogo: " + syncUpService.getCantidadCanciones() + " canciones");
         System.out.println("✓ Usuario admin: admin / admin123");
         System.out.println("═══════════════════════════════════════\n");
@@ -81,6 +98,13 @@ public class SyncUpApp extends Application {
         System.out.println("\n═══════════════════════════════════════");
         System.out.println("   🎵 SYNCUP - Cerrando Sistema");
         System.out.println("═══════════════════════════════════════");
+
+        // ⭐ NUEVO - Detener el reproductor al cerrar
+        if (musicPlayer != null) {
+            musicPlayer.detener();
+            System.out.println("✓ Reproductor detenido");
+        }
+
         System.out.println("✓ Sesión cerrada");
         System.out.println("✓ Hasta pronto!\n");
     }
@@ -108,6 +132,11 @@ public class SyncUpApp extends Application {
 
     public static RadioController getRadioController() {
         return radioController;
+    }
+
+    // ⭐ NUEVO - Getter para el MusicPlayer
+    public static MusicPlayer getMusicPlayer() {
+        return musicPlayer;
     }
 
     public static void main(String[] args) {

@@ -19,6 +19,11 @@ import java.util.Queue;
  * RadioViewController
  * Vista para mostrar la cola de reproducción de Radio
  */
+
+
+import co.edu.uniquindio.syncup.Service.MusicPlayer;
+import co.edu.uniquindio.syncup.SyncUpApp;
+
 public class RadioViewController {
 
     @FXML private Label radioNombreLabel;
@@ -31,10 +36,12 @@ public class RadioViewController {
     private RadioController radioController;
     private PlaylistController playlistController;
     private Usuario usuarioActual;
+    private MusicPlayer musicPlayer; // ⭐ NUEVO
 
     public void setControllers(RadioController radioController, PlaylistController playlistController) {
         this.radioController = radioController;
         this.playlistController = playlistController;
+        this.musicPlayer = SyncUpApp.getMusicPlayer(); // ⭐ NUEVO
         inicializar();
     }
 
@@ -127,8 +134,16 @@ public class RadioViewController {
         HBox botonesBox = new HBox(10);
         botonesBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
 
+        // ⭐ NUEVO - Botón de reproducir
+        Button playBtn = new Button("▶");
+        playBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand; -fx-font-size: 14px;");
+        playBtn.setPrefSize(35, 35);
+        playBtn.setOnAction(e -> {
+            reproducirCancion(cancion);
+        });
+
         Button favoritoBtn = new Button("❤️");
-        favoritoBtn.setStyle("-fx-background-color: #1DB954; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
+        favoritoBtn.setStyle("-fx-background-color: #E91429; -fx-text-fill: #FFFFFF; -fx-background-radius: 15; -fx-cursor: hand;");
         favoritoBtn.setPrefSize(35, 35);
         favoritoBtn.setOnAction(e -> {
             playlistController.agregarFavorito(usuarioActual, cancion);
@@ -144,9 +159,16 @@ public class RadioViewController {
             cargarRadio(); // Recargar la vista
         });
 
-        botonesBox.getChildren().addAll(favoritoBtn, radioBtn);
+        botonesBox.getChildren().addAll(playBtn, favoritoBtn, radioBtn); // ⭐ MODIFICADO - Agregado playBtn
 
         item.getChildren().addAll(posLabel, icono, infoBox, spacer, botonesBox);
+
+        // ⭐ NUEVO - Click en el item reproduce
+        item.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                reproducirCancion(cancion);
+            }
+        });
 
         // Hover effect
         item.setOnMouseEntered(e ->
@@ -157,6 +179,20 @@ public class RadioViewController {
         );
 
         return item;
+    }
+
+    // ⭐ NUEVO - Método para reproducir canción
+    private void reproducirCancion(Cancion cancion) {
+        if (musicPlayer != null) {
+            musicPlayer.reproducir(cancion);
+            mostrarAlerta("Reproduciendo en YouTube",
+                    "🎵 " + cancion.getTitulo() + "\n" +
+                            "🎤 " + cancion.getArtista() + "\n" +
+                            "🎸 " + cancion.getGenero() + "\n\n" +
+                            "Se abrirá YouTube en tu navegador");
+        } else {
+            mostrarAlerta("Error", "El reproductor no está disponible");
+        }
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

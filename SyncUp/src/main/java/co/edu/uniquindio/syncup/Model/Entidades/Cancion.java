@@ -6,6 +6,9 @@ import java.util.Objects;
  * Entidad Cancion - RF-016, RF-017, RF-018
  * Representa una pista musical en el catálogo
  */
+
+import java.util.Objects;
+
 public class Cancion {
     private int id;
     private String titulo;
@@ -17,6 +20,7 @@ public class Cancion {
     private String portadaUrl;
     private int popularidad; // 0-100
     private AudioFeatures audioFeatures;
+    private String youtubeUrl; // ⭐ NUEVO - URL de YouTube
 
     public Cancion() {
     }
@@ -32,6 +36,7 @@ public class Cancion {
         this.portadaUrl = "";
         this.popularidad = 50;
         this.audioFeatures = new AudioFeatures();
+        this.youtubeUrl = ""; // ⭐ NUEVO
     }
 
     // Constructor completo
@@ -48,6 +53,7 @@ public class Cancion {
         this.portadaUrl = portadaUrl;
         this.popularidad = popularidad;
         this.audioFeatures = audioFeatures != null ? audioFeatures : new AudioFeatures();
+        this.youtubeUrl = ""; // ⭐ NUEVO
     }
 
     // Getters y Setters
@@ -129,6 +135,15 @@ public class Cancion {
 
     public void setAudioFeatures(AudioFeatures audioFeatures) {
         this.audioFeatures = audioFeatures;
+    }
+
+    // ⭐ NUEVO - Getter y Setter para youtubeUrl
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
     }
 
     /**
