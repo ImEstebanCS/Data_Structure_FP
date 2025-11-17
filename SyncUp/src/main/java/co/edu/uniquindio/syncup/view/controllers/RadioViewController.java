@@ -35,7 +35,9 @@ public class RadioViewController {
     private Usuario usuarioActual;
     private MusicPlayer musicPlayer;
 
+    // ✅ MÉTODO UNIFICADO - Solo un setControllers
     public void setControllers(RadioController radioController, PlaylistController playlistController) {
+        System.out.println("📻 [RadioViewController] Inicializando...");
         this.radioController = radioController;
         this.playlistController = playlistController;
         this.musicPlayer = SyncUpApp.getMusicPlayer();
@@ -44,11 +46,19 @@ public class RadioViewController {
 
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
+
+        if (usuarioActual == null) {
+            System.out.println("⚠️ No hay usuario en sesión");
+            return;
+        }
+
+        System.out.println("✅ Usuario cargado: " + usuarioActual.getNombre());
         cargarRadio();
     }
 
     private void cargarRadio() {
         if (usuarioActual == null) {
+            System.out.println("⚠️ Usuario actual es null");
             return;
         }
 
@@ -60,7 +70,12 @@ public class RadioViewController {
             semillaTituloLabel.setText("No hay radio activa");
             semillaArtistaLabel.setText("Selecciona una canción para comenzar");
             colaCountLabel.setText("0 canciones en cola");
-            colaPane.getChildren().clear();
+
+            if (colaPane != null) {
+                colaPane.getChildren().clear();
+            }
+
+            System.out.println("⚠️ No hay radio activa");
             return;
         }
 
@@ -70,10 +85,16 @@ public class RadioViewController {
         semillaArtistaLabel.setText(semilla.getArtista());
         infoLabel.setText("Radio basada en: " + semilla.getTitulo() + " de " + semilla.getArtista());
 
+        System.out.println("✅ Radio cargada: " + radio.getNombre());
         cargarColaReproduccion(radio);
     }
 
     private void cargarColaReproduccion(Radio radio) {
+        if (colaPane == null) {
+            System.out.println("⚠️ colaPane es null");
+            return;
+        }
+
         colaPane.getChildren().clear();
 
         Queue<Cancion> cola = radio.getColaReproduccion();
@@ -84,10 +105,12 @@ public class RadioViewController {
             Label mensaje = new Label("La cola de reproducción está vacía");
             mensaje.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 14px;");
             colaPane.getChildren().add(mensaje);
+            System.out.println("⚠️ Cola de reproducción vacía");
             return;
         }
 
         colaCountLabel.setText(totalCanciones + " canciones en cola");
+        System.out.println("✅ Cargando " + totalCanciones + " canciones en cola");
 
         int posicion = 1;
         for (Cancion cancion : cola) {
@@ -95,6 +118,8 @@ public class RadioViewController {
             colaPane.getChildren().add(cancionItem);
             posicion++;
         }
+
+        System.out.println("✅ Cola de reproducción cargada");
     }
 
     private HBox crearItemCola(Cancion cancion, int posicion) {
@@ -157,6 +182,7 @@ public class RadioViewController {
                             "Se abrirá YouTube en tu navegador",
                     "▶️"
             );
+            System.out.println("▶️ Reproduciendo: " + cancion.getTitulo());
         } else {
             UIComponents.mostrarAlertaPersonalizada("Error", "El reproductor no está disponible", "❌");
         }
@@ -169,6 +195,7 @@ public class RadioViewController {
                 cancion.getTitulo() + " agregada a favoritos",
                 "❤️"
         );
+        System.out.println("❤️ Agregado a favoritos: " + cancion.getTitulo());
     }
 
     private void reiniciarRadio(Cancion cancion) {
@@ -178,6 +205,7 @@ public class RadioViewController {
                 "Radio reiniciada desde:\n" + cancion.getTitulo(),
                 "📻"
         );
+        System.out.println("📻 Radio reiniciada desde: " + cancion.getTitulo());
         cargarRadio();
     }
 }

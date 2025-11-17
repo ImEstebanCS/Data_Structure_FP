@@ -23,25 +23,20 @@ public class LibraryViewController {
 
     private PlaylistController playlistController;
     private CancionController cancionController;
-<<<<<<< Updated upstream
-    private PlaylistController playlistController;
-=======
     private RadioController radioController;
     private Usuario usuarioActual;
     private Playlist playlistSeleccionada;
     private MusicPlayer musicPlayer;
->>>>>>> Stashed changes
 
     public void setControllers(UsuarioController usuarioController, CancionController cancionController,
                                PlaylistController playlistController, RadioController radioController) {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
-<<<<<<< Updated upstream
-=======
+
         this.radioController = radioController;
         this.usuarioActual = SessionManager.getInstance().getUsuarioActual();
         this.musicPlayer = SyncUpApp.getMusicPlayer();
->>>>>>> Stashed changes
+
         inicializar();
     }
 

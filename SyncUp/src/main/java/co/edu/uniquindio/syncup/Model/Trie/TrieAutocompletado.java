@@ -24,6 +24,14 @@ public class TrieAutocompletado {
         nodo.setCancion(cancion);
     }
 
+    /**
+     * RF-024: Autocompletado de canciones por prefijo.
+     * Retorna todas las canciones cuyos títulos comienzan con el prefijo dado.
+     *
+     * @param prefijo Prefijo a buscar (case-insensitive)
+     * @return Lista de canciones que coinciden con el prefijo
+     */
+
     public List<Cancion> autocompletar(String prefijo) {
         List<Cancion> resultados = new ArrayList<>();
         NodoTrie nodo = raiz;

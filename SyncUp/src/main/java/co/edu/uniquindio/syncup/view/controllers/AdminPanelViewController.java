@@ -21,13 +21,15 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class AdminPanelViewController {
 
-<<<<<<< Updated upstream
-=======
     @FXML private StackPane contentArea;
     @FXML private VBox dashboardView;
     @FXML private VBox cancionesView;
@@ -44,7 +46,6 @@ public class AdminPanelViewController {
     @FXML private Label totalUsuariosLabel;
     @FXML private Label generosLabel;
 
->>>>>>> Stashed changes
     @FXML private TableView<Cancion> cancionesTable;
     @FXML private TableColumn<Cancion, Integer> idColumn;
     @FXML private TableColumn<Cancion, String> tituloColumn;
@@ -61,15 +62,13 @@ public class AdminPanelViewController {
     @FXML private TextField añoField;
     @FXML private TextField duracionField;
 
-<<<<<<< Updated upstream
-=======
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private TextField nombreUsuarioField;
 
->>>>>>> Stashed changes
     private CancionController cancionController;
     private UsuarioController usuarioController;
+    private String usernameOriginal;
 
     @FXML
     public void initialize() {
@@ -83,7 +82,7 @@ public class AdminPanelViewController {
 
         mostrarDashboard();
     }
-    @FXML
+
     private void configurarTablas() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         tituloColumn.setCellValueFactory(new PropertyValueFactory<>("titulo"));
@@ -92,13 +91,10 @@ public class AdminPanelViewController {
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 
-<<<<<<< Updated upstream
-        cargarDatos();
-=======
         cancionesTable.getStyleClass().add("styled-table");
         usuariosTable.getStyleClass().add("styled-table");
     }
-    @FXML
+
     private void configurarListeners() {
         cancionesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> cargarCancionEnCampos(newValue)
@@ -107,20 +103,17 @@ public class AdminPanelViewController {
         usuariosTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> cargarUsuarioEnCampos(newValue)
         );
->>>>>>> Stashed changes
     }
-    @FXML
+
     private void cargarDatos() {
         cancionesTable.getItems().setAll(cancionController.obtenerTodas());
         usuariosTable.getItems().setAll(usuarioController.listarUsuarios());
     }
-    @FXML
+
     private void actualizarDashboard() {
         int totalCanciones = cancionController.obtenerTotal();
         int totalUsuarios = usuarioController.getCantidadUsuarios();
 
-<<<<<<< Updated upstream
-=======
         Set<String> generos = new HashSet<>();
         for (Cancion cancion : cancionController.obtenerTodas()) {
             generos.add(cancion.getGenero());
@@ -152,7 +145,7 @@ public class AdminPanelViewController {
         cambiarVista(estadisticasView, estadisticasBtn);
         cargarEstadisticas();
     }
-    @FXML
+
     private void cambiarVista(VBox vistaActiva, Button botonActivo) {
         dashboardView.setVisible(false);
         dashboardView.setManaged(false);
@@ -177,7 +170,7 @@ public class AdminPanelViewController {
                         "-fx-background-radius: 8;"
         );
     }
-    @FXML
+
     private void resetearEstilosBotones() {
         String estiloNormal = "-fx-background-color: transparent; " +
                 "-fx-text-fill: #B3B3B3; " +
@@ -193,7 +186,7 @@ public class AdminPanelViewController {
         if (usuariosBtn != null) usuariosBtn.setStyle(estiloNormal);
         if (estadisticasBtn != null) estadisticasBtn.setStyle(estiloNormal);
     }
-    @FXML
+
     private void cargarEstadisticas() {
         estadisticasContainer.getChildren().clear();
 
@@ -218,7 +211,7 @@ public class AdminPanelViewController {
 
         estadisticasContainer.getChildren().add(statsRow1);
     }
-    @FXML
+
     private void cargarCancionEnCampos(Cancion cancion) {
         if (cancion != null) {
             idField.setText(String.valueOf(cancion.getId()));
@@ -230,7 +223,6 @@ public class AdminPanelViewController {
         }
     }
 
->>>>>>> Stashed changes
     @FXML
     private void agregarCancion() {
         try {
@@ -241,16 +233,8 @@ public class AdminPanelViewController {
             int año = Integer.parseInt(añoField.getText());
             double duracion = Double.parseDouble(duracionField.getText());
 
-<<<<<<< Updated upstream
-            cancionController.agregarCancion(id, titulo, artista, genero, año, duracion);
-            cargarDatos();
-            limpiarCampos();
-            mostrarAlerta("Éxito", "Canción agregada correctamente");
-        } catch (Exception e) {
-            mostrarAlerta("Error", "Datos inválidos");
-=======
             if (titulo.isEmpty() || artista.isEmpty() || genero.isEmpty()) {
-                mostrarAlerta("Error", "Todos los campos deben estar llenos", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "Todos los campos deben estar llenos", "❌");
                 return;
             }
 
@@ -260,9 +244,9 @@ public class AdminPanelViewController {
             actualizarDashboard();
             UIComponents.mostrarAlertaPersonalizada("Éxito", "Canción agregada correctamente", "✅");
         } catch (NumberFormatException e) {
-            mostrarAlerta("Error", "Los campos ID, Año y Duración deben ser números válidos", "❌");
+            UIComponents.mostrarAlertaPersonalizada("Error", "Los campos ID, Año y Duración deben ser números válidos", "❌");
         } catch (Exception e) {
-            mostrarAlerta("Error", "Error al agregar: " + e.getMessage(), "❌");
+            UIComponents.mostrarAlertaPersonalizada("Error", "Error al agregar: " + e.getMessage(), "❌");
         }
     }
 
@@ -271,7 +255,7 @@ public class AdminPanelViewController {
         Cancion seleccionada = cancionesTable.getSelectionModel().getSelectedItem();
 
         if (seleccionada == null) {
-            mostrarAlerta("Advertencia", "Debe seleccionar una canción de la tabla para actualizar", "⚠️");
+            UIComponents.mostrarAlertaPersonalizada("Advertencia", "Debe seleccionar una canción de la tabla para actualizar", "⚠️");
             return;
         }
 
@@ -284,7 +268,7 @@ public class AdminPanelViewController {
             double duracion = Double.parseDouble(duracionField.getText());
 
             if (titulo.isEmpty() || artista.isEmpty() || genero.isEmpty()) {
-                mostrarAlerta("Error", "Todos los campos deben estar llenos", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "Todos los campos deben estar llenos", "❌");
                 return;
             }
 
@@ -294,10 +278,9 @@ public class AdminPanelViewController {
             actualizarDashboard();
             UIComponents.mostrarAlertaPersonalizada("Éxito", "Canción actualizada correctamente", "✅");
         } catch (NumberFormatException e) {
-            mostrarAlerta("Error", "Los campos ID, Año y Duración deben ser números válidos", "❌");
+            UIComponents.mostrarAlertaPersonalizada("Error", "Los campos ID, Año y Duración deben ser números válidos", "❌");
         } catch (Exception e) {
-            mostrarAlerta("Error", "Error al actualizar: " + e.getMessage(), "❌");
->>>>>>> Stashed changes
+            UIComponents.mostrarAlertaPersonalizada("Error", "Error al actualizar: " + e.getMessage(), "❌");
         }
     }
 
@@ -305,11 +288,6 @@ public class AdminPanelViewController {
     private void eliminarCancion() {
         Cancion seleccionada = cancionesTable.getSelectionModel().getSelectedItem();
         if (seleccionada != null) {
-<<<<<<< Updated upstream
-            cancionController.eliminarCancion(seleccionada.getId());
-            cargarDatos();
-            mostrarAlerta("Éxito", "Canción eliminada");
-=======
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacion.setTitle("Confirmar eliminación");
             confirmacion.setHeaderText(null);
@@ -323,7 +301,7 @@ public class AdminPanelViewController {
                 UIComponents.mostrarAlertaPersonalizada("Éxito", "Canción eliminada", "✅");
             }
         } else {
-            mostrarAlerta("Advertencia", "Debe seleccionar una canción para eliminar", "⚠️");
+            UIComponents.mostrarAlertaPersonalizada("Advertencia", "Debe seleccionar una canción para eliminar", "⚠️");
         }
     }
 
@@ -350,12 +328,90 @@ public class AdminPanelViewController {
         File archivo = fileChooser.showOpenDialog(null);
 
         if (archivo != null) {
-            UIComponents.mostrarAlertaPersonalizada("Carga Masiva",
-                    "Funcionalidad de carga masiva\nArchivo seleccionado: " + archivo.getName() +
-                            "\n\nEsta funcionalidad será implementada próximamente", "📥");
+            try {
+                int cancionesImportadas = procesarCargaMasiva(archivo);
+
+                if (cancionesImportadas > 0) {
+                    cargarDatos();
+                    actualizarDashboard();
+                    UIComponents.mostrarAlertaPersonalizada(
+                            "Carga Masiva Exitosa",
+                            cancionesImportadas + " canciones importadas correctamente desde:\n" + archivo.getName(),
+                            "EXITO"
+                    );
+                } else {
+                    UIComponents.mostrarAlertaPersonalizada(
+                            "Advertencia",
+                            "No se importaron canciones. Verifique el formato del archivo.",
+                            "ADVERTENCIA"
+                    );
+                }
+            } catch (Exception e) {
+                UIComponents.mostrarAlertaPersonalizada(
+                        "Error",
+                        "Error al procesar el archivo: " + e.getMessage() +
+                                "\n\nFormato esperado por línea:\nid|titulo|artista|genero|año|duracion",
+                        "ERROR"
+                );
+            }
         }
     }
-    @FXML
+
+    private int procesarCargaMasiva(File archivo) throws Exception {
+        int cancionesImportadas = 0;
+        List<String> errores = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            int numeroLinea = 0;
+
+            while ((linea = reader.readLine()) != null) {
+                numeroLinea++;
+                linea = linea.trim();
+
+                if (linea.isEmpty() || linea.startsWith("#")) {
+                    continue;
+                }
+
+                try {
+                    String[] partes = linea.split("\\|");
+
+                    if (partes.length != 6) {
+                        errores.add("Línea " + numeroLinea + ": formato inválido (se esperan 6 campos)");
+                        continue;
+                    }
+
+                    int id = Integer.parseInt(partes[0].trim());
+                    String titulo = partes[1].trim();
+                    String artista = partes[2].trim();
+                    String genero = partes[3].trim();
+                    int año = Integer.parseInt(partes[4].trim());
+                    double duracion = Double.parseDouble(partes[5].trim());
+
+                    if (titulo.isEmpty() || artista.isEmpty() || genero.isEmpty()) {
+                        errores.add("Línea " + numeroLinea + ": campos vacíos");
+                        continue;
+                    }
+
+                    cancionController.agregarCancion(id, titulo, artista, genero, año, duracion);
+                    cancionesImportadas++;
+
+                } catch (NumberFormatException e) {
+                    errores.add("Línea " + numeroLinea + ": error en formato numérico");
+                } catch (Exception e) {
+                    errores.add("Línea " + numeroLinea + ": " + e.getMessage());
+                }
+            }
+        }
+
+        if (!errores.isEmpty() && errores.size() < 10) {
+            System.out.println("Errores durante la carga masiva:");
+            errores.forEach(System.out::println);
+        }
+
+        return cancionesImportadas;
+    }
+
     private void cargarUsuarioEnCampos(Usuario usuario) {
         if (usuario != null) {
             usernameOriginal = usuario.getUsername();
@@ -377,12 +433,12 @@ public class AdminPanelViewController {
             String nombre = nombreUsuarioField.getText().trim();
 
             if (username.isEmpty() || password.isEmpty() || nombre.isEmpty()) {
-                mostrarAlerta("Error", "Todos los campos deben estar llenos", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "Todos los campos deben estar llenos", "❌");
                 return;
             }
 
             if (password.length() < 4) {
-                mostrarAlerta("Error", "La contraseña debe tener al menos 4 caracteres", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "La contraseña debe tener al menos 4 caracteres", "❌");
                 return;
             }
 
@@ -394,10 +450,10 @@ public class AdminPanelViewController {
                 actualizarDashboard();
                 UIComponents.mostrarAlertaPersonalizada("Éxito", "Usuario agregado correctamente", "✅");
             } else {
-                mostrarAlerta("Error", "El username ya existe o los datos son inválidos", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "El username ya existe o los datos son inválidos", "❌");
             }
         } catch (Exception e) {
-            mostrarAlerta("Error", "Error al agregar usuario: " + e.getMessage(), "❌");
+            UIComponents.mostrarAlertaPersonalizada("Error", "Error al agregar usuario: " + e.getMessage(), "❌");
         }
     }
 
@@ -406,7 +462,7 @@ public class AdminPanelViewController {
         Usuario seleccionado = usuariosTable.getSelectionModel().getSelectedItem();
 
         if (seleccionado == null) {
-            mostrarAlerta("Advertencia", "Debe seleccionar un usuario de la tabla para actualizar", "⚠️");
+            UIComponents.mostrarAlertaPersonalizada("Advertencia", "Debe seleccionar un usuario de la tabla para actualizar", "⚠️");
             return;
         }
 
@@ -416,12 +472,12 @@ public class AdminPanelViewController {
             String nombre = nombreUsuarioField.getText().trim();
 
             if (usernameNuevo.isEmpty() || password.isEmpty() || nombre.isEmpty()) {
-                mostrarAlerta("Error", "Todos los campos deben estar llenos", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "Todos los campos deben estar llenos", "❌");
                 return;
             }
 
             if (password.length() < 4) {
-                mostrarAlerta("Error", "La contraseña debe tener al menos 4 caracteres", "❌");
+                UIComponents.mostrarAlertaPersonalizada("Error", "La contraseña debe tener al menos 4 caracteres", "❌");
                 return;
             }
 
@@ -431,8 +487,7 @@ public class AdminPanelViewController {
             actualizarDashboard();
             UIComponents.mostrarAlertaPersonalizada("Éxito", "Usuario actualizado correctamente", "✅");
         } catch (Exception e) {
-            mostrarAlerta("Error", "Error al actualizar usuario: " + e.getMessage(), "❌");
->>>>>>> Stashed changes
+            UIComponents.mostrarAlertaPersonalizada("Error", "Error al actualizar usuario: " + e.getMessage(), "❌");
         }
     }
 
@@ -440,11 +495,6 @@ public class AdminPanelViewController {
     private void eliminarUsuario() {
         Usuario seleccionado = usuariosTable.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-<<<<<<< Updated upstream
-            usuarioController.eliminar(seleccionado.getUsername());
-            cargarDatos();
-            mostrarAlerta("Éxito", "Usuario eliminado");
-=======
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacion.setTitle("Confirmar eliminación");
             confirmacion.setHeaderText(null);
@@ -458,28 +508,19 @@ public class AdminPanelViewController {
                 UIComponents.mostrarAlertaPersonalizada("Éxito", "Usuario eliminado", "✅");
             }
         } else {
-            mostrarAlerta("Advertencia", "Debe seleccionar un usuario para eliminar", "⚠️");
->>>>>>> Stashed changes
+            UIComponents.mostrarAlertaPersonalizada("Advertencia", "Debe seleccionar un usuario para eliminar", "⚠️");
         }
     }
 
-    private void limpiarCampos() {
-        idField.clear();
-        tituloField.clear();
-        artistaField.clear();
-        generoField.clear();
-        añoField.clear();
-        duracionField.clear();
+    @FXML
+    private void limpiarCamposUsuarios() {
+        usernameField.clear();
+        passwordField.clear();
+        nombreUsuarioField.clear();
+        usuariosTable.getSelectionModel().clearSelection();
+        usernameOriginal = null;
     }
 
-<<<<<<< Updated upstream
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-=======
     @FXML
     private void cerrarSesion() {
         SessionManager.getInstance().cerrarSesion();
@@ -487,23 +528,16 @@ public class AdminPanelViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
             Parent loginView = loader.load();
-
             usernameField.getScene().setRoot(loginView);
-
         } catch (IOException e) {
             System.err.println("Error al cargar Login");
             e.printStackTrace();
-            mostrarAlerta("Error", "Error al cerrar sesión: " + e.getMessage(), "❌");
+            UIComponents.mostrarAlertaPersonalizada("Error", "Error al cerrar sesión: " + e.getMessage(), "❌");
         }
-    }
-    @FXML
-    private void mostrarAlerta(String titulo, String mensaje, String icono) {
-        UIComponents.mostrarAlertaPersonalizada(titulo, mensaje, icono);
     }
 
     // ==================== EFECTOS HOVER ====================
 
-    // Logout Button
     @FXML
     public void logoutHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -530,7 +564,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Carga Masiva Button
     @FXML
     public void cargaHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -557,7 +590,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Agregar Canción Button
     @FXML
     public void agregarHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -584,7 +616,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Actualizar Canción Button
     @FXML
     public void actualizarHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -611,7 +642,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Eliminar Canción Button
     @FXML
     public void eliminarHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -638,7 +668,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Limpiar Campos Button
     @FXML
     public void limpiarHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -665,7 +694,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Agregar Usuario Button
     @FXML
     public void agregarUsuarioHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -692,7 +720,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Actualizar Usuario Button
     @FXML
     public void actualizarUsuarioHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -719,7 +746,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Eliminar Usuario Button
     @FXML
     public void eliminarUsuarioHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -746,7 +772,6 @@ public class AdminPanelViewController {
         );
     }
 
-    // Limpiar Usuario Button
     @FXML
     public void limpiarUsuarioHoverEnter(MouseEvent event) {
         ((Button) event.getSource()).setStyle(
@@ -771,6 +796,5 @@ public class AdminPanelViewController {
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;"
         );
->>>>>>> Stashed changes
     }
 }

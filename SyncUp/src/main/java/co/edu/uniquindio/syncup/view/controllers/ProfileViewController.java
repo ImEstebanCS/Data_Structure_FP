@@ -19,8 +19,6 @@ public class ProfileViewController {
     @FXML private Label seguidoresLabel;
     @FXML private Label siguiendoLabel;
 
-<<<<<<< Updated upstream
-=======
     @FXML private TextField nombreField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
@@ -31,7 +29,6 @@ public class ProfileViewController {
     @FXML private Label seguidoresTituloLabel;
     @FXML private Label siguiendoTituloLabel;
 
->>>>>>> Stashed changes
     private UsuarioController usuarioController;
     private Usuario usuarioActual;
 

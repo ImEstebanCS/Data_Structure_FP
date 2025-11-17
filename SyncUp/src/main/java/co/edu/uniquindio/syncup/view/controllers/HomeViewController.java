@@ -1,160 +1,278 @@
 package co.edu.uniquindio.syncup.view.controllers;
 
-import co.edu.uniquindio.syncup.Controller.*;
+import co.edu.uniquindio.syncup.Controller.CancionController;
+import co.edu.uniquindio.syncup.Controller.PlaylistController;
+import co.edu.uniquindio.syncup.Controller.RadioController;
+import co.edu.uniquindio.syncup.Controller.UsuarioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
+import co.edu.uniquindio.syncup.Model.Entidades.Playlist;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
-import co.edu.uniquindio.syncup.Service.MusicPlayer;
 import co.edu.uniquindio.syncup.SyncUpApp;
 import co.edu.uniquindio.syncup.utils.SessionManager;
 import co.edu.uniquindio.syncup.utils.UIComponents;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class HomeViewController {
 
-    @FXML private Label welcomeLabel;
+    @FXML private Label bienvenidaLabel;
     @FXML private FlowPane recentSongsPane;
-    @FXML private FlowPane recommendationsPane;
+    @FXML private FlowPane forYouPane;
+    @FXML private VBox sugerenciasContainer;
 
-    private UsuarioController usuarioController;
     private CancionController cancionController;
     private PlaylistController playlistController;
     private RadioController radioController;
+    private UsuarioController usuarioController;
     private Usuario usuarioActual;
-    private MusicPlayer musicPlayer;
-    private static List<Cancion> historialReproduccion = new ArrayList<>();
+    private List<Cancion> historialReproduccion;
 
-    public void setControllers(UsuarioController usuarioController, CancionController cancionController,
-                               PlaylistController playlistController, RadioController radioController) {
-        this.usuarioController = usuarioController;
-        this.cancionController = cancionController;
-        this.playlistController = playlistController;
-        this.radioController = radioController;
-<<<<<<< Updated upstream
-
-=======
-        this.musicPlayer = SyncUpApp.getMusicPlayer();
->>>>>>> Stashed changes
-        inicializar();
+    public HomeViewController() {
+        this.cancionController = SyncUpApp.getCancionController();
+        this.playlistController = SyncUpApp.getPlaylistController();
+        this.radioController = SyncUpApp.getRadioController();
+        this.usuarioController = SyncUpApp.getUsuarioController();
+        this.historialReproduccion = new ArrayList<>();
     }
 
-    private void inicializar() {
+    @FXML
+    public void initialize() {
+        System.out.println("🏠 [HomeViewController] Inicializando...");
+
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
-        if (usuarioActual != null) {
-            welcomeLabel.setText("Bienvenido, " + usuarioActual.getNombre());
-            cargarContenido();
-        }
-    }
 
-    private void cargarContenido() {
+        if (usuarioActual != null) {
+            bienvenidaLabel.setText("Bienvenido, " + usuarioActual.getNombre());
+            System.out.println("✅ Usuario cargado: " + usuarioActual.getNombre());
+        } else {
+            bienvenidaLabel.setText("Bienvenido");
+            System.out.println("⚠️ No hay usuario en sesión");
+        }
+
+        // ✅ CARGAR CONTENIDO INMEDIATAMENTE
         cargarCancionesRecientes();
-        cargarRecomendaciones();
+        cargarDescubrimientoSemanal();
+
+        if (sugerenciasContainer != null) {
+            cargarSugerenciasUsuarios();
+        }
+
+        System.out.println("✅ [HomeViewController] Inicialización completa");
     }
 
     private void cargarCancionesRecientes() {
-        if (recentSongsPane == null) return;
-        recentSongsPane.getChildren().clear();
-
-        List<Cancion> recientes;
-
-        if (historialReproduccion.isEmpty()) {
-            // Si no hay historial, mostrar canciones aleatorias
-            List<Cancion> todas = cancionController.obtenerTodas();
-            recientes = todas.subList(0, Math.min(10, todas.size()));
-        } else {
-            // Mostrar últimas 10 del historial
-            int inicio = Math.max(0, historialReproduccion.size() - 10);
-            recientes = new ArrayList<>(historialReproduccion.subList(inicio, historialReproduccion.size()));
-            Collections.reverse(recientes);
+        if (recentSongsPane == null) {
+            System.out.println("⚠️ recentSongsPane es null");
+            return;
         }
 
-        for (Cancion cancion : recientes) {
-            VBox card = UIComponents.crearCancionCard(
-                    cancion,
-                    () -> reproducirCancion(cancion),
-                    () -> agregarAFavoritos(cancion),
-                    () -> iniciarRadio(cancion)
+        recentSongsPane.getChildren().clear();
+        System.out.println("🎵 Cargando canciones recientes...");
+
+        List<Cancion> recientes = new ArrayList<>();
+
+        // Si hay historial, usarlo
+        if (historialReproduccion.size() > 10) {
+            recientes = historialReproduccion.subList(
+                    Math.max(historialReproduccion.size() - 10, 0),
+                    historialReproduccion.size()
             );
-            recentSongsPane.getChildren().add(card);
+        } else {
+            recientes = new ArrayList<>(historialReproduccion);
+        }
+
+        Collections.reverse(recientes);
+
+        // ✅ Si no hay historial, mostrar canciones del catálogo
+        if (recientes.isEmpty()) {
+            System.out.println("📚 No hay historial, cargando del catálogo...");
+            List<Cancion> todasLasCanciones = cancionController.obtenerTodas();
+
+            if (todasLasCanciones != null && !todasLasCanciones.isEmpty()) {
+                int limite = Math.min(10, todasLasCanciones.size());
+                recientes = todasLasCanciones.subList(0, limite);
+                System.out.println("✅ Cargadas " + recientes.size() + " canciones del catálogo");
+            } else {
+                System.out.println("❌ El catálogo está vacío");
+            }
+        }
+
+        // ✅ CREAR CARDS DE CANCIONES
+        for (Cancion cancion : recientes) {
+            try {
+                VBox card = UIComponents.crearCancionCard(
+                        cancion,
+                        () -> reproducirCancion(cancion),
+                        () -> agregarAFavoritos(cancion),
+                        () -> iniciarRadio(cancion)
+                );
+                recentSongsPane.getChildren().add(card);
+            } catch (Exception e) {
+                System.err.println("❌ Error al crear card para: " + cancion.getTitulo());
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("✅ Cards de recientes creados: " + recentSongsPane.getChildren().size());
+    }
+
+    private void cargarDescubrimientoSemanal() {
+        if (forYouPane == null) {
+            System.out.println("⚠️ forYouPane es null");
+            return;
+        }
+
+        forYouPane.getChildren().clear();
+        System.out.println("🎯 Cargando descubrimiento semanal...");
+
+        try {
+            Playlist descubrimiento = playlistController.generarDescubrimientoSemanal(usuarioActual);
+
+            if (descubrimiento != null && descubrimiento.getCanciones() != null) {
+                System.out.println("✅ Descubrimiento generado con " + descubrimiento.getCanciones().size() + " canciones");
+
+                for (Cancion cancion : descubrimiento.getCanciones()) {
+                    try {
+                        VBox card = UIComponents.crearCancionCard(
+                                cancion,
+                                () -> reproducirCancion(cancion),
+                                () -> agregarAFavoritos(cancion),
+                                () -> iniciarRadio(cancion)
+                        );
+                        forYouPane.getChildren().add(card);
+                    } catch (Exception e) {
+                        System.err.println("❌ Error al crear card para: " + cancion.getTitulo());
+                        e.printStackTrace();
+                    }
+                }
+
+                System.out.println("✅ Cards de descubrimiento creados: " + forYouPane.getChildren().size());
+            } else {
+                System.out.println("⚠️ No se pudo generar descubrimiento semanal");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Error al cargar descubrimiento: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private void cargarRecomendaciones() {
-        if (recommendationsPane == null) return;
-        recommendationsPane.getChildren().clear();
-
-        // Obtener recomendaciones basadas en favoritos
-        List<Cancion> favoritos = usuarioActual.getListaFavoritos();
-        List<Cancion> todasLasCanciones = cancionController.obtenerTodas();
-        List<Cancion> recomendaciones = new ArrayList<>();
-
-        if (favoritos.isEmpty()) {
-            // Si no hay favoritos, mostrar canciones aleatorias
-            Collections.shuffle(todasLasCanciones);
-            recomendaciones = todasLasCanciones.subList(0, Math.min(10, todasLasCanciones.size()));
-        } else {
-            // Recomendar canciones del mismo género que los favoritos
-            Set<String> generosFavoritos = new HashSet<>();
-            for (Cancion fav : favoritos) {
-                generosFavoritos.add(fav.getGenero());
-            }
-
-            for (Cancion cancion : todasLasCanciones) {
-                if (generosFavoritos.contains(cancion.getGenero()) && !favoritos.contains(cancion)) {
-                    recomendaciones.add(cancion);
-                    if (recomendaciones.size() >= 10) break;
-                }
-            }
-
-            // Si no hay suficientes, completar con canciones aleatorias
-            if (recomendaciones.size() < 10) {
-                for (Cancion cancion : todasLasCanciones) {
-                    if (!recomendaciones.contains(cancion) && !favoritos.contains(cancion)) {
-                        recomendaciones.add(cancion);
-                        if (recomendaciones.size() >= 10) break;
-                    }
-                }
-            }
+    private void cargarSugerenciasUsuarios() {
+        if (sugerenciasContainer == null) {
+            System.out.println("⚠️ sugerenciasContainer es null");
+            return;
         }
 
-        for (Cancion cancion : recomendaciones) {
-            VBox card = UIComponents.crearCancionCard(
-                    cancion,
-                    () -> reproducirCancion(cancion),
-                    () -> agregarAFavoritos(cancion),
-                    () -> iniciarRadio(cancion)
-            );
-            recommendationsPane.getChildren().add(card);
+        sugerenciasContainer.getChildren().clear();
+        System.out.println("👥 Cargando sugerencias de usuarios...");
+
+        try {
+            List<Usuario> sugerencias = usuarioController.obtenerSugerenciasDeUsuarios(usuarioActual, 5);
+
+            if (sugerencias != null && !sugerencias.isEmpty()) {
+                System.out.println("✅ " + sugerencias.size() + " usuarios sugeridos");
+
+                for (Usuario usuario : sugerencias) {
+                    HBox userCard = crearTarjetaUsuario(usuario);
+                    sugerenciasContainer.getChildren().add(userCard);
+                }
+            } else {
+                System.out.println("⚠️ No hay sugerencias de usuarios");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Error al cargar sugerencias: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    private HBox crearTarjetaUsuario(Usuario usuario) {
+        HBox card = new HBox(10);
+        card.setStyle("-fx-background-color: #181818; -fx-padding: 10; -fx-background-radius: 8;");
+        card.setAlignment(Pos.CENTER_LEFT);
+
+        // Icono de usuario
+        VBox iconoContainer = new VBox();
+        iconoContainer.setAlignment(Pos.CENTER);
+        iconoContainer.setPrefSize(40, 40);
+        iconoContainer.setStyle("-fx-background-color: #1DB954; -fx-background-radius: 20;");
+        Label icono = new Label("👤");
+        icono.setStyle("-fx-font-size: 20px;");
+        iconoContainer.getChildren().add(icono);
+
+        // Info del usuario
+        VBox info = new VBox(2);
+        Label nombre = new Label(usuario.getNombre());
+        nombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;");
+        Label username = new Label("@" + usuario.getUsername());
+        username.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 10px;");
+        info.getChildren().addAll(nombre, username);
+        HBox.setHgrow(info, Priority.ALWAYS);
+
+        // Botón seguir
+        Button seguirBtn = new Button("Seguir");
+        seguirBtn.setStyle(
+                "-fx-background-color: #1DB954; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 10px; " +
+                        "-fx-padding: 5 10; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-cursor: hand;"
+        );
+        seguirBtn.setOnAction(e -> {
+            usuarioController.seguir(usuarioActual, usuario);
+            UIComponents.mostrarAlertaPersonalizada("Éxito", "Ahora sigues a " + usuario.getNombre(), "✅");
+            cargarSugerenciasUsuarios();
+        });
+
+        card.getChildren().addAll(iconoContainer, info, seguirBtn);
+
+        return card;
     }
 
     private void reproducirCancion(Cancion cancion) {
-        if (musicPlayer != null) {
-            musicPlayer.reproducir(cancion);
-            agregarAlHistorial(cancion);
-            UIComponents.mostrarAlertaPersonalizada(
-                    "Reproduciendo en YouTube",
-                    "🎵 " + cancion.getTitulo() + "\n🎤 " + cancion.getArtista(),
-                    "▶️"
-            );
+        if (!historialReproduccion.contains(cancion)) {
+            historialReproduccion.add(cancion);
         }
+
+        SyncUpApp.getMusicPlayer().reproducir(cancion);
+
+        UIComponents.mostrarAlertaPersonalizada(
+                "Reproduciendo en YouTube",
+                "🎵 " + cancion.getTitulo() + "\n" +
+                        "🎤 " + cancion.getArtista() + "\n" +
+                        "🎸 " + cancion.getGenero() + "\n\n" +
+                        "Se abrirá YouTube en tu navegador",
+                "▶️"
+        );
+
+        System.out.println("▶️ Reproduciendo: " + cancion.getTitulo());
     }
 
     private void agregarAFavoritos(Cancion cancion) {
-        playlistController.agregarFavorito(usuarioActual, cancion);
-        UIComponents.mostrarAlertaPersonalizada("Favorito", "Agregado: " + cancion.getTitulo(), "❤️");
+        usuarioController.agregarFavorito(usuarioActual, cancion);
+        UIComponents.mostrarAlertaPersonalizada(
+                "Favorito",
+                "Agregado a favoritos:\n" + cancion.getTitulo(),
+                "❤️"
+        );
+        System.out.println("❤️ Agregado a favoritos: " + cancion.getTitulo());
     }
 
     private void iniciarRadio(Cancion cancion) {
         radioController.iniciarRadio(usuarioActual, cancion);
-        UIComponents.mostrarAlertaPersonalizada("Radio Iniciada", "Desde: " + cancion.getTitulo(), "📻");
-    }
-
-    public static void agregarAlHistorial(Cancion cancion) {
-        historialReproduccion.add(cancion);
+        UIComponents.mostrarAlertaPersonalizada(
+                "Radio Iniciada",
+                "Radio iniciada desde:\n" + cancion.getTitulo() + "\n\n" +
+                        "Se generó una cola de reproducción con canciones similares",
+                "📻"
+        );
+        System.out.println("📻 Radio iniciada desde: " + cancion.getTitulo());
     }
 }

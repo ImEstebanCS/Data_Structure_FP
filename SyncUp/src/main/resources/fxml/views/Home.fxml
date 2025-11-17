@@ -1,31 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-           style="-fx-background-color: transparent;">
+<BorderPane prefHeight="700" prefWidth="1200" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.syncup.view.controllers.HomeViewController">
 
-    <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
-        <VBox spacing="30" style="-fx-padding: 30;">
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" style="-fx-background: #121212; -fx-background-color: #121212;">
+            <VBox spacing="30" style="-fx-background-color: #121212;">
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20" />
+                </padding>
 
-            <!-- Bienvenida -->
-            <Label fx:id="welcomeLabel" text="Bienvenido"
-                   style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+                <VBox spacing="10">
+                    <Label fx:id="bienvenidaLabel" style="-fx-text-fill: #55ec05; -fx-font-size: 32px; -fx-font-weight: bold;" text="Bienvenido" textFill="#0fff17" />
+                </VBox>
 
-            <!-- Escuchado Recientemente -->
-            <VBox spacing="15">
-                <Label text="Escuchado recientemente"
-                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
-                <FlowPane fx:id="recentSongsPane" hgap="20" vgap="20" prefWrapLength="1000"/>
+                <VBox spacing="15">
+                    <Label style="-fx-text-fill: #4d7d23; -fx-font-size: 24px; -fx-font-weight: bold;" text="Escuchado recientemente" textFill="#35ac37" />
+                    <ScrollPane fitToHeight="false" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
+                        <FlowPane fx:id="recentSongsPane" hgap="15" prefWrapLength="1000" style="-fx-background-color: transparent;" vgap="15" />
+                    </ScrollPane>
+                </VBox>
+
+                <VBox spacing="15">
+                    <Label style="-fx-text-fill: #4d7d23; -fx-font-size: 24px; -fx-font-weight: bold;" text="Para ti" />
+                    <ScrollPane fitToHeight="false" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
+                        <FlowPane fx:id="forYouPane" hgap="15" prefWrapLength="1000" style="-fx-background-color: transparent;" vgap="15" />
+                    </ScrollPane>
+                </VBox>
+
+                <Region minHeight="120" />
+
             </VBox>
+        </ScrollPane>
+    </center>
 
-            <!-- Para Ti (Recomendaciones) -->
-            <VBox spacing="15">
-                <Label text="Para ti"
-                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
-                <FlowPane fx:id="recommendationsPane" hgap="20" vgap="20" prefWrapLength="1000"/>
-            </VBox>
+    <right>
+        <VBox maxWidth="280" prefWidth="280" spacing="20" style="-fx-background-color: #000000;">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+
+            <Label style="-fx-text-fill: #1DB954; -fx-font-size: 18px; -fx-font-weight: bold;" text="Sugerencias" />
+
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;">
+                <VBox fx:id="sugerenciasContainer" spacing="10" style="-fx-background-color: transparent;" />
+            </ScrollPane>
+
         </VBox>
-    </ScrollPane>
-</StackPane>
+    </right>
+
+</BorderPane>

@@ -11,6 +11,10 @@ import javafx.stage.StageStyle;
 
 public class UIComponents {
 
+    public static final String ICON_SUCCESS = "[OK]";
+    public static final String ICON_ERROR = "[ERROR]";
+    public static final String ICON_WARNING = "[WARNING]";
+    public static final String ICON_INFO = "[INFO]";
     private static final String PRIMARY_GREEN = "#1DB954";
     private static final String PRIMARY_DARK = "#191414";
     private static final String SECONDARY_DARK = "#282828";
@@ -108,40 +112,32 @@ public class UIComponents {
         return crearBotonCircular(texto, color, accion, 40);
     }
 
-    public static void mostrarAlertaPersonalizada(String titulo, String mensaje, String icono) {
+    public static void mostrarAlertaPersonalizada(String titulo, String mensaje, String tipo) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
 
-        VBox content = new VBox(15);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(20));
-        content.setStyle(
-                "-fx-background-color: " + SECONDARY_DARK + "; " +
-                        "-fx-background-radius: 12;"
-        );
+        String icono = "";
+        switch (tipo.toUpperCase()) {
+            case "EXITO":
+            case "SUCCESS":
+            case "OK":
+                icono = ICON_SUCCESS;
+                break;
+            case "ERROR":
+                icono = ICON_ERROR;
+                alert.setAlertType(Alert.AlertType.ERROR);
+                break;
+            case "ADVERTENCIA":
+            case "WARNING":
+                icono = ICON_WARNING;
+                alert.setAlertType(Alert.AlertType.WARNING);
+                break;
+            default:
+                icono = ICON_INFO;
+        }
 
-        Label iconLabel = new Label(icono);
-        iconLabel.setStyle("-fx-font-size: 40px;");
-
-        Label titleLabel = new Label(titulo);
-        titleLabel.setStyle(
-                "-fx-text-fill: " + TEXT_WHITE + "; " +
-                        "-fx-font-size: 18px; " +
-                        "-fx-font-weight: bold;"
-        );
-
-        Label messageLabel = new Label(mensaje);
-        messageLabel.setStyle("-fx-text-fill: " + TEXT_GRAY + "; -fx-font-size: 14px;");
-        messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(300);
-
-        content.getChildren().addAll(iconLabel, titleLabel, messageLabel);
-
-        alert.getDialogPane().setContent(content);
-        alert.getDialogPane().setStyle("-fx-background-color: " + SECONDARY_DARK + ";");
-
+        alert.setContentText(icono + " " + mensaje);
         alert.showAndWait();
     }
 

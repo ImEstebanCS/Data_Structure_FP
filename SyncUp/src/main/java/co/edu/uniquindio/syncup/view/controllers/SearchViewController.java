@@ -33,7 +33,9 @@ public class SearchViewController {
     private MusicPlayer musicPlayer;
     private Usuario usuarioActual;
 
-    public void setControllers(CancionController cancionController, PlaylistController playlistController) {
+    // ✅ MÉTODO UNIFICADO - Solo un setControllers
+    public void setControllers(CancionController cancionController, PlaylistController playlistController, co.edu.uniquindio.syncup.Controller.UsuarioController usuarioController) {
+        System.out.println("🔍 [SearchViewController] Inicializando...");
         this.cancionController = cancionController;
         this.playlistController = playlistController;
         this.radioController = SyncUpApp.getRadioController();
@@ -45,77 +47,125 @@ public class SearchViewController {
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
 
-        searchField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.length() >= 2) {
-                buscarConAutocompletado(newValue);
-            } else {
-                sugerenciasListView.getItems().clear();
-                resultadosPane.getChildren().clear();
-                resultadosLabel.setText("");
-            }
-        });
+        if (usuarioActual != null) {
+            System.out.println("✅ Usuario cargado: " + usuarioActual.getNombre());
+        } else {
+            System.out.println("⚠️ No hay usuario en sesión");
+        }
 
-        sugerenciasListView.setOnMouseClicked(event -> {
-            String seleccionada = sugerenciasListView.getSelectionModel().getSelectedItem();
-            if (seleccionada != null) {
-                searchField.setText(seleccionada);
-                buscarCancion(seleccionada);
-            }
-        });
+        // Autocompletado en tiempo real
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue.length() >= 2) {
+                    buscarConAutocompletado(newValue);
+                } else {
+                    if (sugerenciasListView != null) {
+                        sugerenciasListView.getItems().clear();
+                    }
+                    if (resultadosPane != null) {
+                        resultadosPane.getChildren().clear();
+                    }
+                    if (resultadosLabel != null) {
+                        resultadosLabel.setText("");
+                    }
+                }
+            });
+        }
+
+        // Click en sugerencia
+        if (sugerenciasListView != null) {
+            sugerenciasListView.setOnMouseClicked(event -> {
+                String seleccionada = sugerenciasListView.getSelectionModel().getSelectedItem();
+                if (seleccionada != null && searchField != null) {
+                    searchField.setText(seleccionada);
+                    buscarCancion(seleccionada);
+                }
+            });
+        }
+
+        System.out.println("✅ SearchViewController inicializado");
     }
 
     private void buscarConAutocompletado(String prefijo) {
-        List<Cancion> sugerencias = cancionController.autocompletar(prefijo);
+        try {
+            List<Cancion> sugerencias = cancionController.autocompletar(prefijo);
 
-        sugerenciasListView.getItems().clear();
-        sugerencias.stream()
-                .limit(5)
-                .forEach(c -> sugerenciasListView.getItems().add(c.getTitulo()));
+            if (sugerenciasListView != null) {
+                sugerenciasListView.getItems().clear();
+                sugerencias.stream()
+                        .limit(5)
+                        .forEach(c -> sugerenciasListView.getItems().add(c.getTitulo()));
+            }
 
-        mostrarResultados(sugerencias);
+            mostrarResultados(sugerencias);
+            System.out.println("✅ Autocompletado: " + sugerencias.size() + " resultados");
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en autocompletado: " + e.getMessage());
+        }
     }
 
     @FXML
     private void buscarCancion() {
-        String query = searchField.getText();
-        if (query.trim().isEmpty()) {
+        if (searchField == null || searchField.getText().trim().isEmpty()) {
             return;
         }
 
+        String query = searchField.getText();
         buscarCancion(query);
     }
 
     private void buscarCancion(String query) {
-        List<Cancion> resultados = cancionController.buscarPorTitulo(query);
-        mostrarResultados(resultados);
+        try {
+            List<Cancion> resultados = cancionController.buscarPorTitulo(query);
+            mostrarResultados(resultados);
+            System.out.println("🔍 Búsqueda: " + resultados.size() + " resultados para '" + query + "'");
+        } catch (Exception e) {
+            System.err.println("❌ Error en búsqueda: " + e.getMessage());
+        }
     }
 
     private void mostrarResultados(List<Cancion> canciones) {
-        resultadosPane.getChildren().clear();
-
-        if (canciones.isEmpty()) {
-            resultadosLabel.setText("No se encontraron resultados");
+        if (resultadosPane == null) {
+            System.out.println("⚠️ resultadosPane es null");
             return;
         }
 
-        resultadosLabel.setText(canciones.size() + " resultados encontrados");
+        resultadosPane.getChildren().clear();
+
+        if (canciones == null || canciones.isEmpty()) {
+            if (resultadosLabel != null) {
+                resultadosLabel.setText("No se encontraron resultados");
+            }
+            return;
+        }
+
+        if (resultadosLabel != null) {
+            resultadosLabel.setText(canciones.size() + " resultados encontrados");
+        }
 
         for (Cancion cancion : canciones) {
-            VBox card = UIComponents.crearCancionCard(
-                    cancion,
-                    () -> reproducirCancion(cancion),
-                    () -> agregarAFavoritos(cancion),
-                    () -> iniciarRadio(cancion)
-            );
-            resultadosPane.getChildren().add(card);
+            try {
+                VBox card = UIComponents.crearCancionCard(
+                        cancion,
+                        () -> reproducirCancion(cancion),
+                        () -> agregarAFavoritos(cancion),
+                        () -> iniciarRadio(cancion)
+                );
+                resultadosPane.getChildren().add(card);
+            } catch (Exception e) {
+                System.err.println("❌ Error al crear card: " + e.getMessage());
+            }
         }
     }
 
     @FXML
     private void buscarAvanzada() {
-        String artista = artistaField.getText().trim();
-        String genero = generoField.getText().trim();
-        String añoTexto = añoField.getText().trim();
+        System.out.println("🔍 Búsqueda avanzada iniciada");
+
+        String artista = artistaField != null ? artistaField.getText().trim() : "";
+        String genero = generoField != null ? generoField.getText().trim() : "";
+        String añoTexto = añoField != null ? añoField.getText().trim() : "";
         int año = 0;
 
         if (!añoTexto.isEmpty()) {
@@ -134,17 +184,27 @@ public class SearchViewController {
         int criteriosCount = (tieneArtista ? 1 : 0) + (tieneGenero ? 1 : 0) + (tieneAño ? 1 : 0);
         boolean usarOR = criteriosCount <= 1;
 
-        List<Cancion> resultados = cancionController.buscarAvanzada(
-                artista.isEmpty() ? null : artista,
-                genero.isEmpty() ? null : genero,
-                año,
-                usarOR
-        );
+        try {
+            List<Cancion> resultados = cancionController.buscarAvanzada(
+                    artista.isEmpty() ? null : artista,
+                    genero.isEmpty() ? null : genero,
+                    año,
+                    usarOR
+            );
 
-        mostrarResultados(resultados);
+            mostrarResultados(resultados);
 
-        String logicaTexto = usarOR ? "OR" : "AND";
-        resultadosLabel.setText(resultados.size() + " resultados encontrados (Lógica automática: " + logicaTexto + ")");
+            String logicaTexto = usarOR ? "OR" : "AND";
+            if (resultadosLabel != null) {
+                resultadosLabel.setText(resultados.size() + " resultados (Lógica: " + logicaTexto + ")");
+            }
+
+            System.out.println("✅ Búsqueda avanzada: " + resultados.size() + " resultados con lógica " + logicaTexto);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en búsqueda avanzada: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void reproducirCancion(Cancion cancion) {
@@ -158,6 +218,7 @@ public class SearchViewController {
                             "Se abrirá YouTube en tu navegador",
                     "▶️"
             );
+            System.out.println("▶️ Reproduciendo: " + cancion.getTitulo());
         } else {
             UIComponents.mostrarAlertaPersonalizada("Error", "El reproductor no está disponible", "❌");
         }
@@ -170,6 +231,7 @@ public class SearchViewController {
                 "Agregado a favoritos:\n" + cancion.getTitulo(),
                 "❤️"
         );
+        System.out.println("❤️ Agregado a favoritos: " + cancion.getTitulo());
     }
 
     private void iniciarRadio(Cancion cancion) {
@@ -180,5 +242,6 @@ public class SearchViewController {
                         "Se generó una cola de reproducción con canciones similares",
                 "📻"
         );
+        System.out.println("📻 Radio iniciada desde: " + cancion.getTitulo());
     }
 }

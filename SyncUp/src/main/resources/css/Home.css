@@ -1,0 +1,45 @@
+.scroll-pane {
+    -fx-background: #121212;
+    -fx-background-color: #121212;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #121212;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: #121212;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #535353;
+    -fx-background-radius: 5;
+}
+
+.scroll-pane .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+.song-card {
+    -fx-background-color: #181818;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 2);
+}
+
+.song-card:hover {
+    -fx-background-color: #282828;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 3);
+}
+
+.user-suggestion-card {
+    -fx-background-color: #181818;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-cursor: hand;
+}
+
+.user-suggestion-card:hover {
+    -fx-background-color: #282828;
+}

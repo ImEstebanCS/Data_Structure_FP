@@ -35,7 +35,9 @@ public class FavoritesViewController {
     private MusicPlayer musicPlayer;
     private Usuario usuarioActual;
 
+    // ✅ MÉTODO UNIFICADO - Solo un setControllers
     public void setControllers(PlaylistController playlistController) {
+        System.out.println("❤️ [FavoritesViewController] Inicializando...");
         this.playlistController = playlistController;
         this.radioController = SyncUpApp.getRadioController();
         this.musicPlayer = SyncUpApp.getMusicPlayer();
@@ -44,10 +46,22 @@ public class FavoritesViewController {
 
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
+
+        if (usuarioActual == null) {
+            System.out.println("⚠️ No hay usuario en sesión");
+            return;
+        }
+
+        System.out.println("✅ Usuario cargado: " + usuarioActual.getNombre());
         cargarFavoritos();
     }
 
     private void cargarFavoritos() {
+        if (favoritosContainer == null) {
+            System.out.println("⚠️ favoritosContainer es null");
+            return;
+        }
+
         favoritosContainer.getChildren().clear();
 
         List<Cancion> favoritos = usuarioActual.getListaFavoritos();
@@ -58,14 +72,17 @@ public class FavoritesViewController {
             mensajeVacio.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 14px;");
             favoritosContainer.getChildren().add(mensajeVacio);
 
-            // ✅ VALIDACIONES AGREGADAS
+            // Deshabilitar botones de exportación
             if (exportarJSONBtn != null) exportarJSONBtn.setDisable(true);
             if (exportarTXTBtn != null) exportarTXTBtn.setDisable(true);
             if (exportarCSVBtn != null) exportarCSVBtn.setDisable(true);
+
+            System.out.println("⚠️ No hay favoritos para mostrar");
             return;
         }
 
         totalFavoritosLabel.setText(favoritos.size() + " canciones favoritas");
+        System.out.println("✅ Cargando " + favoritos.size() + " canciones favoritas");
 
         int posicion = 1;
         for (Cancion cancion : favoritos) {
@@ -74,10 +91,12 @@ public class FavoritesViewController {
             posicion++;
         }
 
-        // ✅ VALIDACIONES AGREGADAS
+        // Habilitar botones de exportación
         if (exportarJSONBtn != null) exportarJSONBtn.setDisable(false);
         if (exportarTXTBtn != null) exportarTXTBtn.setDisable(false);
         if (exportarCSVBtn != null) exportarCSVBtn.setDisable(false);
+
+        System.out.println("✅ Favoritos cargados correctamente");
     }
 
     private HBox crearCancionItem(Cancion cancion, int posicion) {
@@ -140,6 +159,7 @@ public class FavoritesViewController {
 
             Window window = favoritosContainer.getScene().getWindow();
             PlaylistExporter.exportarPlaylistJSON(playlistTemp, window);
+            System.out.println("✅ Exportado a JSON");
         }
     }
 
@@ -154,6 +174,7 @@ public class FavoritesViewController {
 
             Window window = favoritosContainer.getScene().getWindow();
             PlaylistExporter.exportarPlaylistTXT(playlistTemp, window);
+            System.out.println("✅ Exportado a TXT");
         }
     }
 
@@ -167,6 +188,7 @@ public class FavoritesViewController {
                     "Favoritos_" + usuarioActual.getUsername(),
                     window
             );
+            System.out.println("✅ Exportado a CSV");
         }
     }
 
@@ -184,6 +206,7 @@ public class FavoritesViewController {
                     cancion.getTitulo() + " eliminado de favoritos",
                     "💔"
             );
+            System.out.println("💔 Eliminado de favoritos: " + cancion.getTitulo());
         }
     }
 
@@ -198,6 +221,7 @@ public class FavoritesViewController {
                             "Se abrirá YouTube en tu navegador",
                     "▶️"
             );
+            System.out.println("▶️ Reproduciendo: " + cancion.getTitulo());
         } else {
             UIComponents.mostrarAlertaPersonalizada("Error", "El reproductor no está disponible", "❌");
         }
@@ -211,5 +235,6 @@ public class FavoritesViewController {
                         "Se generó una cola de reproducción con canciones similares",
                 "📻"
         );
+        System.out.println("📻 Radio iniciada desde: " + cancion.getTitulo());
     }
 }

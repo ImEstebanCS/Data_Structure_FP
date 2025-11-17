@@ -12,15 +12,11 @@ public class RadioController {
         this.service = service;
     }
 
-    public void iniciarRadio(Usuario usuario, Cancion cancionSemilla) {
-        service.iniciarRadio(usuario, cancionSemilla);
+    public Radio iniciarRadio(Usuario usuario, Cancion cancionSemilla) {
+        return service.iniciarRadio(usuario, cancionSemilla);
     }
 
     public Radio obtenerRadio(Usuario usuario) {
         return service.obtenerRadio(usuario);
-    }
-
-    public Cancion siguienteCancion(Radio radio) {
-        return radio != null ? radio.siguienteCancion() : null;
     }
 }

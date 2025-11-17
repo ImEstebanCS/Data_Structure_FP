@@ -1,0 +1,6 @@
+15|Thriller|Michael Jackson|Pop|1982|357
+16|Back in Black|AC/DC|Rock|1980|255
+17|Purple Rain|Prince|Pop|1984|524
+18|Sweet Child O' Mine|Guns N' Roses|Rock|1987|356
+19|Wonderwall|Oasis|Rock|1995|258
+20|Lose Yourself|Eminem|Hip Hop|2002|326

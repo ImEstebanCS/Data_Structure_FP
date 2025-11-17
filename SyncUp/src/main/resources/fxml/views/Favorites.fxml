@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-           fx:controller="co.edu.uniquindio.syncup.view.controllers.FavoritesViewController">
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.syncup.view.controllers.FavoritesViewController">
 
     <ScrollPane fitToWidth="true" style="-fx-background: transparent;">
         <VBox spacing="25" style="-fx-padding: 30;">
 
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <VBox alignment="CENTER" prefWidth="150" prefHeight="150"
-                      style="-fx-background-color: linear-gradient(to bottom right, #E91429, #1DB954); -fx-background-radius: 15;">
-                    <Label text="❤️" style="-fx-font-size: 60px;"/>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox alignment="CENTER" prefHeight="150" prefWidth="150" style="-fx-background-color: linear-gradient(to bottom right, #E91429, #1DB954); -fx-background-radius: 15;">
+                    <Label style="-fx-font-size: 60px;" text="❤️" />
                 </VBox>
 
                 <VBox spacing="10">
-                    <Label text="Canciones Favoritas"
-                           style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
-                    <Label fx:id="totalFavoritosLabel" text="0 canciones"
-                           style="-fx-font-size: 16px; -fx-text-fill: #B3B3B3;"/>
+                    <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="Canciones Favoritas" />
+                    <Label fx:id="totalFavoritosLabel" style="-fx-font-size: 16px; -fx-text-fill: #B3B3B3;" text="0 canciones" textFill="RED" />
                     <HBox spacing="10">
-                        <Button fx:id="exportarJSONBtn" text="📥 JSON" onAction="#exportarJSON" prefHeight="40" prefWidth="120"
-                                style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;"/>
-                        <Button fx:id="exportarTXTBtn" text="📄 TXT" onAction="#exportarTXT" prefHeight="40" prefWidth="120"
-                                style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;"/>
-                        <Button fx:id="exportarCSVBtn" text="📊 CSV" onAction="#exportarCSV" prefHeight="40" prefWidth="120"
-                                style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;"/>
+                        <Button fx:id="exportarJSONBtn" onAction="#exportarJSON" prefHeight="40" prefWidth="120" style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;" text="📥 JSON" />
+                        <Button fx:id="exportarTXTBtn" onAction="#exportarTXT" prefHeight="40" prefWidth="120" style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;" text="📄 TXT" />
+                        <Button fx:id="exportarCSVBtn" onAction="#exportarCSV" prefHeight="40" prefWidth="120" style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 20; -fx-cursor: hand;" text="📊 CSV" />
                     </HBox>
                 </VBox>
             </HBox>
 
-            <VBox fx:id="favoritosContainer" spacing="10"
-                  style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 20;"/>
+            <VBox fx:id="favoritosContainer" spacing="10" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 20;" />
         </VBox>
     </ScrollPane>
 </StackPane>

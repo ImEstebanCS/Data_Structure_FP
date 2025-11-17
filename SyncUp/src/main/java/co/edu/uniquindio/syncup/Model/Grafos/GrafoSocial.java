@@ -37,7 +37,14 @@ public class GrafoSocial {
             seguido.getSeguidores().remove(seguidor);
         }
     }
-
+    /**
+     * RF-022: Obtiene sugerencias de usuarios usando BFS.
+     * Encuentra "amigos de amigos" que el usuario no sigue actualmente.
+     *
+     * @param usuario Usuario para el cual buscar sugerencias
+     * @param limite Número máximo de sugerencias a retornar
+     * @return Lista de usuarios sugeridos
+     */
     public List<Usuario> obtenerSeguidores(Usuario usuario) {
         return new ArrayList<>(usuario.getSeguidores());
     }
