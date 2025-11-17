@@ -1,0 +1,125 @@
+# ARCHIVO DE CARGA MASIVA EXTENDIDO - SYNCUP
+# Formato: id|titulo|artista|genero|año|duracion
+# Las líneas que comienzan con # son comentarios y se ignoran
+# Duración en segundos
+# IDs del 61 al 160 (100 canciones)
+
+# Rock Clásico Ampliado
+61|Stairway to Heaven|Led Zeppelin|Rock|1971|482
+62|Smoke on the Water|Deep Purple|Rock|1972|341
+63|Whole Lotta Love|Led Zeppelin|Rock|1969|334
+64|Paranoid|Black Sabbath|Rock|1970|170
+65|Highway to Hell|AC/DC|Rock|1979|208
+66|Back in Black|AC/DC|Rock|1980|255
+67|Enter Sandman|Metallica|Rock|1991|331
+68|Nothing Else Matters|Metallica|Rock|1991|388
+69|One|Metallica|Rock|1988|446
+70|Master of Puppets|Metallica|Rock|1986|515
+
+# Pop de los 80s y 90s
+71|Like a Prayer|Madonna|Pop|1989|339
+72|Material Girl|Madonna|Pop|1984|240
+73|Vogue|Madonna|Pop|1990|293
+74|Thriller|Michael Jackson|Pop|1982|357
+75|Beat It|Michael Jackson|Pop|1982|258
+76|Smooth Criminal|Michael Jackson|Pop|1987|257
+77|Livin' la Vida Loca|Ricky Martin|Pop|1999|245
+78|I Want It That Way|Backstreet Boys|Pop|1999|213
+79|Baby One More Time|Britney Spears|Pop|1998|210
+80|Wannabe|Spice Girls|Pop|1996|173
+
+# Rock Alternativo de los 90s
+81|Smells Like Teen Spirit|Nirvana|Grunge|1991|301
+82|Come As You Are|Nirvana|Grunge|1992|219
+83|Heart-Shaped Box|Nirvana|Grunge|1993|281
+84|Black Hole Sun|Soundgarden|Grunge|1994|318
+85|Creep|Radiohead|Alternative|1992|238
+86|Karma Police|Radiohead|Alternative|1997|263
+87|Jeremy|Pearl Jam|Grunge|1991|316
+88|Alive|Pearl Jam|Grunge|1991|341
+89|The Man Who Sold The World|Nirvana|Grunge|1993|230
+90|Under the Bridge|Red Hot Chili Peppers|Alternative|1991|264
+
+# Hip Hop Clásico
+91|Lose Yourself|Eminem|Hip Hop|2002|326
+92|Stan|Eminem|Hip Hop|2000|404
+93|Without Me|Eminem|Hip Hop|2002|290
+94|In Da Club|50 Cent|Hip Hop|2003|253
+95|99 Problems|Jay-Z|Hip Hop|2003|235
+96|Empire State of Mind|Jay-Z|Hip Hop|2009|276
+97|Hotline Bling|Drake|Hip Hop|2015|267
+98|One Dance|Drake|Hip Hop|2016|173
+99|POWER|Kanye West|Hip Hop|2010|312
+100|Stronger|Kanye West|Hip Hop|2007|311
+
+# Reggaeton y Música Latina
+101|Despacito|Luis Fonsi, Daddy Yankee|Reggaeton|2017|229
+102|Mi Gente|J Balvin, Willy William|Reggaeton|2017|189
+103|X|Nicky Jam, J Balvin|Reggaeton|2018|264
+104|Bailando|Enrique Iglesias|Pop Latino|2014|240
+105|Vivir Mi Vida|Marc Anthony|Salsa|2013|245
+106|La Bicicleta|Carlos Vives, Shakira|Vallenato|2016|226
+107|Felices los 4|Maluma|Reggaeton|2017|230
+108|Échame la Culpa|Luis Fonsi, Demi Lovato|Pop Latino|2017|173
+109|Taki Taki|DJ Snake, Selena Gomez|Reggaeton|2018|212
+110|Con Calma|Daddy Yankee, Snow|Reggaeton|2019|193
+
+# EDM y Electrónica
+111|Titanium|David Guetta, Sia|EDM|2011|245
+112|Animals|Martin Garrix|EDM|2013|305
+113|Clarity|Zedd, Foxes|EDM|2012|251
+114|This Is What You Came For|Calvin Harris, Rihanna|EDM|2016|238
+115|How Deep Is Your Love|Calvin Harris|EDM|2015|212
+116|Summer|Calvin Harris|EDM|2014|223
+117|Don't You Worry Child|Swedish House Mafia|EDM|2012|213
+118|Levels|Avicii|EDM|2011|200
+119|The Nights|Avicii|EDM|2014|176
+120|Waiting For Love|Avicii|EDM|2015|230
+
+# Pop Contemporáneo
+121|Blinding Lights|The Weeknd|Pop|2019|200
+122|Starboy|The Weeknd, Daft Punk|Pop|2016|230
+123|Can't Feel My Face|The Weeknd|Pop|2015|213
+124|Uptown Funk|Mark Ronson, Bruno Mars|Pop|2014|269
+125|24K Magic|Bruno Mars|Pop|2016|226
+126|That's What I Like|Bruno Mars|Pop|2016|206
+127|Perfect|Ed Sheeran|Pop|2017|263
+128|Thinking Out Loud|Ed Sheeran|Pop|2014|281
+129|Photograph|Ed Sheeran|Pop|2014|258
+130|Castle on the Hill|Ed Sheeran|Pop|2017|261
+
+# R&B y Soul Moderno
+131|No Tears Left to Cry|Ariana Grande|Pop|2018|205
+132|Thank U, Next|Ariana Grande|Pop|2018|207
+133|7 rings|Ariana Grande|Pop|2019|178
+134|positions|Ariana Grande|Pop|2020|172
+135|good 4 u|Olivia Rodrigo|Pop|2021|178
+136|drivers license|Olivia Rodrigo|Pop|2021|242
+137|Levitating|Dua Lipa|Pop|2020|203
+138|Don't Start Now|Dua Lipa|Pop|2019|183
+139|Physical|Dua Lipa|Pop|2020|193
+140|Break My Soul|Beyoncé|Dance|2022|277
+
+# Rock Indie y Alternativo Moderno
+141|Do I Wanna Know?|Arctic Monkeys|Alternative|2013|272
+142|R U Mine?|Arctic Monkeys|Alternative|2012|201
+143|Why'd You Only Call Me When You're High?|Arctic Monkeys|Alternative|2013|161
+144|Pumped Up Kicks|Foster the People|Indie|2011|239
+145|Take Me to Church|Hozier|Alternative|2013|241
+146|Somebody That I Used to Know|Gotye, Kimbra|Indie|2011|244
+147|Shut Up and Dance|Walk the Moon|Alternative|2014|199
+148|Electric Love|BØRNS|Indie|2015|228
+149|Feel It Still|Portugal. The Man|Alternative|2017|143
+150|Sweater Weather|The Neighbourhood|Alternative|2012|240
+
+# Música Electrónica Alternativa
+151|Midnight City|M83|Electronic|2011|244
+152|Safe and Sound|Capital Cities|Indie|2011|192
+153|Pumped Up Kicks|Foster the People|Indie|2010|239
+154|Little Talks|Of Monsters and Men|Indie|2011|263
+155|Ho Hey|The Lumineers|Folk|2012|163
+156|Radioactive|Imagine Dragons|Alternative|2012|187
+157|Demons|Imagine Dragons|Alternative|2012|177
+158|It's Time|Imagine Dragons|Alternative|2012|240
+159|Thunder|Imagine Dragons|Alternative|2017|187
+160|Whatever It Takes|Imagine Dragons|Alternative|2017|201

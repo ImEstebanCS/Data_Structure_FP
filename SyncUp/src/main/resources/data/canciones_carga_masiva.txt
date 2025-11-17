@@ -1,0 +1,60 @@
+# ARCHIVO DE CARGA MASIVA - SYNCUP
+# Formato: id|titulo|artista|genero|año|duracion
+# Las líneas que comienzan con # son comentarios y se ignoran
+# Duración en segundos
+
+# Rock Clásico
+21|Sweet Child O' Mine|Guns N' Roses|Rock|1987|356
+22|November Rain|Guns N' Roses|Rock|1991|537
+23|Don't Stop Believin'|Journey|Rock|1981|251
+24|Livin' on a Prayer|Bon Jovi|Rock|1986|249
+25|We Will Rock You|Queen|Rock|1977|122
+
+# Pop Moderno
+26|Shape of You|Ed Sheeran|Pop|2017|233
+27|Bad Guy|Billie Eilish|Pop|2019|194
+28|Someone Like You|Adele|Pop|2011|285
+29|Watermelon Sugar|Harry Styles|Pop|2019|174
+30|Circles|Post Malone|Pop|2019|215
+
+# Reggaeton/Latino
+31|Tusa|KAROL G, Nicki Minaj|Reggaeton|2019|200
+32|Dákiti|Bad Bunny, Jhay Cortez|Reggaeton|2020|205
+33|Hawái|Maluma|Reggaeton|2020|207
+34|Vida de Rico|Camilo|Pop Latino|2020|166
+35|Baila Baila Baila|Ozuna|Reggaeton|2019|255
+
+# Hip Hop/Rap
+36|Sicko Mode|Travis Scott|Hip Hop|2018|312
+37|God's Plan|Drake|Hip Hop|2018|198
+38|HUMBLE.|Kendrick Lamar|Hip Hop|2017|177
+39|Rockstar|Post Malone, 21 Savage|Hip Hop|2017|218
+40|Old Town Road|Lil Nas X|Hip Hop|2019|113
+
+# Electrónica/EDM
+41|Wake Me Up|Avicii|EDM|2013|247
+42|Lean On|Major Lazer, DJ Snake|EDM|2015|176
+43|Closer|The Chainsmokers, Halsey|EDM|2016|244
+44|Don't Let Me Down|The Chainsmokers|EDM|2016|208
+45|Faded|Alan Walker|EDM|2015|212
+
+# Alternative/Indie
+46|Radioactive|Imagine Dragons|Alternative|2012|187
+47|Believer|Imagine Dragons|Alternative|2017|204
+48|High Hopes|Panic! At The Disco|Alternative|2018|190
+49|Stressed Out|Twenty One Pilots|Alternative|2015|202
+50|Riptide|Vance Joy|Indie|2013|204
+
+# Jazz/Soul
+51|Feeling Good|Nina Simone|Jazz|1965|178
+52|At Last|Etta James|Soul|1960|183
+53|Ain't No Sunshine|Bill Withers|Soul|1971|125
+54|Superstition|Stevie Wonder|Soul|1972|245
+55|The Way You Make Me Feel|Michael Jackson|Soul|1987|299
+
+# Rock Alternativo
+56|Seven Nation Army|The White Stripes|Alternative Rock|2003|231
+57|Mr. Brightside|The Killers|Alternative Rock|2003|222
+58|Boulevard of Broken Dreams|Green Day|Alternative Rock|2004|261
+59|Take Me Out|Franz Ferdinand|Alternative Rock|2004|237
+60|I Bet You Look Good on the Dancefloor|Arctic Monkeys|Alternative Rock|2005|173

@@ -157,21 +157,25 @@
 
                             <!-- Botones -->
                             <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
-                                <Button text="➕ Agregar" onAction="#agregarCancion" prefHeight="50" prefWidth="200"
+                                <Button text="➕ Agregar" onAction="#agregarCancion" prefHeight="50" prefWidth="160"
                                         styleClass="btn-success"
                                         onMouseEntered="#agregarHoverEnter" onMouseExited="#agregarHoverExit"/>
 
-                                <Button text="🔄 Actualizar" onAction="#actualizarCancion" prefHeight="50" prefWidth="200"
+                                <Button text="🔄 Actualizar" onAction="#actualizarCancion" prefHeight="50" prefWidth="160"
                                         styleClass="btn-warning"
                                         onMouseEntered="#actualizarHoverEnter" onMouseExited="#actualizarHoverExit"/>
 
-                                <Button text="🗑️ Eliminar" onAction="#eliminarCancion" prefHeight="50" prefWidth="200"
+                                <Button text="🗑️ Eliminar" onAction="#eliminarCancion" prefHeight="50" prefWidth="160"
                                         styleClass="btn-danger"
                                         onMouseEntered="#eliminarHoverEnter" onMouseExited="#eliminarHoverExit"/>
 
-                                <Button text="🧹 Limpiar" onAction="#limpiarCamposCanciones" prefHeight="50" prefWidth="200"
+                                <Button text="🧹 Limpiar" onAction="#limpiarCamposCanciones" prefHeight="50" prefWidth="160"
                                         style="-fx-background-color: #404040; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
                                         onMouseEntered="#limpiarHoverEnter" onMouseExited="#limpiarHoverExit"/>
+
+                                <Button text="📂 Carga Masiva" onAction="#cargaMasiva" prefHeight="50" prefWidth="160"
+                                        style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#cargaHoverEnter" onMouseExited="#cargaHoverExit"/>
                             </HBox>
                         </VBox>
 

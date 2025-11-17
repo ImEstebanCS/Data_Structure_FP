@@ -13,7 +13,7 @@
            styleClass="login-container">
 
     <!-- Imagen de fondo -->
-    <ImageView fitHeight="768.0" fitWidth="1366.0" preserveRatio="false">
+    <ImageView fitHeight="880.0" fitWidth="1600.0" preserveRatio="false">
         <image>
             <Image url="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1920&amp;h=1080&amp;fit=crop&amp;q=80"
                    backgroundLoading="true" smooth="true"/>
