@@ -4,19 +4,14 @@ import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * NodoTrie - RF-023
- * Nodo del árbol de prefijos para autocompletado
- */
 public class NodoTrie {
     private Map<Character, NodoTrie> hijos;
-    private boolean esFinPalabra;
+    private boolean esFinDePalabra;
     private Cancion cancion;
 
     public NodoTrie() {
         this.hijos = new HashMap<>();
-        this.esFinPalabra = false;
-        this.cancion = null;
+        this.esFinDePalabra = false;
     }
 
     public Map<Character, NodoTrie> getHijos() {
@@ -27,12 +22,12 @@ public class NodoTrie {
         this.hijos = hijos;
     }
 
-    public boolean isEsFinPalabra() {
-        return esFinPalabra;
+    public boolean isEsFinDePalabra() {
+        return esFinDePalabra;
     }
 
-    public void setEsFinPalabra(boolean esFinPalabra) {
-        this.esFinPalabra = esFinPalabra;
+    public void setEsFinDePalabra(boolean esFinDePalabra) {
+        this.esFinDePalabra = esFinDePalabra;
     }
 
     public Cancion getCancion() {
@@ -41,21 +36,5 @@ public class NodoTrie {
 
     public void setCancion(Cancion cancion) {
         this.cancion = cancion;
-    }
-
-    public NodoTrie obtenerHijo(char c) {
-        return hijos.get(c);
-    }
-
-    public void agregarHijo(char c, NodoTrie nodo) {
-        hijos.put(c, nodo);
-    }
-
-    public boolean tieneHijo(char c) {
-        return hijos.containsKey(c);
-    }
-
-    public boolean tieneHijos() {
-        return !hijos.isEmpty();
     }
 }

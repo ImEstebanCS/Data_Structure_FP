@@ -1,26 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="co.edu.uniquindio.syncup.view.controllers.ProfileViewController"
-      spacing="30.0" style="-fx-background-color: #121212;" alignment="CENTER">
-    <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
-    
-    <Label text="👤" style="-fx-font-size: 80px;"/>
-    
-    <VBox spacing="15.0" alignment="CENTER">
-        <Label fx:id="usernameLabel" text="@username" style="-fx-text-fill: #1DB954; -fx-font-size: 24px; -fx-font-weight: bold;"/>
-        <Label fx:id="nombreLabel" text="Nombre" style="-fx-text-fill: #FFFFFF; -fx-font-size: 20px;"/>
-    </VBox>
-    
-    <Separator style="-fx-background-color: #282828;"/>
-    
-    <VBox spacing="10.0" alignment="CENTER">
-        <Label fx:id="favoritosLabel" text="0 canciones favoritas" style="-fx-text-fill: #B3B3B3; -fx-font-size: 16px;"/>
-        <Label fx:id="seguidoresLabel" text="0 seguidores" style="-fx-text-fill: #B3B3B3; -fx-font-size: 16px;"/>
-        <Label fx:id="siguiendoLabel" text="0 siguiendo" style="-fx-text-fill: #B3B3B3; -fx-font-size: 16px;"/>
-    </VBox>
-</VBox>
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.syncup.view.controllers.ProfileViewController">
+
+    <ScrollPane fitToWidth="true" style="-fx-background: transparent;">
+        <VBox spacing="30" style="-fx-padding: 30;">
+
+            <!-- Header Perfil -->
+            <HBox alignment="CENTER_LEFT" spacing="30">
+                <VBox alignment="CENTER" prefHeight="150" prefWidth="150" style="-fx-background-color: linear-gradient(to bottom right, #1DB954, #1ed760); -fx-background-radius: 75;">
+                    <Label style="-fx-font-size: 80px;" text="👤" />
+                </VBox>
+
+                <VBox spacing="15">
+               <DialogPane>
+                  <content>
+                          <Label style="-fx-font-size: 14px; -fx-text-fill: #B3B3B3; -fx-font-weight: bold;" text="PERFIL" />
+                  </content>
+               </DialogPane>
+                    <Label fx:id="usernameLabel" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="" />
+
+                    <HBox spacing="30">
+                        <VBox spacing="5">
+                            <Label fx:id="favoritosLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="0 canciones" />
+                            <Label style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;" text="Favoritas" />
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label fx:id="seguidoresLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="0" />
+                            <Label style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;" text="Seguidores" />
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label fx:id="siguiendoLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="0" />
+                            <Label style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;" text="Siguiendo" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- Editar Perfil -->
+            <VBox spacing="20" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 30;">
+                <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1DB954;" text="Editar Información" />
+
+                <VBox spacing="10">
+                    <Label style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;" text="Nombre" />
+                    <TextField fx:id="nombreField" prefHeight="45" style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-background-radius: 10; -fx-border-color: #404040; -fx-border-radius: 10;" />
+                </VBox>
+
+                <VBox spacing="10">
+                    <Label style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;" text="Nueva Contraseña" />
+                    <PasswordField fx:id="passwordField" prefHeight="45" style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-background-radius: 10; -fx-border-color: #404040; -fx-border-radius: 10;" />
+                </VBox>
+
+                <VBox spacing="10">
+                    <Label style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;" text="Confirmar Contraseña" />
+                    <PasswordField fx:id="confirmPasswordField" prefHeight="45" style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-background-radius: 10; -fx-border-color: #404040; -fx-border-radius: 10;" />
+                </VBox>
+
+                <Label fx:id="mensajeLabel" style="-fx-font-size: 14px;" />
+
+                <Button onAction="#guardarCambios" prefHeight="50" prefWidth="200" style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 25; -fx-cursor: hand;" text="💾 Guardar Cambios" />
+            </VBox>
+
+            <!-- ✅ SECCIONES AGREGADAS - Seguidores y Siguiendo -->
+            <HBox spacing="30">
+                <!-- Seguidores -->
+                <VBox spacing="15" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                    <Label fx:id="seguidoresTituloLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1DB954;" text="Seguidores (0)" />
+                    <ScrollPane fitToWidth="true" prefHeight="300" style="-fx-background: transparent;">
+                        <VBox fx:id="seguidoresContainer" spacing="10" />
+                    </ScrollPane>
+                </VBox>
+
+                <!-- Siguiendo -->
+                <VBox spacing="15" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                    <Label fx:id="siguiendoTituloLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1DB954;" text="Siguiendo (0)" />
+                    <ScrollPane fitToWidth="true" prefHeight="300" style="-fx-background: transparent;">
+                        <VBox fx:id="siguiendoContainer" spacing="10" />
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+</StackPane>

@@ -1,38 +1,31 @@
 package co.edu.uniquindio.syncup.Model.Entidades;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
-/**
- * Entidad Usuario - RF-013, RF-014, RF-015
- * Representa un usuario de la plataforma
- */
 public class Usuario {
-    private String username; // único
+    private String username;
     private String password;
     private String nombre;
-    private LinkedList<Cancion> listaFavoritos; // RF-013
-    private List<Usuario> siguiendo;
+    private Playlist listaFavoritosPlaylist;  // SOLO UNA estructura para favoritos
+    private List<Playlist> playlists;
+    private List<Usuario> seguidos;
     private List<Usuario> seguidores;
-
-    public Usuario() {
-        this.listaFavoritos = new LinkedList<>();
-        this.siguiendo = new ArrayList<>();
-        this.seguidores = new ArrayList<>();
-    }
+    private Playlist playlistActual;
+    private Radio radioActual;
 
     public Usuario(String username, String password, String nombre) {
         this.username = username;
         this.password = password;
         this.nombre = nombre;
-        this.listaFavoritos = new LinkedList<>();
-        this.siguiendo = new ArrayList<>();
+        this.playlists = new ArrayList<>();
+        this.seguidos = new ArrayList<>();
         this.seguidores = new ArrayList<>();
+        // ✅ CORREGIDO: Usar constructor con 2 parámetros
+        this.listaFavoritosPlaylist = new Playlist("Favoritos", this);
     }
 
-    // Getters y Setters
+    // Getters y Setters básicos
     public String getUsername() {
         return username;
     }
@@ -57,23 +50,83 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public LinkedList<Cancion> getListaFavoritos() {
-        return listaFavoritos;
+    // FAVORITOS - Métodos unificados
+    public List<Cancion> getListaFavoritos() {
+        if (listaFavoritosPlaylist == null) {
+            // ✅ CORREGIDO
+            listaFavoritosPlaylist = new Playlist("Favoritos", this);
+        }
+        return listaFavoritosPlaylist.getCanciones();
     }
 
-    public void setListaFavoritos(LinkedList<Cancion> listaFavoritos) {
-        this.listaFavoritos = listaFavoritos;
+    public Playlist getListaFavoritosPlaylist() {
+        if (listaFavoritosPlaylist == null) {
+            // ✅ CORREGIDO
+            listaFavoritosPlaylist = new Playlist("Favoritos", this);
+        }
+        return listaFavoritosPlaylist;
     }
 
+    public void setListaFavoritosPlaylist(Playlist listaFavoritos) {
+        this.listaFavoritosPlaylist = listaFavoritos;
+    }
+
+    public void agregarFavorito(Cancion cancion) {
+        if (listaFavoritosPlaylist == null) {
+            // ✅ CORREGIDO
+            listaFavoritosPlaylist = new Playlist("Favoritos", this);
+        }
+        if (!listaFavoritosPlaylist.getCanciones().contains(cancion)) {
+            listaFavoritosPlaylist.agregarCancion(cancion);
+        }
+    }
+
+    public void removerFavorito(Cancion cancion) {
+        if (listaFavoritosPlaylist != null) {
+            listaFavoritosPlaylist.getCanciones().remove(cancion);
+        }
+    }
+
+    // PLAYLISTS
+    public List<Playlist> getPlaylists() {
+        if (playlists == null) {
+            playlists = new ArrayList<>();
+        }
+        return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists) {
+        this.playlists = playlists;
+    }
+
+    public void agregarPlaylist(Playlist playlist) {
+        if (playlists == null) {
+            playlists = new ArrayList<>();
+        }
+        playlists.add(playlist);
+    }
+
+    // SEGUIDOS Y SEGUIDORES
+    public List<Usuario> getSeguidos() {
+        if (seguidos == null) {
+            seguidos = new ArrayList<>();
+        }
+        return seguidos;
+    }
+
+    public void setSeguidos(List<Usuario> seguidos) {
+        this.seguidos = seguidos;
+    }
+
+    // ✅ MÉTODO AGREGADO - Este era el método faltante
     public List<Usuario> getSiguiendo() {
-        return siguiendo;
-    }
-
-    public void setSiguiendo(List<Usuario> siguiendo) {
-        this.siguiendo = siguiendo;
+        return getSeguidos(); // Alias para mantener compatibilidad
     }
 
     public List<Usuario> getSeguidores() {
+        if (seguidores == null) {
+            seguidores = new ArrayList<>();
+        }
         return seguidores;
     }
 
@@ -81,71 +134,33 @@ public class Usuario {
         this.seguidores = seguidores;
     }
 
-    // Métodos de favoritos - RF-002
-    public void agregarFavorito(Cancion cancion) {
-        if (!listaFavoritos.contains(cancion)) {
-            listaFavoritos.add(cancion);
-        }
+    // PLAYLIST Y RADIO ACTUAL
+    public Playlist getPlaylistActual() {
+        return playlistActual;
     }
 
-    public void removerFavorito(Cancion cancion) {
-        listaFavoritos.remove(cancion);
+    public void setPlaylistActual(Playlist playlistActual) {
+        this.playlistActual = playlistActual;
     }
 
-    public boolean esFavorito(Cancion cancion) {
-        return listaFavoritos.contains(cancion);
+    public Radio getRadioActual() {
+        return radioActual;
     }
 
-    // Métodos de conexiones sociales - RF-007
-    public void seguir(Usuario usuario) {
-        if (!siguiendo.contains(usuario) && !this.equals(usuario)) {
-            siguiendo.add(usuario);
-            usuario.agregarSeguidor(this);
-        }
+    public void setRadioActual(Radio radioActual) {
+        this.radioActual = radioActual;
     }
 
-    public void dejarDeSeguir(Usuario usuario) {
-        if (siguiendo.contains(usuario)) {
-            siguiendo.remove(usuario);
-            usuario.removerSeguidor(this);
-        }
-    }
-
-    private void agregarSeguidor(Usuario usuario) {
-        if (!seguidores.contains(usuario)) {
-            seguidores.add(usuario);
-        }
-    }
-
-    private void removerSeguidor(Usuario usuario) {
-        seguidores.remove(usuario);
-    }
-
-    public boolean estaSiguiendo(Usuario usuario) {
-        return siguiendo.contains(usuario);
-    }
-
-    /**
-     * RF-015: hashCode basado en username
-     */
     @Override
-    public int hashCode() {
-        return Objects.hash(username);
-    }
-
-    /**
-     * RF-015: equals basado en username
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Usuario usuario = (Usuario) obj;
-        return Objects.equals(username, usuario.username);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return username != null && username.equals(usuario.username);
     }
 
     @Override
-    public String toString() {
-        return nombre + " (@" + username + ")";
+    public int hashCode() {
+        return username != null ? username.hashCode() : 0;
     }
 }

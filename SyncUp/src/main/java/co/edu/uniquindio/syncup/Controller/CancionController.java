@@ -40,11 +40,15 @@ public class CancionController {
     }
 
     public List<Cancion> buscarAvanzada(String artista, String genero, int año) {
-        return service.buscarAvanzadaPorAtributos(artista, genero, año);
+        return service.buscarAvanzadaPorAtributos(artista, genero, año, false);
+    }
+
+    public List<Cancion> buscarAvanzada(String artista, String genero, int año, boolean usarOR) {
+        return service.buscarAvanzadaPorAtributos(artista, genero, año, usarOR);
     }
 
     public List<Cancion> obtenerTodas() {
-        return service.getCatalogoCanciones().getCanciones();
+        return service.obtenerTodasLasCanciones();
     }
 
     public int obtenerTotal() {

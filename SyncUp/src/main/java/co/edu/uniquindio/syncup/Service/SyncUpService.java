@@ -7,204 +7,340 @@ import co.edu.uniquindio.syncup.Model.Trie.TrieAutocompletado;
 
 import java.util.*;
 
-/**
- * SyncUpService
- * Servicio principal que integra todas las funcionalidades del sistema
- */
 public class SyncUpService {
-    // RF-014: HashMap para acceso O(1) a usuarios
+    private final CatalogoCanciones catalogoCanciones;
     private final Map<String, Usuario> usuarios;
     private final Map<String, Administrador> administradores;
-
-    // Estructuras de datos principales
-    private final CatalogoCanciones catalogoCanciones;
-    private final TrieAutocompletado trieAutocompletado;
     private final GrafoDeSimilitud grafoDeSimilitud;
     private final GrafoSocial grafoSocial;
-
-    // Datos por usuario
-    private final Map<Usuario, Playlist> playlists;
-    private final Map<Usuario, Radio> radios;
-
-    // Servicio de datos
-    private final MusicDataService musicDataService;
+    private final TrieAutocompletado trieAutocompletado;
 
     public SyncUpService() {
+        this.catalogoCanciones = new CatalogoCanciones();
         this.usuarios = new HashMap<>();
         this.administradores = new HashMap<>();
-        this.catalogoCanciones = new CatalogoCanciones();
-        this.trieAutocompletado = new TrieAutocompletado();
         this.grafoDeSimilitud = new GrafoDeSimilitud();
         this.grafoSocial = new GrafoSocial();
-        this.playlists = new HashMap<>();
-        this.radios = new HashMap<>();
-        this.musicDataService = new MusicDataService();
+        this.trieAutocompletado = new TrieAutocompletado();
 
-        inicializarSistema();
+        inicializarDatos();
     }
 
-    /**
-     * Inicializa el sistema cargando datos y configurando similitudes
-     */
-    private void inicializarSistema() {
+    private void inicializarDatos() {
+        System.out.println("Inicializando datos del sistema...");
+
+        Administrador admin = new Administrador("admin", "admin123", "Administrador Principal");
+        administradores.put(admin.getUsername(), admin);
+
         cargarCancionesIniciales();
-        configurarSimilitudesIniciales();
-        crearAdministradorPorDefecto();
+        construirGrafoDeSimilitud();
+        construirTrie();
+
+        System.out.println("✓ Datos inicializados correctamente");
     }
 
-    /**
-     * Carga canciones desde el servicio de datos
-     */
     private void cargarCancionesIniciales() {
-        List<Cancion> canciones = musicDataService.cargarCanciones();
+        catalogoCanciones.agregarCancion(new Cancion(1, "Bohemian Rhapsody", "Queen", "Rock", 1975, 354,
+                "https://i.scdn.co/image/ab67616d0000b273e319baafd16e84f0408af2a0",
+                "https://www.youtube.com/watch?v=fJ9rUzIMcZQ"));
+
+        catalogoCanciones.agregarCancion(new Cancion(2, "Imagine", "John Lennon", "Rock", 1971, 183,
+                "https://i.scdn.co/image/ab67616d0000b2737b2e7a6e7b7b0e0e0e0e0e0e",
+                "https://www.youtube.com/watch?v=YkgkThdzX-8"));
+
+        catalogoCanciones.agregarCancion(new Cancion(3, "Hotel California", "Eagles", "Rock", 1976, 391,
+                "https://i.scdn.co/image/ab67616d0000b273e72569c2fbf3b3e8e8e8e8e8",
+                "https://www.youtube.com/watch?v=09839DpTctU"));
+
+        catalogoCanciones.agregarCancion(new Cancion(4, "Stairway to Heaven", "Led Zeppelin", "Rock", 1971, 482,
+                "https://i.scdn.co/image/ab67616d0000b273c8b444df094279e70cd0ed64",
+                "https://www.youtube.com/watch?v=QkF3oxziUI4"));
+
+        catalogoCanciones.agregarCancion(new Cancion(5, "Billie Jean", "Michael Jackson", "Pop", 1982, 294,
+                "https://i.scdn.co/image/ab67616d0000b273de1f24209e0b5d2419d5c239",
+                "https://www.youtube.com/watch?v=Zi_XLOBDo_Y"));
+
+        catalogoCanciones.agregarCancion(new Cancion(6, "Like a Rolling Stone", "Bob Dylan", "Rock", 1965, 369,
+                "https://i.scdn.co/image/ab67616d0000b273df1e48f7d9c4b7f8e8e8e8e8",
+                "https://www.youtube.com/watch?v=IwOfCgkyEj0"));
+
+        catalogoCanciones.agregarCancion(new Cancion(7, "Smells Like Teen Spirit", "Nirvana", "Rock", 1991, 301,
+                "https://i.scdn.co/image/ab67616d0000b273e175a19e5d8d7e5e5e5e5e5e",
+                "https://www.youtube.com/watch?v=hTWKbfoikeg"));
+
+        catalogoCanciones.agregarCancion(new Cancion(8, "What's Going On", "Marvin Gaye", "Soul", 1971, 232,
+                "https://i.scdn.co/image/ab67616d0000b273f3f3f3f3f3f3f3f3f3f3f3f3",
+                "https://www.youtube.com/watch?v=H-kA3UtBj4M"));
+
+        catalogoCanciones.agregarCancion(new Cancion(9, "Yesterday", "The Beatles", "Pop", 1965, 125,
+                "https://i.scdn.co/image/ab67616d0000b273e7e7e7e7e7e7e7e7e7e7e7e7",
+                "https://www.youtube.com/watch?v=wXTJBr9tt8Q"));
+
+        catalogoCanciones.agregarCancion(new Cancion(10, "Hey Jude", "The Beatles", "Pop", 1968, 431,
+                "https://i.scdn.co/image/ab67616d0000b273f5f5f5f5f5f5f5f5f5f5f5f5",
+                "https://www.youtube.com/watch?v=A_MjCqQoLLA"));
+
+        catalogoCanciones.agregarCancion(new Cancion(11, "MAÑANA SERA BONITO", "KAROL G", "Reggaeton", 2023, 225,
+                "https://i.scdn.co/image/ab67616d0000b2730c471c36970b9406233842a5",
+                "https://www.youtube.com/watch?v=oeDeJZpB6l8"));
+
+        catalogoCanciones.agregarCancion(new Cancion(12, "+57", "KAROL G, Feid", "Reggaeton", 2024, 197,
+                "https://i.scdn.co/image/ab67616d0000b27385dc5bc6ea5d5b0b5e5e5e5e",
+                "https://www.youtube.com/watch?v=VQdYY6KkJMU"));
+
+        catalogoCanciones.agregarCancion(new Cancion(13, "la luz(fin)", "Kali Uchis, JHAYCO", "R&B", 2023, 218,
+                "https://i.scdn.co/image/ab67616d0000b273c0c0c0c0c0c0c0c0c0c0c0c0",
+                "https://www.youtube.com/watch?v=example13"));
+
+        catalogoCanciones.agregarCancion(new Cancion(14, "TQG", "KAROL G, Shakira", "Reggaeton", 2023, 202,
+                "https://i.scdn.co/image/ab67616d0000b273d4d4d4d4d4d4d4d4d4d4d4d4",
+                "https://www.youtube.com/watch?v=RlPNh_PBZb4"));
+
+        System.out.println("✓ " + catalogoCanciones.obtenerTotal() + " canciones cargadas");
+    }
+
+    private void construirGrafoDeSimilitud() {
+        List<Cancion> canciones = catalogoCanciones.obtenerTodasLasCanciones();
+
         for (Cancion cancion : canciones) {
-            catalogoCanciones.agregarCancion(cancion);
-            trieAutocompletado.insertarCancion(cancion.getTitulo(), cancion);
             grafoDeSimilitud.agregarCancion(cancion);
         }
-        System.out.println("✓ Sistema inicializado con " + canciones.size() + " canciones");
-    }
 
+<<<<<<< Updated upstream
     /**
      * Configura similitudes iniciales entre canciones del mismo género
      */
     private void configurarSimilitudesIniciales() {
         List<Cancion> canciones = catalogoCanciones.getCanciones();
 
+=======
+>>>>>>> Stashed changes
         for (int i = 0; i < canciones.size(); i++) {
             for (int j = i + 1; j < canciones.size(); j++) {
                 Cancion c1 = canciones.get(i);
                 Cancion c2 = canciones.get(j);
 
+<<<<<<< Updated upstream
                 double similitud = calcularSimilitud(c1, c2);
                 if (similitud < 0.7) { // Solo agregar si son suficientemente similares
+=======
+                int similitud = calcularSimilitud(c1, c2);
+                if (similitud > 0) {
+>>>>>>> Stashed changes
                     grafoDeSimilitud.agregarArista(c1, c2, similitud);
                 }
             }
         }
+
+        System.out.println("✓ Grafo de similitud construido");
     }
 
-    /**
-     * Calcula similitud entre dos canciones
-     */
-    private double calcularSimilitud(Cancion c1, Cancion c2) {
-        double sim = 1.0;
+    private int calcularSimilitud(Cancion c1, Cancion c2) {
+        int similitud = 0;
 
-        // Mismo género reduce la distancia (aumenta similitud)
-        if (c1.getGenero().equalsIgnoreCase(c2.getGenero())) {
-            sim -= 0.3;
+        if (c1.getGenero().equals(c2.getGenero())) {
+            similitud += 50;
         }
 
-        // Mismo artista reduce más la distancia
-        if (c1.getArtista().equalsIgnoreCase(c2.getArtista())) {
-            sim -= 0.4;
+        if (c1.getArtista().equals(c2.getArtista())) {
+            similitud += 30;
         }
 
-        // Años cercanos reducen la distancia
-        int difAños = Math.abs(c1.getAño() - c2.getAño());
-        if (difAños <= 5) {
-            sim -= 0.2;
+        int diferenciaAños = Math.abs(c1.getAño() - c2.getAño());
+        if (diferenciaAños <= 5) {
+            similitud += (5 - diferenciaAños) * 4;
         }
 
-        return Math.max(0.1, sim); // Mínimo 0.1
+        return similitud;
     }
 
-    /**
-     * Crea un administrador por defecto
-     */
-    private void crearAdministradorPorDefecto() {
-        registrarAdministrador("admin", "admin123", "Administrador");
+    private void construirTrie() {
+        for (Cancion cancion : catalogoCanciones.obtenerTodasLasCanciones()) {
+            trieAutocompletado.insertar(cancion.getTitulo(), cancion);
+        }
+        System.out.println("✓ Trie de autocompletado construido");
     }
 
-    // ==================== USUARIOS - RF-001, RF-002 ====================
+    // ==================== MÉTODOS DE USUARIOS ====================
 
-    /**
-     * RF-001: Registrar usuario
-     */
     public boolean registrarUsuario(String username, String password, String nombre) {
-        if (username == null || username.trim().isEmpty() ||
-                password == null || password.trim().isEmpty()) {
-            return false;
-        }
-
         if (usuarios.containsKey(username)) {
-            return false; // Ya existe
+            return false;
         }
 
         Usuario nuevoUsuario = new Usuario(username, password, nombre);
         usuarios.put(username, nuevoUsuario);
         grafoSocial.agregarUsuario(nuevoUsuario);
-        radios.put(nuevoUsuario, new Radio(nombre + "'s Radio"));
 
+        System.out.println("✓ Usuario registrado: " + username);
         return true;
     }
 
-    /**
-     * RF-001: Autenticar usuario
-     */
     public Usuario autenticarUsuario(String username, String password) {
         Usuario usuario = usuarios.get(username);
-
         if (usuario != null && usuario.getPassword().equals(password)) {
             return usuario;
         }
-
         return null;
     }
 
-    /**
-     * RF-002: Gestionar favoritos
-     */
-    public void agregarFavorito(Usuario usuario, Cancion cancion) {
-        if (usuario != null && cancion != null) {
-            usuario.agregarFavorito(cancion);
-        }
-    }
+    public void actualizarUsuario(String usernameOriginal, String nuevoUsername, String nuevaPassword, String nuevoNombre) {
+        Usuario usuario = usuarios.get(usernameOriginal);
 
-    public void removerFavorito(Usuario usuario, Cancion cancion) {
-        if (usuario != null && cancion != null) {
-            usuario.removerFavorito(cancion);
-        }
-    }
-
-    public List<Cancion> obtenerFavoritos(Usuario usuario) {
         if (usuario != null) {
-            return new ArrayList<>(usuario.getListaFavoritos());
+            if (!usernameOriginal.equals(nuevoUsername)) {
+                usuarios.remove(usernameOriginal);
+                usuario.setUsername(nuevoUsername);
+                usuarios.put(nuevoUsername, usuario);
+            }
+
+            usuario.setPassword(nuevaPassword);
+            usuario.setNombre(nuevoNombre);
+
+            System.out.println("✓ Usuario actualizado: " + nuevoUsername);
         }
-        return new ArrayList<>();
     }
 
-    // ==================== BÚSQUEDA - RF-003, RF-004 ====================
-
-    /**
-     * RF-003: Buscar por autocompletado usando Trie
-     */
-    public List<Cancion> autocompletarBusqueda(String prefijo) {
-        if (prefijo == null || prefijo.trim().isEmpty()) {
-            return new ArrayList<>();
+    public boolean eliminarUsuario(String username) {
+        Usuario usuario = usuarios.remove(username);
+        if (usuario != null) {
+            grafoSocial.eliminarUsuario(usuario);
+            System.out.println("✓ Usuario eliminado: " + username);
+            return true;
         }
-        return trieAutocompletado.buscarPorPrefijo(prefijo.trim());
+        return false;
     }
 
-    /**
-     * RF-004: Búsqueda avanzada por múltiples atributos
-     */
-    public List<Cancion> buscarAvanzadaPorAtributos(String artista, String genero, int año) {
-        List<Cancion> resultado = new ArrayList<>();
+    public List<Usuario> listarTodosLosUsuarios() {
+        return new ArrayList<>(usuarios.values());
+    }
 
-        for (Cancion cancion : catalogoCanciones.getCanciones()) {
-            boolean cumpleArtista = artista == null || artista.isEmpty() ||
-                    cancion.getArtista().toLowerCase().contains(artista.toLowerCase());
-            boolean cumpleGenero = genero == null || genero.isEmpty() ||
-                    cancion.getGenero().toLowerCase().contains(genero.toLowerCase());
-            boolean cumpleAño = año == 0 || cancion.getAño() == año;
+    public List<Usuario> listarUsuarios() {
+        return listarTodosLosUsuarios();
+    }
 
-            if (cumpleArtista && cumpleGenero && cumpleAño) {
-                resultado.add(cancion);
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        return usuarios.get(username);
+    }
+
+    public int getCantidadUsuarios() {
+        return usuarios.size();
+    }
+
+    // ==================== MÉTODOS DE ADMINISTRADORES ====================
+
+    public boolean registrarAdministrador(String username, String password, String nombre) {
+        if (administradores.containsKey(username)) {
+            return false;
+        }
+
+        Administrador nuevoAdmin = new Administrador(username, password, nombre);
+        administradores.put(username, nuevoAdmin);
+
+        System.out.println("✓ Administrador registrado: " + username);
+        return true;
+    }
+
+    public Administrador autenticarAdministrador(String username, String password) {
+        Administrador admin = administradores.get(username);
+        if (admin != null && admin.getPassword().equals(password)) {
+            return admin;
+        }
+        return null;
+    }
+
+    // ==================== MÉTODOS DE GRAFO SOCIAL ====================
+
+    public void seguir(Usuario seguidor, Usuario seguido) {
+        seguidor.getSeguidos().add(seguido);
+        seguido.getSeguidores().add(seguidor);
+        grafoSocial.seguir(seguidor, seguido);
+        System.out.println("✓ " + seguidor.getUsername() + " ahora sigue a " + seguido.getUsername());
+    }
+
+    public void dejarDeSeguir(Usuario seguidor, Usuario seguido) {
+        seguidor.getSeguidos().remove(seguido);
+        seguido.getSeguidores().remove(seguidor);
+        grafoSocial.dejarDeSeguir(seguidor, seguido);
+        System.out.println("✓ " + seguidor.getUsername() + " dejó de seguir a " + seguido.getUsername());
+    }
+
+    public List<Usuario> obtenerSeguidores(Usuario usuario) {
+        return new ArrayList<>(usuario.getSeguidores());
+    }
+
+    public List<Usuario> obtenerSiguiendo(Usuario usuario) {
+        return new ArrayList<>(usuario.getSeguidos());
+    }
+
+    public List<Usuario> obtenerSugerenciasDeAmigos(Usuario usuario, int limite) {
+        return grafoSocial.obtenerSugerenciasDeAmigos(usuario, limite);
+    }
+
+    public List<Usuario> obtenerSugerenciasDeUsuarios(Usuario usuarioActual, int cantidad) {
+        List<Usuario> todos = listarUsuarios();
+        List<Usuario> sugerencias = new ArrayList<>();
+
+        for (Usuario u : todos) {
+            if (!u.equals(usuarioActual) && !usuarioActual.getSeguidos().contains(u)) {
+                sugerencias.add(u);
+                if (sugerencias.size() >= cantidad) break;
+            }
+        }
+        return sugerencias;
+    }
+
+    public boolean sonistaConectados(Usuario usuario1, Usuario usuario2) {
+        return grafoSocial.estanConectados(usuario1, usuario2);
+    }
+
+    public int obtenerGradoSeparacion(Usuario usuario1, Usuario usuario2) {
+        return grafoSocial.obtenerGradoSeparacion(usuario1, usuario2);
+    }
+
+    // ==================== MÉTODOS DE CANCIONES ====================
+
+    public void agregarCancion(int id, String titulo, String artista, String genero, int año, double duracion) {
+        Cancion nuevaCancion = new Cancion(id, titulo, artista, genero, año, duracion,
+                "https://via.placeholder.com/150",
+                "https://www.youtube.com/results?search_query=" + titulo.replace(" ", "+"));
+
+        catalogoCanciones.agregarCancion(nuevaCancion);
+        grafoDeSimilitud.agregarCancion(nuevaCancion);
+        trieAutocompletado.insertar(titulo, nuevaCancion);
+
+        for (Cancion existente : catalogoCanciones.obtenerTodasLasCanciones()) {
+            if (existente.getId() != id) {
+                int similitud = calcularSimilitud(nuevaCancion, existente);
+                if (similitud > 0) {
+                    grafoDeSimilitud.agregarArista(nuevaCancion, existente, similitud);
+                }
             }
         }
 
-        return resultado;
+        System.out.println("✓ Canción agregada: " + titulo);
+    }
+
+    public void actualizarCancion(int id, String nuevoTitulo, String nuevoArtista, String nuevoGenero, int nuevoAño, double nuevaDuracion) {
+        Cancion cancion = catalogoCanciones.buscarPorId(id);
+
+        if (cancion != null) {
+            cancion.setTitulo(nuevoTitulo);
+            cancion.setArtista(nuevoArtista);
+            cancion.setGenero(nuevoGenero);
+            cancion.setAño(nuevoAño);
+            cancion.setDuracion(nuevaDuracion);
+
+            System.out.println("✓ Canción actualizada: " + nuevoTitulo);
+        }
+    }
+
+    public void eliminarCancion(int id) {
+        Cancion cancion = catalogoCanciones.buscarPorId(id);
+        if (cancion != null) {
+            catalogoCanciones.eliminarCancion(id);
+            System.out.println("✓ Canción eliminada: " + cancion.getTitulo());
+        }
     }
 
     public List<Cancion> buscarCancionesPorTitulo(String titulo) {
@@ -219,83 +355,31 @@ public class SyncUpService {
         return catalogoCanciones.buscarPorGenero(genero);
     }
 
-    // ==================== RECOMENDACIONES - RF-005, RF-006 ====================
-
-    /**
-     * RF-005: Generar playlist "Descubrimiento Semanal"
-     */
-    public Playlist generarDescubrimientoSemanal(Usuario usuario) {
-        Playlist descubrimiento = new Playlist("Descubrimiento Semanal", usuario,
-                "Basado en tus gustos musicales");
-
-        List<Cancion> favoritos = usuario.getListaFavoritos();
-        Set<Cancion> recomendadas = new HashSet<>();
-
-        // Obtener recomendaciones basadas en favoritos
-        for (Cancion favorita : favoritos) {
-            List<Cancion> similares = grafoDeSimilitud.obtenerCancionesSimilares(favorita, 5);
-            recomendadas.addAll(similares);
-        }
-
-        // Limitar a 30 canciones
-        recomendadas.stream()
-                .filter(c -> !favoritos.contains(c))
-                .limit(30)
-                .forEach(descubrimiento::agregarCancion);
-
-        return descubrimiento;
+    public List<Cancion> autocompletarCanciones(String prefijo) {
+        return trieAutocompletado.autocompletar(prefijo);
     }
 
-    /**
-     * RF-006: Iniciar Radio basada en canción
-     */
-    public void iniciarRadio(Usuario usuario, Cancion cancionSemilla) {
-        if (!radios.containsKey(usuario)) {
-            radios.put(usuario, new Radio(usuario.getNombre() + "'s Radio"));
-        }
-
-        Radio radio = radios.get(usuario);
-        radio.iniciarRadio(cancionSemilla);
-
-        // Agregar canciones similares a la cola
-        List<Cancion> similares = grafoDeSimilitud.obtenerCancionesSimilares(cancionSemilla, 20);
-        for (Cancion similar : similares) {
-            radio.agregarCancionACola(similar);
-        }
+    public List<Cancion> autocompletarBusqueda(String prefijo) {
+        return autocompletarCanciones(prefijo);
     }
 
-    public Radio obtenerRadio(Usuario usuario) {
-        return radios.get(usuario);
+    public List<Cancion> busquedaAvanzada(String artista, String genero, int año, boolean usarOR) {
+        return catalogoCanciones.busquedaAvanzada(artista, genero, año, usarOR);
     }
 
-    // ==================== RED SOCIAL - RF-007, RF-008 ====================
-
-    /**
-     * RF-007: Seguir/dejar de seguir usuarios
-     */
-    public void seguir(Usuario usuario1, Usuario usuario2) {
-        if (usuario1 != null && usuario2 != null) {
-            usuario1.seguir(usuario2);
-            grafoSocial.agregarConexion(usuario1, usuario2);
-        }
+    public List<Cancion> buscarAvanzadaPorAtributos(String artista, String genero, int año, boolean usarOR) {
+        return busquedaAvanzada(artista, genero, año, usarOR);
     }
 
-    public void dejarDeSeguir(Usuario usuario1, Usuario usuario2) {
-        if (usuario1 != null && usuario2 != null) {
-            usuario1.dejarDeSeguir(usuario2);
-            grafoSocial.removerConexion(usuario1, usuario2);
-        }
+    public List<Cancion> obtenerTodasLasCanciones() {
+        return catalogoCanciones.obtenerTodasLasCanciones();
     }
 
-    /**
-     * RF-008: Sugerencias de usuarios usando BFS
-     */
-    public List<Usuario> obtenerSugerenciasDeUsuarios(Usuario usuario, int cantidad) {
-        List<Usuario> sugerencias = grafoSocial.encontrarAmigosDeAmigos(usuario);
-        return sugerencias.size() > cantidad ?
-                sugerencias.subList(0, cantidad) : sugerencias;
+    public int getCantidadCanciones() {
+        return catalogoCanciones.obtenerTotal();
     }
 
+<<<<<<< Updated upstream
     public List<Usuario> obtenerSeguidores(Usuario usuario) {
         return usuario != null ? usuario.getSeguidores() : new ArrayList<>();
     }
@@ -387,27 +471,176 @@ public class SyncUpService {
 
     // ==================== GETTERS ====================
 
+=======
+>>>>>>> Stashed changes
     public CatalogoCanciones getCatalogoCanciones() {
         return catalogoCanciones;
     }
 
-    public int getCantidadCanciones() {
-        return catalogoCanciones.getTamaño();
+    // ==================== MÉTODOS DE PLAYLISTS ====================
+
+    public Playlist crearPlaylist(Usuario usuario, String nombre) {
+        Playlist nuevaPlaylist = new Playlist(nombre, usuario);
+        usuario.agregarPlaylist(nuevaPlaylist);
+        System.out.println("✓ Playlist creada: " + nombre);
+        return nuevaPlaylist;
     }
 
-    public int getCantidadUsuarios() {
-        return usuarios.size();
+    public void agregarCancionAPlaylist(Usuario usuario, String nombrePlaylist, Cancion cancion) {
+        Playlist playlist = obtenerPlaylistPorNombre(usuario, nombrePlaylist);
+        if (playlist != null) {
+            playlist.agregarCancion(cancion);
+            System.out.println("✓ Canción agregada a playlist: " + cancion.getTitulo());
+        }
     }
 
-    public GrafoDeSimilitud getGrafoDeSimilitud() {
-        return grafoDeSimilitud;
+    public void eliminarCancionDePlaylist(Usuario usuario, String nombrePlaylist, Cancion cancion) {
+        Playlist playlist = obtenerPlaylistPorNombre(usuario, nombrePlaylist);
+        if (playlist != null) {
+            playlist.getCanciones().remove(cancion);
+            System.out.println("✓ Canción eliminada de playlist");
+        }
     }
 
-    public GrafoSocial getGrafoSocial() {
-        return grafoSocial;
+    public Playlist obtenerPlaylist(Usuario usuario) {
+        return usuario.getPlaylistActual();
     }
 
-    public TrieAutocompletado getTrieAutocompletado() {
-        return trieAutocompletado;
+    public List<Playlist> obtenerPlaylistsDeUsuario(Usuario usuario) {
+        if (usuario == null || usuario.getPlaylists() == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(usuario.getPlaylists());
+    }
+
+    public Playlist obtenerPlaylistPorNombre(Usuario usuario, String nombre) {
+        if (usuario == null || nombre == null || usuario.getPlaylists() == null) {
+            return null;
+        }
+
+        for (Playlist playlist : usuario.getPlaylists()) {
+            if (playlist.getNombre().equals(nombre)) {
+                return playlist;
+            }
+        }
+
+        return null;
+    }
+
+    public void eliminarPlaylist(Usuario usuario, String nombrePlaylist) {
+        if (usuario == null || nombrePlaylist == null || usuario.getPlaylists() == null) {
+            return;
+        }
+
+        Playlist playlistAEliminar = null;
+        for (Playlist playlist : usuario.getPlaylists()) {
+            if (playlist.getNombre().equals(nombrePlaylist)) {
+                playlistAEliminar = playlist;
+                break;
+            }
+        }
+
+        if (playlistAEliminar != null) {
+            usuario.getPlaylists().remove(playlistAEliminar);
+            System.out.println("✓ Playlist '" + nombrePlaylist + "' eliminada correctamente");
+        }
+    }
+
+    public void quitarCancionDePlaylist(Playlist playlist, Cancion cancion) {
+        if (playlist == null || cancion == null) {
+            return;
+        }
+
+        playlist.getCanciones().remove(cancion);
+        System.out.println("✓ Canción '" + cancion.getTitulo() + "' eliminada de la playlist '" + playlist.getNombre() + "'");
+    }
+
+    // ==================== MÉTODOS DE FAVORITOS ====================
+
+    public void agregarFavorito(Usuario usuario, Cancion cancion) {
+        usuario.agregarFavorito(cancion);
+        System.out.println("✓ Canción agregada a favoritos: " + cancion.getTitulo());
+    }
+
+    public void removerFavorito(Usuario usuario, Cancion cancion) {
+        usuario.removerFavorito(cancion);
+        System.out.println("✓ Canción eliminada de favoritos: " + cancion.getTitulo());
+    }
+
+    public List<Cancion> obtenerFavoritos(Usuario usuario) {
+        return usuario.getListaFavoritos();
+    }
+
+    public Playlist obtenerListaFavoritos(Usuario usuario) {
+        if (usuario.getListaFavoritosPlaylist() == null) {
+            Playlist favoritos = new Playlist("Favoritos", usuario);
+            usuario.setListaFavoritosPlaylist(favoritos);
+        }
+        return usuario.getListaFavoritosPlaylist();
+    }
+
+    // ==================== MÉTODOS DE DESCUBRIMIENTO Y RADIO ====================
+
+    public Playlist generarDescubrimientoSemanal(Usuario usuario) {
+        Playlist descubrimiento = new Playlist("Descubrimiento Semanal", usuario);
+
+        List<Cancion> favoritos = usuario.getListaFavoritos();
+
+        if (favoritos.isEmpty()) {
+            List<Cancion> todasLasCanciones = catalogoCanciones.obtenerTodasLasCanciones();
+            Collections.shuffle(todasLasCanciones);
+            for (int i = 0; i < Math.min(10, todasLasCanciones.size()); i++) {
+                descubrimiento.agregarCancion(todasLasCanciones.get(i));
+            }
+            return descubrimiento;
+        }
+
+        Set<Cancion> cancionesRecomendadas = new HashSet<>();
+
+        for (Cancion favorita : favoritos) {
+            List<Cancion> similares = grafoDeSimilitud.obtenerCancionesSimilares(favorita, 5);
+            cancionesRecomendadas.addAll(similares);
+        }
+
+        cancionesRecomendadas.removeAll(favoritos);
+
+        List<Cancion> listaRecomendadas = new ArrayList<>(cancionesRecomendadas);
+        Collections.shuffle(listaRecomendadas);
+
+        for (int i = 0; i < Math.min(15, listaRecomendadas.size()); i++) {
+            descubrimiento.agregarCancion(listaRecomendadas.get(i));
+        }
+
+        System.out.println("✓ Descubrimiento semanal generado con " + descubrimiento.getCanciones().size() + " canciones");
+        return descubrimiento;
+    }
+
+    public Radio iniciarRadio(Usuario usuario, Cancion cancionSemilla) {
+        Radio radio = new Radio("Radio de " + cancionSemilla.getTitulo(), cancionSemilla);
+
+        List<Cancion> similares = grafoDeSimilitud.obtenerCancionesSimilares(cancionSemilla, 20);
+
+        for (Cancion cancion : similares) {
+            radio.agregarALaCola(cancion);
+        }
+
+        usuario.setRadioActual(radio);
+
+        System.out.println("✓ Radio iniciada con " + radio.getColaReproduccion().size() + " canciones");
+        return radio;
+    }
+
+    public Radio obtenerRadio(Usuario usuario) {
+        return usuario.getRadioActual();
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    public void guardarUsuarios() {
+        System.out.println("✓ Datos guardados (en memoria)");
+    }
+
+    public void exportarPlaylist(Playlist playlist, String formato) {
+        System.out.println("✓ Playlist '" + playlist.getNombre() + "' exportada en formato: " + formato);
     }
 }

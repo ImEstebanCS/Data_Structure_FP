@@ -7,10 +7,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * NavigationManager
- * Gestiona la navegación entre vistas
- */
 public class NavigationManager {
     private static NavigationManager instance;
     private Stage primaryStage;
@@ -34,11 +30,17 @@ public class NavigationManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, width, height);
+            int finalWidth = width > 0 ? width : 1366;
+            int finalHeight = height > 0 ? height : 768;
+
+            Scene scene = new Scene(root, finalWidth, finalHeight);
 
             if (primaryStage != null) {
                 primaryStage.setTitle(title);
                 primaryStage.setScene(scene);
+                primaryStage.setMinWidth(1280);
+                primaryStage.setMinHeight(720);
+                primaryStage.setResizable(true);
                 primaryStage.show();
             }
         } catch (IOException e) {

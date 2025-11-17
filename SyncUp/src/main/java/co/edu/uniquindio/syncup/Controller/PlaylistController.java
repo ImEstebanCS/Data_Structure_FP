@@ -4,7 +4,7 @@ import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Playlist;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import co.edu.uniquindio.syncup.Service.SyncUpService;
-import java.util.List;
+import co.edu.uniquindio.syncup.utils.UIComponents;
 
 public class PlaylistController {
     private final SyncUpService service;
@@ -13,31 +13,55 @@ public class PlaylistController {
         this.service = service;
     }
 
-    public Playlist crearPlaylist(Usuario usuario, String nombre) {
-        return service.crearPlaylist(usuario, nombre);
+    public void crearPlaylist(Usuario usuario, String nombre) {
+        service.crearPlaylist(usuario, nombre);
     }
 
-    public void agregarCancion(Usuario usuario, Cancion cancion) {
-        service.agregarCancionAPlaylist(usuario, cancion);
+    public void agregarCancionAPlaylist(Usuario usuario, String nombrePlaylist, Cancion cancion) {
+        service.agregarCancionAPlaylist(usuario, nombrePlaylist, cancion);
     }
 
-    public Playlist obtenerPlaylist(Usuario usuario) {
-        return service.obtenerPlaylist(usuario);
+    public void eliminarCancionDePlaylist(Usuario usuario, String nombrePlaylist, Cancion cancion) {
+        service.eliminarCancionDePlaylist(usuario, nombrePlaylist, cancion);
     }
 
     public void agregarFavorito(Usuario usuario, Cancion cancion) {
-        service.agregarFavorito(usuario, cancion);
+        Playlist favoritos = service.obtenerListaFavoritos(usuario);
+        if (!favoritos.getCanciones().contains(cancion)) {
+            favoritos.getCanciones().add(cancion);
+            service.guardarUsuarios();
+        }
     }
 
-    public void removerFavorito(Usuario usuario, Cancion cancion) {
-        service.removerFavorito(usuario, cancion);
+    public void eliminarDeFavoritos(Usuario usuario, Cancion cancion) {
+        Playlist favoritos = service.obtenerListaFavoritos(usuario);
+        favoritos.getCanciones().remove(cancion);
+        service.guardarUsuarios();
     }
 
-    public List<Cancion> obtenerFavoritos(Usuario usuario) {
-        return service.obtenerFavoritos(usuario);
+    public void quitarFavorito(Usuario usuario, Cancion cancion) {
+        eliminarDeFavoritos(usuario, cancion);
+    }
+
+    public Playlist obtenerFavoritos(Usuario usuario) {
+        return service.obtenerListaFavoritos(usuario);
     }
 
     public Playlist generarDescubrimientoSemanal(Usuario usuario) {
         return service.generarDescubrimientoSemanal(usuario);
+    }
+
+    public void exportarJSON(Playlist playlist) {
+        service.exportarPlaylist(playlist, "json");
+        UIComponents.mostrarAlertaPersonalizada("Exportado", "Playlist exportada a JSON", "📥");
+    }
+
+    public void exportarTXT(Playlist playlist) {
+        service.exportarPlaylist(playlist, "txt");
+        UIComponents.mostrarAlertaPersonalizada("Exportado", "Playlist exportada a TXT", "📄");
+    }
+
+    public void guardarDatos() {
+        service.guardarUsuarios();
     }
 }

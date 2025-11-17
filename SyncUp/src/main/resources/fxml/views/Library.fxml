@@ -1,26 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="co.edu.uniquindio.syncup.view.controllers.LibraryViewController"
-      spacing="20.0" style="-fx-background-color: #121212;">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-    
-    <Label text="Tu Biblioteca" style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold;">
-        <font><Font size="32.0"/></font>
-    </Label>
-    
-    <Label fx:id="totalLabel" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
-    
-    <TableView fx:id="cancionesTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="tituloColumn" text="Título" prefWidth="250"/>
-            <TableColumn fx:id="artistaColumn" text="Artista" prefWidth="200"/>
-            <TableColumn fx:id="generoColumn" text="Género" prefWidth="150"/>
-            <TableColumn fx:id="añoColumn" text="Año" prefWidth="100"/>
-        </columns>
-    </TableView>
-</VBox>
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="co.edu.uniquindio.syncup.view.controllers.LibraryViewController">
+
+    <ScrollPane fitToWidth="true" style="-fx-background: transparent;">
+        <VBox spacing="25" style="-fx-padding: 30;">
+
+            <Label text="Tu Biblioteca"
+                   style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+
+            <!-- Crear Playlist -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <TextField fx:id="nombrePlaylistField" promptText="Nombre de nueva playlist"
+                           prefHeight="45" prefWidth="300"
+                           style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 20; -fx-border-color: #1DB954; -fx-border-radius: 20;"/>
+                <Button text="➕ Crear Playlist" onAction="#crearPlaylist" prefHeight="45" prefWidth="180"
+                        style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;"/>
+            </HBox>
+
+            <!-- Lista de Playlists -->
+            <HBox spacing="20" VBox.vgrow="ALWAYS">
+                <!-- Sidebar Playlists -->
+                <VBox spacing="10" prefWidth="250" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 20;">
+                    <Label text="Mis Playlists" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+                    <ListView fx:id="playlistsListView" prefHeight="500"
+                              style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+                </VBox>
+
+                <!-- Contenido Playlist -->
+                <VBox spacing="15" HBox.hgrow="ALWAYS">
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label fx:id="playlistTituloLabel" text="Selecciona una playlist"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="exportarJSONBtn" text="📥 JSON" onAction="#exportarJSON" prefHeight="40" prefWidth="100"
+                                style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 20; -fx-cursor: hand;" disable="true"/>
+                        <Button fx:id="exportarTXTBtn" text="📄 TXT" onAction="#exportarTXT" prefHeight="40" prefWidth="100"
+                                style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 20; -fx-cursor: hand;" disable="true"/>
+                        <Button text="🗑️ Eliminar" onAction="#eliminarPlaylist" prefHeight="40" prefWidth="120"
+                                style="-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 20; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <Label fx:id="totalCancionesLabel" text="" style="-fx-text-fill: #B3B3B3; -fx-font-size: 14px;"/>
+
+                    <ScrollPane fitToWidth="true" style="-fx-background: transparent;" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="cancionesContainer" spacing="10" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 15;"/>
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+</StackPane>

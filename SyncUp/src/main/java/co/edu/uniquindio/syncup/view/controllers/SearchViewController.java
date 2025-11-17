@@ -2,21 +2,20 @@ package co.edu.uniquindio.syncup.view.controllers;
 
 import co.edu.uniquindio.syncup.Controller.CancionController;
 import co.edu.uniquindio.syncup.Controller.PlaylistController;
+import co.edu.uniquindio.syncup.Controller.RadioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
+import co.edu.uniquindio.syncup.Service.MusicPlayer;
+import co.edu.uniquindio.syncup.SyncUpApp;
 import co.edu.uniquindio.syncup.utils.SessionManager;
+import co.edu.uniquindio.syncup.utils.UIComponents;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
 
-/**
- * SearchViewController
- * Vista de búsqueda con autocompletado en tiempo real usando Trie
- */
 public class SearchViewController {
 
     @FXML private TextField searchField;
@@ -24,13 +23,21 @@ public class SearchViewController {
     @FXML private Label resultadosLabel;
     @FXML private ListView<String> sugerenciasListView;
 
+    @FXML private TextField artistaField;
+    @FXML private TextField generoField;
+    @FXML private TextField añoField;
+
     private CancionController cancionController;
     private PlaylistController playlistController;
+    private RadioController radioController;
+    private MusicPlayer musicPlayer;
     private Usuario usuarioActual;
 
     public void setControllers(CancionController cancionController, PlaylistController playlistController) {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
+        this.radioController = SyncUpApp.getRadioController();
+        this.musicPlayer = SyncUpApp.getMusicPlayer();
 
         inicializar();
     }
@@ -38,7 +45,6 @@ public class SearchViewController {
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
 
-        // Configurar autocompletado en tiempo real - RF-003
         searchField.textProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.length() >= 2) {
                 buscarConAutocompletado(newValue);
@@ -49,7 +55,6 @@ public class SearchViewController {
             }
         });
 
-        // Seleccionar sugerencia al hacer click
         sugerenciasListView.setOnMouseClicked(event -> {
             String seleccionada = sugerenciasListView.getSelectionModel().getSelectedItem();
             if (seleccionada != null) {
@@ -59,20 +64,14 @@ public class SearchViewController {
         });
     }
 
-    /**
-     * RF-003: Autocompletado usando Trie
-     */
     private void buscarConAutocompletado(String prefijo) {
-        // Buscar en Trie
         List<Cancion> sugerencias = cancionController.autocompletar(prefijo);
 
-        // Actualizar ListView de sugerencias
         sugerenciasListView.getItems().clear();
         sugerencias.stream()
                 .limit(5)
                 .forEach(c -> sugerenciasListView.getItems().add(c.getTitulo()));
 
-        // También mostrar resultados completos
         mostrarResultados(sugerencias);
     }
 
@@ -102,62 +101,84 @@ public class SearchViewController {
         resultadosLabel.setText(canciones.size() + " resultados encontrados");
 
         for (Cancion cancion : canciones) {
-            VBox card = crearCancionCard(cancion);
+            VBox card = UIComponents.crearCancionCard(
+                    cancion,
+                    () -> reproducirCancion(cancion),
+                    () -> agregarAFavoritos(cancion),
+                    () -> iniciarRadio(cancion)
+            );
             resultadosPane.getChildren().add(card);
         }
     }
 
-    private VBox crearCancionCard(Cancion cancion) {
-        VBox card = new VBox(8);
-        card.setPrefSize(150, 200);
-        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;");
-        card.setPadding(new Insets(10));
+    @FXML
+    private void buscarAvanzada() {
+        String artista = artistaField.getText().trim();
+        String genero = generoField.getText().trim();
+        String añoTexto = añoField.getText().trim();
+        int año = 0;
 
-        // Imagen placeholder
-        Label imagePlaceholder = new Label("🎵");
-        imagePlaceholder.setStyle("-fx-font-size: 50px; -fx-text-fill: #1DB954; -fx-alignment: center;");
-        imagePlaceholder.setMaxWidth(Double.MAX_VALUE);
+        if (!añoTexto.isEmpty()) {
+            try {
+                año = Integer.parseInt(añoTexto);
+            } catch (NumberFormatException e) {
+                UIComponents.mostrarAlertaPersonalizada("Error", "El año debe ser un número válido", "❌");
+                return;
+            }
+        }
 
-        // Título
-        Label titulo = new Label(cancion.getTitulo());
-        titulo.setStyle("-fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px;");
-        titulo.setWrapText(true);
-        titulo.setMaxWidth(130);
+        boolean tieneArtista = !artista.isEmpty();
+        boolean tieneGenero = !genero.isEmpty();
+        boolean tieneAño = año > 0;
 
-        // Artista
-        Label artista = new Label(cancion.getArtista());
-        artista.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 12px;");
-        artista.setWrapText(true);
-        artista.setMaxWidth(130);
+        int criteriosCount = (tieneArtista ? 1 : 0) + (tieneGenero ? 1 : 0) + (tieneAño ? 1 : 0);
+        boolean usarOR = criteriosCount <= 1;
 
-        // Duración
-        Label duracion = new Label(cancion.getDuracionFormateada());
-        duracion.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 11px;");
-
-        card.getChildren().addAll(imagePlaceholder, titulo, artista, duracion);
-
-        // Evento de click - Agregar a favoritos
-        card.setOnMouseClicked(e -> {
-            playlistController.agregarFavorito(usuarioActual, cancion);
-            mostrarAlerta("Agregado", cancion.getTitulo() + " agregada a favoritos");
-        });
-
-        // Hover effect
-        card.setOnMouseEntered(e ->
-                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8; -fx-cursor: hand;")
-        );
-        card.setOnMouseExited(e ->
-                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;")
+        List<Cancion> resultados = cancionController.buscarAvanzada(
+                artista.isEmpty() ? null : artista,
+                genero.isEmpty() ? null : genero,
+                año,
+                usarOR
         );
 
-        return card;
+        mostrarResultados(resultados);
+
+        String logicaTexto = usarOR ? "OR" : "AND";
+        resultadosLabel.setText(resultados.size() + " resultados encontrados (Lógica automática: " + logicaTexto + ")");
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    private void reproducirCancion(Cancion cancion) {
+        if (musicPlayer != null) {
+            musicPlayer.reproducir(cancion);
+            UIComponents.mostrarAlertaPersonalizada(
+                    "Reproduciendo en YouTube",
+                    "🎵 " + cancion.getTitulo() + "\n" +
+                            "🎤 " + cancion.getArtista() + "\n" +
+                            "🎸 " + cancion.getGenero() + "\n\n" +
+                            "Se abrirá YouTube en tu navegador",
+                    "▶️"
+            );
+        } else {
+            UIComponents.mostrarAlertaPersonalizada("Error", "El reproductor no está disponible", "❌");
+        }
+    }
+
+    private void agregarAFavoritos(Cancion cancion) {
+        playlistController.agregarFavorito(usuarioActual, cancion);
+        UIComponents.mostrarAlertaPersonalizada(
+                "Favorito",
+                "Agregado a favoritos:\n" + cancion.getTitulo(),
+                "❤️"
+        );
+    }
+
+    private void iniciarRadio(Cancion cancion) {
+        radioController.iniciarRadio(usuarioActual, cancion);
+        UIComponents.mostrarAlertaPersonalizada(
+                "Radio Iniciada",
+                "Radio iniciada desde:\n" + cancion.getTitulo() + "\n\n" +
+                        "Se generó una cola de reproducción con canciones similares",
+                "📻"
+        );
     }
 }

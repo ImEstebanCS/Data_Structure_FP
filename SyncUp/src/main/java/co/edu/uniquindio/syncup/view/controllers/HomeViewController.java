@@ -2,26 +2,20 @@ package co.edu.uniquindio.syncup.view.controllers;
 
 import co.edu.uniquindio.syncup.Controller.*;
 import co.edu.uniquindio.syncup.Model.Entidades.Cancion;
-import co.edu.uniquindio.syncup.Model.Entidades.Playlist;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
+import co.edu.uniquindio.syncup.Service.MusicPlayer;
+import co.edu.uniquindio.syncup.SyncUpApp;
 import co.edu.uniquindio.syncup.utils.SessionManager;
+import co.edu.uniquindio.syncup.utils.UIComponents;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
+import java.util.*;
 
-/**
- * HomeViewController
- * Vista de inicio con recomendaciones y contenido personalizado
- */
 public class HomeViewController {
 
-    @FXML private ScrollPane scrollPane;
-    @FXML private VBox mainContent;
     @FXML private Label welcomeLabel;
     @FXML private FlowPane recentSongsPane;
     @FXML private FlowPane recommendationsPane;
@@ -31,6 +25,8 @@ public class HomeViewController {
     private PlaylistController playlistController;
     private RadioController radioController;
     private Usuario usuarioActual;
+    private MusicPlayer musicPlayer;
+    private static List<Cancion> historialReproduccion = new ArrayList<>();
 
     public void setControllers(UsuarioController usuarioController, CancionController cancionController,
                                PlaylistController playlistController, RadioController radioController) {
@@ -38,13 +34,16 @@ public class HomeViewController {
         this.cancionController = cancionController;
         this.playlistController = playlistController;
         this.radioController = radioController;
+<<<<<<< Updated upstream
 
+=======
+        this.musicPlayer = SyncUpApp.getMusicPlayer();
+>>>>>>> Stashed changes
         inicializar();
     }
 
     private void inicializar() {
         usuarioActual = SessionManager.getInstance().getUsuarioActual();
-
         if (usuarioActual != null) {
             welcomeLabel.setText("Bienvenido, " + usuarioActual.getNombre());
             cargarContenido();
@@ -52,82 +51,110 @@ public class HomeViewController {
     }
 
     private void cargarContenido() {
-        // Cargar canciones recientes (últimas 10)
         cargarCancionesRecientes();
-
-        // Cargar recomendaciones
         cargarRecomendaciones();
     }
 
     private void cargarCancionesRecientes() {
+        if (recentSongsPane == null) return;
         recentSongsPane.getChildren().clear();
 
-        List<Cancion> canciones = cancionController.obtenerTodas();
-        int limite = Math.min(10, canciones.size());
+        List<Cancion> recientes;
 
-        for (int i = 0; i < limite; i++) {
-            Cancion cancion = canciones.get(i);
-            VBox cancionCard = crearCancionCard(cancion);
-            recentSongsPane.getChildren().add(cancionCard);
+        if (historialReproduccion.isEmpty()) {
+            // Si no hay historial, mostrar canciones aleatorias
+            List<Cancion> todas = cancionController.obtenerTodas();
+            recientes = todas.subList(0, Math.min(10, todas.size()));
+        } else {
+            // Mostrar últimas 10 del historial
+            int inicio = Math.max(0, historialReproduccion.size() - 10);
+            recientes = new ArrayList<>(historialReproduccion.subList(inicio, historialReproduccion.size()));
+            Collections.reverse(recientes);
+        }
+
+        for (Cancion cancion : recientes) {
+            VBox card = UIComponents.crearCancionCard(
+                    cancion,
+                    () -> reproducirCancion(cancion),
+                    () -> agregarAFavoritos(cancion),
+                    () -> iniciarRadio(cancion)
+            );
+            recentSongsPane.getChildren().add(card);
         }
     }
 
     private void cargarRecomendaciones() {
+        if (recommendationsPane == null) return;
         recommendationsPane.getChildren().clear();
 
-        // Generar descubrimiento semanal
-        Playlist descubrimiento = playlistController.generarDescubrimientoSemanal(usuarioActual);
+        // Obtener recomendaciones basadas en favoritos
+        List<Cancion> favoritos = usuarioActual.getListaFavoritos();
+        List<Cancion> todasLasCanciones = cancionController.obtenerTodas();
+        List<Cancion> recomendaciones = new ArrayList<>();
 
-        List<Cancion> recomendadas = descubrimiento.getCanciones();
-        int limite = Math.min(8, recomendadas.size());
+        if (favoritos.isEmpty()) {
+            // Si no hay favoritos, mostrar canciones aleatorias
+            Collections.shuffle(todasLasCanciones);
+            recomendaciones = todasLasCanciones.subList(0, Math.min(10, todasLasCanciones.size()));
+        } else {
+            // Recomendar canciones del mismo género que los favoritos
+            Set<String> generosFavoritos = new HashSet<>();
+            for (Cancion fav : favoritos) {
+                generosFavoritos.add(fav.getGenero());
+            }
 
-        for (int i = 0; i < limite; i++) {
-            Cancion cancion = recomendadas.get(i);
-            VBox cancionCard = crearCancionCard(cancion);
-            recommendationsPane.getChildren().add(cancionCard);
+            for (Cancion cancion : todasLasCanciones) {
+                if (generosFavoritos.contains(cancion.getGenero()) && !favoritos.contains(cancion)) {
+                    recomendaciones.add(cancion);
+                    if (recomendaciones.size() >= 10) break;
+                }
+            }
+
+            // Si no hay suficientes, completar con canciones aleatorias
+            if (recomendaciones.size() < 10) {
+                for (Cancion cancion : todasLasCanciones) {
+                    if (!recomendaciones.contains(cancion) && !favoritos.contains(cancion)) {
+                        recomendaciones.add(cancion);
+                        if (recomendaciones.size() >= 10) break;
+                    }
+                }
+            }
+        }
+
+        for (Cancion cancion : recomendaciones) {
+            VBox card = UIComponents.crearCancionCard(
+                    cancion,
+                    () -> reproducirCancion(cancion),
+                    () -> agregarAFavoritos(cancion),
+                    () -> iniciarRadio(cancion)
+            );
+            recommendationsPane.getChildren().add(card);
         }
     }
 
-    private VBox crearCancionCard(Cancion cancion) {
-        VBox card = new VBox(8);
-        card.setPrefSize(150, 180);
-        card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;");
-        card.setPadding(new Insets(10));
+    private void reproducirCancion(Cancion cancion) {
+        if (musicPlayer != null) {
+            musicPlayer.reproducir(cancion);
+            agregarAlHistorial(cancion);
+            UIComponents.mostrarAlertaPersonalizada(
+                    "Reproduciendo en YouTube",
+                    "🎵 " + cancion.getTitulo() + "\n🎤 " + cancion.getArtista(),
+                    "▶️"
+            );
+        }
+    }
 
-        // Imagen placeholder
-        Label imagePlaceholder = new Label("🎵");
-        imagePlaceholder.setStyle("-fx-font-size: 50px; -fx-text-fill: #1DB954;");
-        imagePlaceholder.setMaxWidth(Double.MAX_VALUE);
-        imagePlaceholder.setStyle(imagePlaceholder.getStyle() + "-fx-alignment: center;");
+    private void agregarAFavoritos(Cancion cancion) {
+        playlistController.agregarFavorito(usuarioActual, cancion);
+        UIComponents.mostrarAlertaPersonalizada("Favorito", "Agregado: " + cancion.getTitulo(), "❤️");
+    }
 
-        // Título
-        Label titulo = new Label(cancion.getTitulo());
-        titulo.setStyle("-fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px;");
-        titulo.setWrapText(true);
-        titulo.setMaxWidth(130);
+    private void iniciarRadio(Cancion cancion) {
+        radioController.iniciarRadio(usuarioActual, cancion);
+        UIComponents.mostrarAlertaPersonalizada("Radio Iniciada", "Desde: " + cancion.getTitulo(), "📻");
+    }
 
-        // Artista
-        Label artista = new Label(cancion.getArtista());
-        artista.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 12px;");
-        artista.setWrapText(true);
-        artista.setMaxWidth(130);
-
-        card.getChildren().addAll(imagePlaceholder, titulo, artista);
-
-        // Evento de click
-        card.setOnMouseClicked(e -> {
-            System.out.println("Reproduciendo: " + cancion.getTitulo());
-            playlistController.agregarFavorito(usuarioActual, cancion);
-        });
-
-        // Hover effect
-        card.setOnMouseEntered(e ->
-                card.setStyle("-fx-background-color: #282828; -fx-background-radius: 8; -fx-cursor: hand;")
-        );
-        card.setOnMouseExited(e ->
-                card.setStyle("-fx-background-color: #181818; -fx-background-radius: 8; -fx-cursor: hand;")
-        );
-
-        return card;
+    public static void agregarAlHistorial(Cancion cancion) {
+        historialReproduccion.add(cancion);
     }
 }

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
+<<<<<<< Updated upstream
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
            fx:controller="co.edu.uniquindio.syncup.view.controllers.AdminPanelViewController"
            style="-fx-background-color: #121212;">
@@ -64,3 +67,268 @@
     </center>
     
 </BorderPane>
+=======
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.syncup.view.controllers.AdminPanelViewController"
+            prefHeight="768.0" prefWidth="1366.0">
+
+    <center>
+        <StackPane>
+            <!-- Imagen de fondo -->
+            <ImageView fitHeight="768.0" fitWidth="1366.0" preserveRatio="false">
+                <image>
+                    <Image url="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1920&amp;h=1080&amp;fit=crop&amp;q=80"
+                           backgroundLoading="true" smooth="true"/>
+                </image>
+            </ImageView>
+
+            <!-- Overlay oscuro -->
+            <Pane style="-fx-background-color: rgba(0, 0, 0, 0.85);" />
+
+            <!-- Contenedor principal -->
+            <HBox spacing="0">
+                <!-- SIDEBAR -->
+                <VBox prefWidth="280" spacing="0"
+                      style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-border-color: #1DB954; -fx-border-width: 0 2 0 0;">
+
+                    <!-- Logo -->
+                    <VBox alignment="CENTER" spacing="10"
+                          style="-fx-padding: 30 20 30 20; -fx-border-color: #282828; -fx-border-width: 0 0 1 0;">
+                        <Label text="🎵" style="-fx-font-size: 50px;"/>
+                        <Label text="SyncUp"
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+                        <Label text="Panel de Administrador"
+                               style="-fx-font-size: 12px; -fx-text-fill: #B3B3B3;"/>
+                    </VBox>
+
+                    <!-- Menú -->
+                    <VBox spacing="5" style="-fx-padding: 20 15 20 15;" VBox.vgrow="ALWAYS">
+                        <Button fx:id="dashboardBtn" text="📊 Dashboard" onAction="#mostrarDashboard"
+                                prefHeight="50" maxWidth="Infinity"
+                                style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-font-weight: bold; -fx-alignment: center-left; -fx-padding: 15 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+                        <Button fx:id="cancionesBtn" text="🎵 Gestión de Canciones" onAction="#mostrarCanciones"
+                                prefHeight="50" maxWidth="Infinity"
+                                style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-font-weight: bold; -fx-alignment: center-left; -fx-padding: 15 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+                        <Button fx:id="usuariosBtn" text="👥 Gestión de Usuarios" onAction="#mostrarUsuarios"
+                                prefHeight="50" maxWidth="Infinity"
+                                style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-font-weight: bold; -fx-alignment: center-left; -fx-padding: 15 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+                        <Button fx:id="estadisticasBtn" text="📈 Estadísticas" onAction="#mostrarEstadisticas"
+                                prefHeight="50" maxWidth="Infinity"
+                                style="-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-font-weight: bold; -fx-alignment: center-left; -fx-padding: 15 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+                    </VBox>
+
+                    <!-- Cerrar sesión -->
+                    <VBox style="-fx-padding: 15; -fx-border-color: #282828; -fx-border-width: 1 0 0 0;">
+                        <Button text="🚪 Cerrar Sesión" onAction="#cerrarSesion" prefHeight="50" maxWidth="Infinity"
+                                style="-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                onMouseEntered="#logoutHoverEnter" onMouseExited="#logoutHoverExit"/>
+                    </VBox>
+                </VBox>
+
+                <!-- CONTENIDO -->
+                <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS">
+
+                    <!-- DASHBOARD -->
+                    <VBox fx:id="dashboardView" spacing="30" style="-fx-padding: 40;" alignment="TOP_CENTER">
+                        <Label text="Dashboard" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+
+                        <HBox spacing="30" alignment="CENTER">
+                            <VBox alignment="CENTER" spacing="15"
+                                  style="-fx-background-color: rgba(40, 40, 40, 0.95); -fx-padding: 30; -fx-background-radius: 15; -fx-min-width: 220;">
+                                <Label text="🎵" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="totalCancionesLabel" text="0"
+                                       style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+                                <Label text="Total Canciones" style="-fx-font-size: 16px; -fx-text-fill: #B3B3B3;"/>
+                            </VBox>
+
+                            <VBox alignment="CENTER" spacing="15"
+                                  style="-fx-background-color: rgba(40, 40, 40, 0.95); -fx-padding: 30; -fx-background-radius: 15; -fx-min-width: 220;">
+                                <Label text="👥" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="totalUsuariosLabel" text="0"
+                                       style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+                                <Label text="Total Usuarios" style="-fx-font-size: 16px; -fx-text-fill: #B3B3B3;"/>
+                            </VBox>
+
+                            <VBox alignment="CENTER" spacing="15"
+                                  style="-fx-background-color: rgba(40, 40, 40, 0.95); -fx-padding: 30; -fx-background-radius: 15; -fx-min-width: 220;">
+                                <Label text="🎸" style="-fx-font-size: 40px;"/>
+                                <Label fx:id="generosLabel" text="0"
+                                       style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+                                <Label text="Géneros" style="-fx-font-size: 16px; -fx-text-fill: #B3B3B3;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- CANCIONES -->
+                    <VBox fx:id="cancionesView" spacing="25" style="-fx-padding: 40;" visible="false" managed="false">
+
+                        <HBox alignment="CENTER_LEFT" spacing="20">
+                            <Label text="Gestión de Canciones"
+                                   style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📥 Carga Masiva" onAction="#cargaMasiva" prefHeight="45" prefWidth="180"
+                                    style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                    onMouseEntered="#cargaHoverEnter" onMouseExited="#cargaHoverExit"/>
+                        </HBox>
+
+                        <!-- Formulario -->
+                        <VBox spacing="20" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 30;">
+
+                            <Label text="Datos de la Canción"
+                                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+
+                            <HBox spacing="15">
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="ID" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="idField" promptText="ID" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Título" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="tituloField" promptText="Título" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="15">
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Artista" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="artistaField" promptText="Artista" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Género" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="generoField" promptText="Género" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="15">
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Año" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="añoField" promptText="Año" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Duración (seg)" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="duracionField" promptText="Duración" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Botones -->
+                            <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                                <Button text="➕ Agregar" onAction="#agregarCancion" prefHeight="50" prefWidth="200"
+                                        style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#agregarHoverEnter" onMouseExited="#agregarHoverExit"/>
+
+                                <Button text="🔄 Actualizar" onAction="#actualizarCancion" prefHeight="50" prefWidth="200"
+                                        style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#actualizarHoverEnter" onMouseExited="#actualizarHoverExit"/>
+
+                                <Button text="🗑️ Eliminar" onAction="#eliminarCancion" prefHeight="50" prefWidth="200"
+                                        style="-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#eliminarHoverEnter" onMouseExited="#eliminarHoverExit"/>
+
+                                <Button text="🧹 Limpiar" onAction="#limpiarCamposCanciones" prefHeight="50" prefWidth="200"
+                                        style="-fx-background-color: #404040; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#limpiarHoverEnter" onMouseExited="#limpiarHoverExit"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Tabla -->
+                        <VBox spacing="10">
+                            <Label text="Catálogo de Canciones"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+                            <TableView fx:id="cancionesTable" prefHeight="300"
+                                       style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15;">
+                                <columns>
+                                    <TableColumn fx:id="idColumn" text="ID" prefWidth="80"/>
+                                    <TableColumn fx:id="tituloColumn" text="Título" prefWidth="300"/>
+                                    <TableColumn fx:id="artistaColumn" text="Artista" prefWidth="250"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+
+                    <!-- USUARIOS -->
+                    <VBox fx:id="usuariosView" spacing="25" style="-fx-padding: 40;" visible="false" managed="false">
+
+                        <Label text="Gestión de Usuarios"
+                               style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+
+                        <!-- Formulario -->
+                        <VBox spacing="20" style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15; -fx-padding: 30;">
+
+                            <Label text="Datos del Usuario"
+                                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1DB954;"/>
+
+                            <HBox spacing="15">
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Username" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="usernameField" promptText="Username" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Contraseña" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <PasswordField fx:id="passwordField" promptText="Contraseña" prefHeight="45"
+                                                   style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Nombre" style="-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                    <TextField fx:id="nombreUsuarioField" promptText="Nombre" prefHeight="45"
+                                               style="-fx-background-color: #181818; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #B3B3B3; -fx-font-size: 14px; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Botones -->
+                            <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                                <Button text="➕ Agregar Usuario" onAction="#agregarUsuario" prefHeight="50" prefWidth="220"
+                                        style="-fx-background-color: #1DB954; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#agregarUsuarioHoverEnter" onMouseExited="#agregarUsuarioHoverExit"/>
+
+                                <Button text="🔄 Actualizar Usuario" onAction="#actualizarUsuario" prefHeight="50" prefWidth="220"
+                                        style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#actualizarUsuarioHoverEnter" onMouseExited="#actualizarUsuarioHoverExit"/>
+
+                                <Button text="🗑️ Eliminar Usuario" onAction="#eliminarUsuario" prefHeight="50" prefWidth="220"
+                                        style="-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#eliminarUsuarioHoverEnter" onMouseExited="#eliminarUsuarioHoverExit"/>
+
+                                <Button text="🧹 Limpiar" onAction="#limpiarCamposUsuarios" prefHeight="50" prefWidth="220"
+                                        style="-fx-background-color: #404040; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                                        onMouseEntered="#limpiarUsuarioHoverEnter" onMouseExited="#limpiarUsuarioHoverExit"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Tabla -->
+                        <VBox spacing="10">
+                            <Label text="Usuarios Registrados"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+                            <TableView fx:id="usuariosTable" prefHeight="300"
+                                       style="-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 15;">
+                                <columns>
+                                    <TableColumn fx:id="usernameColumn" text="Username" prefWidth="300"/>
+                                    <TableColumn fx:id="nombreColumn" text="Nombre" prefWidth="400"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+
+                    <!-- ESTADÍSTICAS -->
+                    <VBox fx:id="estadisticasView" spacing="30" style="-fx-padding: 40;" alignment="TOP_CENTER" visible="false" managed="false">
+                        <Label text="Estadísticas del Sistema"
+                               style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;"/>
+
+                        <VBox fx:id="estadisticasContainer" spacing="20"/>
+                    </VBox>
+                </StackPane>
+            </HBox>
+        </StackPane>
+    </center>
+</BorderPane>
+>>>>>>> Stashed changes

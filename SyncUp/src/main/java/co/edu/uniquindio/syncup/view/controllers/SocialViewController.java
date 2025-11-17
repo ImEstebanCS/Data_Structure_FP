@@ -3,48 +3,91 @@ package co.edu.uniquindio.syncup.view.controllers;
 import co.edu.uniquindio.syncup.Controller.UsuarioController;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import co.edu.uniquindio.syncup.utils.SessionManager;
+import co.edu.uniquindio.syncup.utils.UIComponents;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.util.List;
 
 public class SocialViewController {
 
-    @FXML private ListView<String> seguidoresListView;
-    @FXML private ListView<String> siguiendoListView;
-    @FXML private ListView<String> sugerenciasListView;
     @FXML private Label seguidoresLabel;
     @FXML private Label siguiendoLabel;
+    @FXML private VBox sugerenciasContainer;
+    @FXML private VBox siguiendoContainer;
 
     private UsuarioController usuarioController;
     private Usuario usuarioActual;
 
     public void setControllers(UsuarioController usuarioController) {
         this.usuarioController = usuarioController;
+        this.usuarioActual = SessionManager.getInstance().getUsuarioActual();
         inicializar();
     }
 
     private void inicializar() {
-        usuarioActual = SessionManager.getInstance().getUsuarioActual();
-        cargarDatos();
+        seguidoresLabel.setText(String.valueOf(usuarioController.obtenerSiguiendo(usuarioActual).size()));
+        siguiendoLabel.setText(String.valueOf(usuarioController.obtenerSiguiendo(usuarioActual).size()));
+
+        cargarSugerencias();
+        cargarSiguiendo();
     }
 
-    private void cargarDatos() {
-        // Seguidores
-        List<Usuario> seguidores = usuarioController.obtenerSeguidores(usuarioActual);
-        seguidoresListView.getItems().clear();
-        seguidores.forEach(u -> seguidoresListView.getItems().add(u.toString()));
-        seguidoresLabel.setText(seguidores.size() + " seguidores");
+    private void cargarSugerencias() {
+        sugerenciasContainer.getChildren().clear();
+        List<Usuario> sugerencias = usuarioController.obtenerSugerencias(usuarioActual, 10);
 
-        // Siguiendo
-        List<Usuario> siguiendo = usuarioController.obtenerSiguiendo(usuarioActual);
-        siguiendoListView.getItems().clear();
-        siguiendo.forEach(u -> siguiendoListView.getItems().add(u.toString()));
-        siguiendoLabel.setText(siguiendo.size() + " siguiendo");
+        for (Usuario u : sugerencias) {
+            sugerenciasContainer.getChildren().add(crearUserCard(u, true));
+        }
+    }
 
-        // RF-008: Sugerencias usando BFS
-        List<Usuario> sugerencias = usuarioController.obtenerSugerencias(usuarioActual, 5);
-        sugerenciasListView.getItems().clear();
-        sugerencias.forEach(u -> sugerenciasListView.getItems().add(u.toString() + " (amigo de amigo)"));
+    private void cargarSiguiendo() {
+        siguiendoContainer.getChildren().clear();
+        for (Usuario u : usuarioController.obtenerSiguiendo(usuarioActual)) {
+            siguiendoContainer.getChildren().add(crearUserCard(u, false));
+        }
+    }
+
+    private HBox crearUserCard(Usuario usuario, boolean esSugerencia) {
+        HBox card = new HBox(15);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setStyle("-fx-background-color: rgba(24, 24, 24, 0.95); -fx-background-radius: 10; -fx-padding: 15;");
+        card.setPrefHeight(80);
+
+        VBox circulo = new VBox();
+        circulo.setAlignment(Pos.CENTER);
+        circulo.setPrefSize(50, 50);
+        circulo.setStyle("-fx-background-color: #1DB954; -fx-background-radius: 25;");
+        Label icon = new Label("👤");
+        icon.setStyle("-fx-font-size: 26px;");
+        circulo.getChildren().add(icon);
+
+        VBox infoBox = new VBox(3);
+        Label nombre = new Label(usuario.getNombre());
+        nombre.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 15px; -fx-font-weight: bold;");
+        Label username = new Label("@" + usuario.getUsername());
+        username.setStyle("-fx-text-fill: #B3B3B3; -fx-font-size: 13px;");
+        infoBox.getChildren().addAll(nombre, username);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+
+        Button actionBtn = new Button(esSugerencia ? "Seguir" : "Dejar de seguir");
+        actionBtn.setStyle(esSugerencia
+                ? "-fx-background-color: #1DB954; -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand; -fx-pref-width: 120; -fx-pref-height: 35; -fx-font-size: 12px; -fx-font-weight: bold;"
+                : "-fx-background-color: transparent; -fx-text-fill: #B3B3B3; -fx-border-color: #B3B3B3; -fx-border-radius: 20; -fx-background-radius: 20; -fx-cursor: hand; -fx-pref-width: 120; -fx-pref-height: 35; -fx-font-size: 12px;");
+
+        actionBtn.setOnAction(e -> {
+            if (esSugerencia) {
+                usuarioController.seguir(usuarioActual, usuario);
+            } else {
+                usuarioController.dejarDeSeguir(usuarioActual, usuario);
+            }
+            inicializar();
+        });
+
+        card.getChildren().addAll(circulo, infoBox, actionBtn);
+        return card;
     }
 }

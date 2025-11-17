@@ -3,12 +3,9 @@ package co.edu.uniquindio.syncup.Controller;
 import co.edu.uniquindio.syncup.Model.Entidades.Usuario;
 import co.edu.uniquindio.syncup.Service.SyncUpService;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * UsuarioController
- * Controlador intermedio para operaciones de usuarios
- */
 public class UsuarioController {
     private final SyncUpService service;
 
@@ -36,27 +33,29 @@ public class UsuarioController {
     }
 
     public boolean eliminar(String username) {
-        return service.eliminarUsuario(username);
+        service.eliminarUsuario(username);
+        return true;
     }
 
-    public void seguir(Usuario usuario1, Usuario usuario2) {
-        service.seguir(usuario1, usuario2);
+    public void seguir(Usuario seguidor, Usuario seguido) {
+        service.seguir(seguidor, seguido);
     }
 
-    public void dejarDeSeguir(Usuario usuario1, Usuario usuario2) {
-        service.dejarDeSeguir(usuario1, usuario2);
-    }
-
-    public List<Usuario> obtenerSeguidores(Usuario usuario) {
-        return service.obtenerSeguidores(usuario);
+    public void dejarDeSeguir(Usuario seguidor, Usuario seguido) {
+        service.dejarDeSeguir(seguidor, seguido);
     }
 
     public List<Usuario> obtenerSiguiendo(Usuario usuario) {
         return service.obtenerSiguiendo(usuario);
     }
 
-    public List<Usuario> obtenerSugerencias(Usuario usuario, int cantidad) {
-        return service.obtenerSugerenciasDeUsuarios(usuario, cantidad);
+    // ✅ MÉTODO AGREGADO - Este era el método faltante
+    public List<Usuario> obtenerSeguidores(Usuario usuario) {
+        return service.obtenerSeguidores(usuario);
+    }
+
+    public List<Usuario> obtenerSugerencias(Usuario usuarioActual, int cantidad) {
+        return service.obtenerSugerenciasDeUsuarios(usuarioActual, cantidad);
     }
 
     public boolean sonistaConectados(Usuario usuario1, Usuario usuario2) {
@@ -69,5 +68,9 @@ public class UsuarioController {
 
     public int getCantidadUsuarios() {
         return service.getCantidadUsuarios();
+    }
+
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        return service.obtenerUsuarioPorUsername(username);
     }
 }
