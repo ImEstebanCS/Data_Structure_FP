@@ -2,10 +2,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
            fx:controller="co.edu.uniquindio.syncup.view.controllers.LibraryViewController">
 
     <ScrollPane fitToWidth="true" style="-fx-background: transparent;">
+        <ImageView fitHeight="880.0" fitWidth="1600.0" preserveRatio="false">
+            <image>
+                <Image url="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1920&amp;h=1080&amp;fit=crop&amp;q=80"
+                       backgroundLoading="true" smooth="true"/>
+            </image>
+        </ImageView>
         <VBox spacing="25" style="-fx-padding: 30;">
 
             <Label text="Tu Biblioteca"

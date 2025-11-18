@@ -102,7 +102,7 @@ public class UIComponents {
         ));
 
         // ✅ BOTÓN LIKE (Rojo) con efectos mejorados
-        Button likeBtn = new Button("\u2764");
+        Button likeBtn = new Button("♥");
         likeBtn.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-text-fill: #E91429; " +
@@ -149,7 +149,7 @@ public class UIComponents {
         ));
 
         // ✅ BOTÓN RADIO (Naranja) con efectos mejorados
-        Button radioBtn = new Button("\uD83D\uDCFB");
+        Button radioBtn = new Button("⊙");
         radioBtn.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-text-fill: #FFA500; " +
