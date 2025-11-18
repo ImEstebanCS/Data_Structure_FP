@@ -1,0 +1,330 @@
+@startuml SyncUp - Diagrama de Clases
+
+' ==================== CONFIGURACIÓN ====================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam class {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+    ArrowColor #1565C0
+    FontSize 11
+}
+skinparam package {
+    BackgroundColor #F5F5F5
+    BorderColor #424242
+    FontStyle bold
+}
+
+title SyncUp - Diagrama de Clases UML\nSistema de Streaming Musical
+
+' ==================== ENTIDADES ====================
+package "Model.Entidades" <<Rectangle>> {
+    class Usuario {
+        - username: String
+        - password: String
+        - nombre: String
+        - listaFavoritosPlaylist: Playlist
+        - playlists: List<Playlist>
+        - seguidos: List<Usuario>
+        - seguidores: List<Usuario>
+        - playlistActual: Playlist
+        - radioActual: Radio
+        __
+        + Usuario(username, password, nombre)
+        + getListaFavoritos(): List<Cancion>
+        + agregarFavorito(cancion: Cancion): void
+        + removerFavorito(cancion: Cancion): void
+        + agregarPlaylist(playlist: Playlist): void
+        + getSiguiendo(): List<Usuario>
+        + equals(o: Object): boolean
+        + hashCode(): int
+    }
+
+    class Administrador {
+        - username: String
+        - password: String
+        - nombre: String
+        __
+        + Administrador(username, password, nombre)
+        + getUsername(): String
+        + getPassword(): String
+        + getNombre(): String
+    }
+
+    class Cancion {
+        - id: int
+        - titulo: String
+        - artista: String
+        - genero: String
+        - año: int
+        - duracion: double
+        - portadaUrl: String
+        - youtubeUrl: String
+        __
+        + Cancion(id, titulo, artista, genero, año, duracion)
+        + Cancion(id, titulo, artista, genero, año, duracion, portadaUrl, youtubeUrl)
+        + getId(): int
+        + getTitulo(): String
+        + getArtista(): String
+        + equals(obj: Object): boolean
+        + hashCode(): int
+    }
+
+    class Playlist {
+        - nombre: String
+        - creador: Usuario
+        - canciones: LinkedList<Cancion>
+        __
+        + Playlist(nombre, creador)
+        + agregarCancion(cancion: Cancion): void
+        + eliminarCancion(cancion: Cancion): void
+        + getCanciones(): LinkedList<Cancion>
+        + getNombre(): String
+    }
+
+    class Radio {
+        - nombre: String
+        - cancionSemilla: Cancion
+        - colaReproduccion: Queue<Cancion>
+        __
+        + Radio(nombre, cancionSemilla)
+        + agregarALaCola(cancion: Cancion): void
+        + siguienteCancion(): Cancion
+        + getColaReproduccion(): Queue<Cancion>
+    }
+
+    class CatalogoCanciones {
+        - canciones: Map<Integer, Cancion>
+        __
+        + CatalogoCanciones()
+        + agregarCancion(cancion: Cancion): void
+        + buscarPorId(id: int): Cancion
+        + buscarPorTitulo(titulo: String): List<Cancion>
+        + buscarPorArtista(artista: String): List<Cancion>
+        + buscarPorGenero(genero: String): List<Cancion>
+        + busquedaAvanzada(artista, genero, año, usarOR): List<Cancion>
+        + obtenerTodasLasCanciones(): List<Cancion>
+        + eliminarCancion(id: int): boolean
+        + obtenerTotal(): int
+    }
+}
+
+' ==================== ESTRUCTURAS DE DATOS - GRAFOS ====================
+package "Model.Grafos" <<Rectangle>> {
+    class GrafoSocial {
+        - adyacencias: Map<Usuario, List<Usuario>>
+        __
+        + GrafoSocial()
+        + agregarUsuario(usuario: Usuario): void
+        + eliminarUsuario(usuario: Usuario): void
+        + seguir(seguidor: Usuario, seguido: Usuario): void
+        + dejarDeSeguir(seguidor: Usuario, seguido: Usuario): void
+        + obtenerSugerenciasDeAmigos(usuario: Usuario, limite: int): List<Usuario>
+        + estanConectados(usuario1: Usuario, usuario2: Usuario): boolean
+        + obtenerGradoSeparacion(usuario1: Usuario, usuario2: Usuario): int
+        __
+        <<RF-021: Grafo Social>>
+        <<RF-022: BFS>>
+    }
+
+    class GrafoDeSimilitud {
+        - grafo: Map<Cancion, Map<Cancion, Double>>
+        __
+        + GrafoDeSimilitud()
+        + agregarCancion(cancion: Cancion): void
+        + agregarArista(origen: Cancion, destino: Cancion, peso: double): void
+        + obtenerCancionesSimilares(cancion: Cancion, cantidad: int): List<Cancion>
+        - dijkstra(inicio: Cancion): Map<Cancion, Double>
+        + rutaMenorCosto(origen: Cancion, destino: Cancion): List<Cancion>
+        + getCantidadCanciones(): int
+        __
+        <<RF-020: Dijkstra>>
+    }
+}
+
+' ==================== ESTRUCTURAS DE DATOS - TRIE ====================
+package "Model.Trie" <<Rectangle>> {
+    class TrieAutocompletado {
+        - raiz: NodoTrie
+        __
+        + TrieAutocompletado()
+        + insertar(palabra: String, cancion: Cancion): void
+        + autocompletar(prefijo: String): List<Cancion>
+        - buscarTodasLasCanciones(nodo: NodoTrie, resultados: List<Cancion>): void
+        __
+        <<RF-024: Trie Autocompletado>>
+    }
+
+    class NodoTrie {
+        - hijos: Map<Character, NodoTrie>
+        - esFinDePalabra: boolean
+        - cancion: Cancion
+        __
+        + NodoTrie()
+        + getHijos(): Map<Character, NodoTrie>
+        + isEsFinDePalabra(): boolean
+        + getCancion(): Cancion
+        + setCancion(cancion: Cancion): void
+    }
+}
+
+' ==================== SERVICIOS ====================
+package "Service" <<Rectangle>> {
+    class SyncUpService {
+        - catalogoCanciones: CatalogoCanciones
+        - usuarios: Map<String, Usuario>
+        - administradores: Map<String, Administrador>
+        - grafoDeSimilitud: GrafoDeSimilitud
+        - grafoSocial: GrafoSocial
+        - trieAutocompletado: TrieAutocompletado
+        __
+        + SyncUpService()
+        ..Usuarios..
+        + registrarUsuario(username, password, nombre): boolean
+        + autenticarUsuario(username, password): Usuario
+        + obtenerUsuarioPorUsername(username): Usuario
+        + eliminarUsuario(username): boolean
+        ..Red Social..
+        + seguir(seguidor: Usuario, seguido: Usuario): void
+        + obtenerSugerenciasDeUsuarios(usuario: Usuario, cantidad: int): List<Usuario>
+        + estanConectados(usuario1: Usuario, usuario2: Usuario): boolean
+        + obtenerGradoSeparacion(usuario1: Usuario, usuario2: Usuario): int
+        ..Canciones..
+        + agregarCancion(...): void
+        + buscarCancionesPorTitulo(titulo: String): List<Cancion>
+        + autocompletarBusqueda(prefijo: String): List<Cancion>
+        ..Playlists..
+        + crearPlaylist(usuario: Usuario, nombre: String): Playlist
+        + generarDescubrimientoSemanal(usuario: Usuario): Playlist
+        ..Radio..
+        + iniciarRadio(usuario: Usuario, cancionSemilla: Cancion): Radio
+        ..Favoritos..
+        + agregarFavorito(usuario: Usuario, cancion: Cancion): void
+    }
+
+    class MusicDataService {
+        - gson: Gson
+        __
+        + MusicDataService()
+        + cargarCanciones(): List<Cancion>
+        - crearCancionesPorDefecto(): List<Cancion>
+        - crearCancion(...): Cancion
+    }
+
+    class MusicPlayer {
+        - cancionActual: Cancion
+        __
+        + MusicPlayer()
+        + reproducir(cancion: Cancion): void
+        + detener(): void
+        + pausar(): void
+    }
+}
+
+' ==================== UTILIDADES ====================
+package "utils" <<Rectangle>> {
+    class SessionManager <<Singleton>> {
+        - {static} instance: SessionManager
+        - usuarioActual: Usuario
+        - administradorActual: Administrador
+        __
+        + {static} getInstance(): SessionManager
+        + setUsuarioActual(usuario: Usuario): void
+        + getUsuarioActual(): Usuario
+        + setAdministradorActual(admin: Administrador): void
+        + cerrarSesion(): void
+        + hayUsuarioActivo(): boolean
+    }
+
+    class NavigationManager <<Singleton>> {
+        - {static} instance: NavigationManager
+        - primaryStage: Stage
+        __
+        + {static} getInstance(): NavigationManager
+        + setPrimaryStage(stage: Stage): void
+        + navigateTo(fxmlPath, title, width, height): void
+        + loadFXML(fxmlPath): FXMLLoader
+    }
+
+    class PlaylistExporter <<utility>> {
+        __
+        + {static} exportarPlaylistJSON(playlist: Playlist, window: Window): void
+        + {static} exportarPlaylistTXT(playlist: Playlist, window: Window): void
+        + {static} exportarCancionesCSV(canciones: List<Cancion>, nombreArchivo: String, window: Window): void
+    }
+
+    class UIComponents <<utility>> {
+        __
+        + {static} crearCancionCard(cancion: Cancion, ...): VBox
+        + {static} mostrarAlertaPersonalizada(titulo, mensaje, icono): void
+    }
+}
+
+' ==================== RELACIONES PRINCIPALES ====================
+
+' Usuario - Playlist
+Usuario "1" *-- "0..*" Playlist : tiene >
+Usuario "1" -- "1" Playlist : listaFavoritos >
+Usuario "1" -- "0..1" Radio : radioActual >
+Usuario "0..*" -- "0..*" Usuario : sigue/seguido por
+
+' Playlist - Cancion
+Playlist "0..*" o-- "0..*" Cancion : contiene >
+Radio "1" *-- "1" Cancion : cancionSemilla
+Radio "1" *-- "0..*" Cancion : colaReproduccion
+
+' CatalogoCanciones - Cancion
+CatalogoCanciones "1" o-- "0..*" Cancion : gestiona >
+
+' Grafos
+GrafoSocial "1" ..> "0..*" Usuario : gestiona
+GrafoDeSimilitud "1" ..> "0..*" Cancion : analiza similitud
+
+' Trie
+TrieAutocompletado "1" *-- "1" NodoTrie : raiz
+TrieAutocompletado "1" ..> "0..*" Cancion : indexa
+NodoTrie "1" *-- "0..*" NodoTrie : hijos
+
+' Service - Estructuras
+SyncUpService "1" *-- "1" CatalogoCanciones
+SyncUpService "1" *-- "1" GrafoSocial
+SyncUpService "1" *-- "1" GrafoDeSimilitud
+SyncUpService "1" *-- "1" TrieAutocompletado
+SyncUpService "1" o-- "0..*" Usuario : gestiona
+SyncUpService "1" o-- "0..*" Administrador : gestiona
+
+' MusicPlayer
+MusicPlayer "1" ..> "0..1" Cancion : reproduce
+
+' SessionManager
+SessionManager "1" ..> "0..1" Usuario : usuarioActual
+SessionManager "1" ..> "0..1" Administrador : administradorActual
+
+' ==================== NOTAS ====================
+note right of GrafoSocial
+  **RF-022: BFS**
+  - obtenerSugerenciasDeAmigos()
+  - estanConectados()
+  - obtenerGradoSeparacion()
+
+  Usa Queue<Usuario> para
+  recorrido por niveles
+end note
+
+note right of GrafoDeSimilitud
+  **RF-020: Dijkstra**
+  - obtenerCancionesSimilares()
+  - rutaMenorCosto()
+
+  Usa PriorityQueue para
+  encontrar rutas óptimas
+end note
+
+note bottom of TrieAutocompletado
+  **RF-024: Trie**
+  Autocompletado O(m)
+  donde m = longitud prefijo
+end note
+
+@enduml
