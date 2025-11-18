@@ -200,16 +200,45 @@ public class AdminPanelViewController {
             artistas.add(cancion.getArtista());
         }
 
-        HBox statsRow1 = new HBox(20);
+        HBox statsRow1 = new HBox(30);
         statsRow1.setPadding(new Insets(10));
+        statsRow1.setAlignment(javafx.geometry.Pos.CENTER);
+
         statsRow1.getChildren().addAll(
-                UIComponents.crearStatCard(String.valueOf(totalCanciones), "Total Canciones", "🎵"),
-                UIComponents.crearStatCard(String.valueOf(totalUsuarios), "Total Usuarios", "👥"),
-                UIComponents.crearStatCard(String.valueOf(generos.size()), "Géneros Musicales", "🎸"),
-                UIComponents.crearStatCard(String.valueOf(artistas.size()), "Artistas Únicos", "🎤")
+                crearStatCardMejorado(String.valueOf(totalCanciones), "Total Canciones", "🎵"),
+                crearStatCardMejorado(String.valueOf(totalUsuarios), "Total Usuarios", "👥"),
+                crearStatCardMejorado(String.valueOf(generos.size()), "Géneros Musicales", "🎸"),
+                crearStatCardMejorado(String.valueOf(artistas.size()), "Artistas Únicos", "🎤")
         );
 
         estadisticasContainer.getChildren().add(statsRow1);
+    }
+
+    private VBox crearStatCardMejorado(String valor, String titulo, String icono) {
+        VBox card = new VBox(15);
+        card.setAlignment(javafx.geometry.Pos.CENTER);
+        card.setPadding(new Insets(40));
+        card.setPrefSize(250, 220);
+        card.setStyle(
+                "-fx-background-color: linear-gradient(to bottom right, #282828, #181818); " +
+                        "-fx-background-radius: 20; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(29, 185, 84, 0.4), 15, 0, 0, 0);"
+        );
+
+        // Icono en verde
+        Label iconLabel = new Label(icono);
+        iconLabel.setStyle("-fx-font-size: 50px; -fx-text-fill: #1DB954;");
+
+        // Valor en verde y grande
+        Label valorLabel = new Label(valor);
+        valorLabel.setStyle("-fx-text-fill: #1DB954; -fx-font-size: 48px; -fx-font-weight: bold;");
+
+        // Título en blanco
+        Label tituloLabel = new Label(titulo);
+        tituloLabel.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+        card.getChildren().addAll(iconLabel, valorLabel, tituloLabel);
+        return card;
     }
 
     private void cargarCancionEnCampos(Cancion cancion) {
@@ -291,7 +320,29 @@ public class AdminPanelViewController {
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacion.setTitle("Confirmar eliminación");
             confirmacion.setHeaderText(null);
-            confirmacion.setContentText("¿Está seguro de eliminar la canción: " + seleccionada.getTitulo() + "?");
+            confirmacion.setContentText("🗑️ ¿Está seguro de eliminar la canción:\n" + seleccionada.getTitulo() + "?");
+
+            // ✅ ESTILIZAR EL DIÁLOGO DE CONFIRMACIÓN
+            DialogPane dialogPane = confirmacion.getDialogPane();
+            dialogPane.setStyle(
+                    "-fx-background-color: #181818; " +
+                            "-fx-border-color: #E91429; " +
+                            "-fx-border-width: 2; " +
+                            "-fx-border-radius: 10; " +
+                            "-fx-background-radius: 10; " +
+                            "-fx-effect: dropshadow(gaussian, #E91429, 15, 0.6, 0, 0);"
+            );
+            dialogPane.lookup(".content.label").setStyle(
+                    "-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;"
+            );
+            dialogPane.lookupButton(ButtonType.OK).setStyle(
+                    "-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 5; -fx-cursor: hand;"
+            );
+            dialogPane.lookupButton(ButtonType.CANCEL).setStyle(
+                    "-fx-background-color: #404040; -fx-text-fill: white; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 5; -fx-cursor: hand;"
+            );
 
             if (confirmacion.showAndWait().get() == ButtonType.OK) {
                 cancionController.eliminarCancion(seleccionada.getId());
@@ -337,13 +388,13 @@ public class AdminPanelViewController {
                     UIComponents.mostrarAlertaPersonalizada(
                             "Carga Masiva Exitosa",
                             cancionesImportadas + " canciones importadas correctamente desde:\n" + archivo.getName(),
-                            "EXITO"
+                            "✅"
                     );
                 } else {
                     UIComponents.mostrarAlertaPersonalizada(
                             "Advertencia",
                             "No se importaron canciones. Verifique el formato del archivo.",
-                            "ADVERTENCIA"
+                            "⚠️"
                     );
                 }
             } catch (Exception e) {
@@ -351,7 +402,7 @@ public class AdminPanelViewController {
                         "Error",
                         "Error al procesar el archivo: " + e.getMessage() +
                                 "\n\nFormato esperado por línea:\nid|titulo|artista|genero|año|duracion",
-                        "ERROR"
+                        "❌"
                 );
             }
         }
@@ -498,7 +549,29 @@ public class AdminPanelViewController {
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacion.setTitle("Confirmar eliminación");
             confirmacion.setHeaderText(null);
-            confirmacion.setContentText("¿Está seguro de eliminar el usuario: " + seleccionado.getUsername() + "?");
+            confirmacion.setContentText("🗑️ ¿Está seguro de eliminar el usuario:\n" + seleccionado.getUsername() + "?");
+
+            // ✅ ESTILIZAR EL DIÁLOGO DE CONFIRMACIÓN
+            DialogPane dialogPane = confirmacion.getDialogPane();
+            dialogPane.setStyle(
+                    "-fx-background-color: #181818; " +
+                            "-fx-border-color: #E91429; " +
+                            "-fx-border-width: 2; " +
+                            "-fx-border-radius: 10; " +
+                            "-fx-background-radius: 10; " +
+                            "-fx-effect: dropshadow(gaussian, #E91429, 15, 0.6, 0, 0);"
+            );
+            dialogPane.lookup(".content.label").setStyle(
+                    "-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;"
+            );
+            dialogPane.lookupButton(ButtonType.OK).setStyle(
+                    "-fx-background-color: #E91429; -fx-text-fill: white; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 5; -fx-cursor: hand;"
+            );
+            dialogPane.lookupButton(ButtonType.CANCEL).setStyle(
+                    "-fx-background-color: #404040; -fx-text-fill: white; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 5; -fx-cursor: hand;"
+            );
 
             if (confirmacion.showAndWait().get() == ButtonType.OK) {
                 usuarioController.eliminar(seleccionado.getUsername());

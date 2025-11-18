@@ -6,6 +6,7 @@ import co.edu.uniquindio.syncup.Service.SyncUpService;
 
 import java.util.List;
 
+
 public class UsuarioController {
     private final SyncUpService service;
 
@@ -37,8 +38,33 @@ public class UsuarioController {
         return service.getCantidadUsuarios();
     }
 
+    /**
+     * RF-022: Obtiene sugerencias de usuarios usando BFS (amigos de amigos).
+     * Delega al service que ejecuta el algoritmo BFS en el GrafoSocial.
+     */
     public List<Usuario> obtenerSugerenciasDeUsuarios(Usuario usuarioActual, int cantidad) {
         return service.obtenerSugerenciasDeUsuarios(usuarioActual, cantidad);
+    }
+
+    /**
+     * RF-022: Alias de obtenerSugerenciasDeUsuarios para compatibilidad.
+     */
+    public List<Usuario> obtenerSugerencias(Usuario usuarioActual, int cantidad) {
+        return service.obtenerSugerenciasDeUsuarios(usuarioActual, cantidad);
+    }
+
+    /**
+     * RF-022: Verifica si dos usuarios están conectados usando BFS.
+     */
+    public boolean estanConectados(Usuario usuario1, Usuario usuario2) {
+        return service.estanConectados(usuario1, usuario2);
+    }
+
+    /**
+     * RF-022: Calcula grados de separación entre usuarios usando BFS.
+     */
+    public int obtenerGradoSeparacion(Usuario usuario1, Usuario usuario2) {
+        return service.obtenerGradoSeparacion(usuario1, usuario2);
     }
 
     public void agregarFavorito(Usuario usuario, Cancion cancion) {
@@ -49,6 +75,10 @@ public class UsuarioController {
         service.seguir(seguidor, seguido);
     }
 
+    public void dejarDeSeguir(Usuario seguidor, Usuario seguido) {
+        service.dejarDeSeguir(seguidor, seguido);
+    }
+
     public List<Usuario> obtenerSeguidores(Usuario usuario) {
         return service.obtenerSeguidores(usuario);
     }
@@ -57,15 +87,10 @@ public class UsuarioController {
         return service.obtenerSiguiendo(usuario);
     }
 
-    public void dejarDeSeguir(Usuario usuarioActual, Usuario usuario) {
-        service.dejarDeSeguir(usuarioActual, usuario);
-    }
-
-    public List<Usuario> obtenerSugerencias(Usuario usuarioActual, int i) {
-        return List.of();
-    }
-
-    public Usuario obtenerUsuarioPorUsername(String usernameActual) {
-        return null;
+    /**
+     * RF-014: Obtiene un usuario por su username con acceso O(1).
+     */
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        return service.obtenerUsuarioPorUsername(username);
     }
 }

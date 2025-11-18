@@ -119,7 +119,7 @@ public class SyncUpService {
             }
         }
 
-        System.out.println("[OK] " + " Grafo de similitud construido");
+        System.out.println("[OK] Grafo de similitud construido");
     }
 
     private int calcularSimilitud(Cancion c1, Cancion c2) {
@@ -145,7 +145,7 @@ public class SyncUpService {
         for (Cancion cancion : catalogoCanciones.obtenerTodasLasCanciones()) {
             trieAutocompletado.insertar(cancion.getTitulo(), cancion);
         }
-        System.out.println("[OK] " + " Trie de autocompletado construido");
+        System.out.println("[OK] Trie de autocompletado construido");
     }
 
     private void cargarUsuariosDePrueba() {
@@ -168,7 +168,7 @@ public class SyncUpService {
         rockClassics.agregarCancion(todasCanciones.get(3));
         maicol.agregarPlaylist(rockClassics);
 
-        System.out.println("[OK] " + " Usuario Maicol creado con " + maicol.getListaFavoritos().size() + " favoritos");
+        System.out.println("[OK] Usuario Maicol creado con " + maicol.getListaFavoritos().size() + " favoritos");
 
         // Usuario 2: Ana
         Usuario ana = new Usuario("ana", "1234", "Ana García");
@@ -184,7 +184,7 @@ public class SyncUpService {
         beatles.agregarCancion(todasCanciones.get(9));
         ana.agregarPlaylist(beatles);
 
-        System.out.println("[OK] " + " Usuario Ana creado con " + ana.getListaFavoritos().size() + " favoritos");
+        System.out.println("[OK] Usuario Ana creado con " + ana.getListaFavoritos().size() + " favoritos");
 
         // Usuario 3: Carlos
         Usuario carlos = new Usuario("carlos", "1234", "Carlos Ruiz");
@@ -194,14 +194,43 @@ public class SyncUpService {
         carlos.agregarFavorito(todasCanciones.get(2));
         carlos.agregarFavorito(todasCanciones.get(6));
 
-        System.out.println("[OK] " + " Usuario Carlos creado con " + carlos.getListaFavoritos().size() + " favoritos");
+        System.out.println("[OK] Usuario Carlos creado con " + carlos.getListaFavoritos().size() + " favoritos");
 
-        // Relaciones sociales
-        seguir(maicol, ana);
-        seguir(maicol, carlos);
-        seguir(ana, carlos);
+        // ✅ AGREGAR MÁS USUARIOS PARA QUE HAYA SUGERENCIAS BFS
 
-        System.out.println("[OK] " + " 3 usuarios de prueba creados");
+        // Usuario 4: Laura (amiga de Ana)
+        Usuario laura = new Usuario("laura", "1234", "Laura Pérez");
+        usuarios.put(laura.getUsername(), laura);
+        grafoSocial.agregarUsuario(laura);
+        laura.agregarFavorito(todasCanciones.get(5));
+        System.out.println("[OK] Usuario Laura creado");
+
+        // Usuario 5: Pedro (amigo de Carlos)
+        Usuario pedro = new Usuario("pedro", "1234", "Pedro López");
+        usuarios.put(pedro.getUsername(), pedro);
+        grafoSocial.agregarUsuario(pedro);
+        pedro.agregarFavorito(todasCanciones.get(7));
+        System.out.println("[OK] Usuario Pedro creado");
+
+        // Usuario 6: María (amiga de Ana)
+        Usuario maria = new Usuario("maria", "1234", "María Torres");
+        usuarios.put(maria.getUsername(), maria);
+        grafoSocial.agregarUsuario(maria);
+        maria.agregarFavorito(todasCanciones.get(4));
+        System.out.println("[OK] Usuario María creado");
+
+        // Relaciones sociales - Nivel 1
+        seguir(maicol, ana);      // Maicol sigue a Ana
+        seguir(maicol, carlos);   // Maicol sigue a Carlos
+        seguir(ana, carlos);      // Ana sigue a Carlos
+
+        // Relaciones sociales - Nivel 2 (para que BFS funcione)
+        seguir(ana, laura);       // Ana sigue a Laura (amiga de amiga de Maicol)
+        seguir(ana, maria);       // Ana sigue a María (amiga de amiga de Maicol)
+        seguir(carlos, pedro);    // Carlos sigue a Pedro (amigo de amigo de Maicol)
+
+        System.out.println("[OK] 6 usuarios de prueba creados con red social BFS");
+        System.out.println("[INFO] Maicol debería ver como sugerencias: Laura, María, Pedro (amigos de amigos)");
     }
 
     // ==================== MÉTODOS DE USUARIOS ====================
@@ -215,7 +244,7 @@ public class SyncUpService {
         usuarios.put(username, nuevoUsuario);
         grafoSocial.agregarUsuario(nuevoUsuario);
 
-        System.out.println("[OK] " + " Usuario registrado: " + username);
+        System.out.println("[OK] Usuario registrado: " + username);
         return true;
     }
 
@@ -240,7 +269,7 @@ public class SyncUpService {
             usuario.setPassword(nuevaPassword);
             usuario.setNombre(nuevoNombre);
 
-            System.out.println("[OK] " + " Usuario actualizado: " + nuevoUsername);
+            System.out.println("[OK] Usuario actualizado: " + nuevoUsername);
         }
     }
 
@@ -248,7 +277,7 @@ public class SyncUpService {
         Usuario usuario = usuarios.remove(username);
         if (usuario != null) {
             grafoSocial.eliminarUsuario(usuario);
-            System.out.println("[OK] " + " Usuario eliminado: " + username);
+            System.out.println("[OK] Usuario eliminado: " + username);
             return true;
         }
         return false;
@@ -260,6 +289,19 @@ public class SyncUpService {
 
     public List<Usuario> listarUsuarios() {
         return listarTodosLosUsuarios();
+    }
+
+    /**
+     * RF-014: Obtiene un usuario por su username con acceso O(1).
+     *
+     * @param username Username del usuario a buscar
+     * @return Usuario encontrado o null si no existe
+     */
+    public Usuario obtenerUsuarioPorUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return null;
+        }
+        return usuarios.get(username);
     }
 
     public int getCantidadUsuarios() {
@@ -276,7 +318,7 @@ public class SyncUpService {
         Administrador nuevoAdmin = new Administrador(username, password, nombre);
         administradores.put(username, nuevoAdmin);
 
-        System.out.println("[OK] " + " Administrador registrado: " + username);
+        System.out.println("[OK] Administrador registrado: " + username);
         return true;
     }
 
@@ -288,20 +330,20 @@ public class SyncUpService {
         return null;
     }
 
-    // ==================== MÉTODOS DE GRAFO SOCIAL ====================
+    // ==================== MÉTODOS DE GRAFO SOCIAL (RF-021, RF-022) ====================
 
     public void seguir(Usuario seguidor, Usuario seguido) {
         seguidor.getSeguidos().add(seguido);
         seguido.getSeguidores().add(seguidor);
         grafoSocial.seguir(seguidor, seguido);
-        System.out.println("[OK] "  + seguidor.getUsername() + " ahora sigue a " + seguido.getUsername());
+        System.out.println("[OK] " + seguidor.getUsername() + " ahora sigue a " + seguido.getUsername());
     }
 
     public void dejarDeSeguir(Usuario seguidor, Usuario seguido) {
         seguidor.getSeguidos().remove(seguido);
         seguido.getSeguidores().remove(seguidor);
         grafoSocial.dejarDeSeguir(seguidor, seguido);
-        System.out.println("[OK] "  + seguidor.getUsername() + " dejó de seguir a " + seguido.getUsername());
+        System.out.println("[OK] " + seguidor.getUsername() + " dejó de seguir a " + seguido.getUsername());
     }
 
     public List<Usuario> obtenerSeguidores(Usuario usuario) {
@@ -312,11 +354,19 @@ public class SyncUpService {
         return new ArrayList<>(usuario.getSeguidos());
     }
 
-    public List<Usuario> obtenerSugerenciasDeAmigos(Usuario usuario, int limite) {
-        return grafoSocial.obtenerSugerenciasDeAmigos(usuario, limite);
-    }
 
     public List<Usuario> obtenerSugerenciasDeUsuarios(Usuario usuarioActual, int cantidad) {
+        // Primero intentar con BFS (amigos de amigos)
+        List<Usuario> sugerenciasBFS = grafoSocial.obtenerSugerenciasDeAmigos(usuarioActual, cantidad);
+
+        // Si BFS retorna resultados, usarlos
+        if (!sugerenciasBFS.isEmpty()) {
+            System.out.println("[OK] BFS encontró " + sugerenciasBFS.size() + " sugerencias (amigos de amigos)");
+            return sugerenciasBFS;
+        }
+
+        // Si BFS no retorna nada, buscar usuarios que no sigue (fallback)
+        System.out.println("[INFO] BFS sin resultados, usando fallback (usuarios no seguidos)");
         List<Usuario> todos = listarUsuarios();
         List<Usuario> sugerencias = new ArrayList<>();
 
@@ -326,13 +376,29 @@ public class SyncUpService {
                 if (sugerencias.size() >= cantidad) break;
             }
         }
+
         return sugerencias;
     }
-
-    public boolean sonistaConectados(Usuario usuario1, Usuario usuario2) {
+    /**
+     * RF-022: Verifica si dos usuarios están conectados usando BFS.
+     * Recorre el grafo social por niveles para determinar conectividad.
+     *
+     * @param usuario1 Usuario origen
+     * @param usuario2 Usuario destino
+     * @return true si existe un camino entre los usuarios, false en caso contrario
+     */
+    public boolean estanConectados(Usuario usuario1, Usuario usuario2) {
         return grafoSocial.estanConectados(usuario1, usuario2);
     }
 
+    /**
+     * RF-022: Calcula grados de separación entre usuarios usando BFS.
+     * Implementa el concepto de "6 grados de separación" en la red social.
+     *
+     * @param usuario1 Usuario origen
+     * @param usuario2 Usuario destino
+     * @return Número de grados de separación, -1 si no hay conexión
+     */
     public int obtenerGradoSeparacion(Usuario usuario1, Usuario usuario2) {
         return grafoSocial.obtenerGradoSeparacion(usuario1, usuario2);
     }
@@ -357,7 +423,7 @@ public class SyncUpService {
             }
         }
 
-        System.out.println("[OK] " + " Canción agregada: " + titulo);
+        System.out.println("[OK] Canción agregada: " + titulo);
     }
 
     public void actualizarCancion(int id, String nuevoTitulo, String nuevoArtista, String nuevoGenero, int nuevoAño, double nuevaDuracion) {
@@ -370,7 +436,7 @@ public class SyncUpService {
             cancion.setAño(nuevoAño);
             cancion.setDuracion(nuevaDuracion);
 
-            System.out.println("[OK] " + " Canción actualizada: " + nuevoTitulo);
+            System.out.println("[OK] Canción actualizada: " + nuevoTitulo);
         }
     }
 
@@ -378,7 +444,7 @@ public class SyncUpService {
         Cancion cancion = catalogoCanciones.buscarPorId(id);
         if (cancion != null) {
             catalogoCanciones.eliminarCancion(id);
-            System.out.println("[OK] " + " Canción eliminada: " + cancion.getTitulo());
+            System.out.println("[OK] Canción eliminada: " + cancion.getTitulo());
         }
     }
 
@@ -402,6 +468,9 @@ public class SyncUpService {
         return autocompletarCanciones(prefijo);
     }
 
+    /**
+     * RF-027: Búsqueda avanzada con hilos de ejecución.
+     */
     public List<Cancion> busquedaAvanzada(String artista, String genero, int año, boolean usarOR) {
         return catalogoCanciones.busquedaAvanzada(artista, genero, año, usarOR);
     }
@@ -427,7 +496,7 @@ public class SyncUpService {
     public Playlist crearPlaylist(Usuario usuario, String nombre) {
         Playlist nuevaPlaylist = new Playlist(nombre, usuario);
         usuario.agregarPlaylist(nuevaPlaylist);
-        System.out.println("[OK] " + " Playlist creada: " + nombre);
+        System.out.println("[OK] Playlist creada: " + nombre);
         return nuevaPlaylist;
     }
 
@@ -435,7 +504,7 @@ public class SyncUpService {
         Playlist playlist = obtenerPlaylistPorNombre(usuario, nombrePlaylist);
         if (playlist != null) {
             playlist.agregarCancion(cancion);
-            System.out.println("[OK] " + " Canción agregada a playlist: " + cancion.getTitulo());
+            System.out.println("[OK] Canción agregada a playlist: " + cancion.getTitulo());
         }
     }
 
@@ -443,7 +512,7 @@ public class SyncUpService {
         Playlist playlist = obtenerPlaylistPorNombre(usuario, nombrePlaylist);
         if (playlist != null) {
             playlist.getCanciones().remove(cancion);
-            System.out.println("[OK] " + " Canción eliminada de playlist");
+            System.out.println("[OK] Canción eliminada de playlist");
         }
     }
 
@@ -487,7 +556,7 @@ public class SyncUpService {
 
         if (playlistAEliminar != null) {
             usuario.getPlaylists().remove(playlistAEliminar);
-            System.out.println("[OK] " + " Playlist '" + nombrePlaylist + "' eliminada correctamente");
+            System.out.println("[OK] Playlist '" + nombrePlaylist + "' eliminada correctamente");
         }
     }
 
@@ -497,19 +566,19 @@ public class SyncUpService {
         }
 
         playlist.getCanciones().remove(cancion);
-        System.out.println("[OK] " + " Canción '" + cancion.getTitulo() + "' eliminada de la playlist '" + playlist.getNombre() + "'");
+        System.out.println("[OK] Canción '" + cancion.getTitulo() + "' eliminada de la playlist '" + playlist.getNombre() + "'");
     }
 
     // ==================== MÉTODOS DE FAVORITOS ====================
 
     public void agregarFavorito(Usuario usuario, Cancion cancion) {
         usuario.agregarFavorito(cancion);
-        System.out.println("[OK] " + " Canción agregada a favoritos: " + cancion.getTitulo());
+        System.out.println("[OK] Canción agregada a favoritos: " + cancion.getTitulo());
     }
 
     public void removerFavorito(Usuario usuario, Cancion cancion) {
         usuario.removerFavorito(cancion);
-        System.out.println("[OK] " + " Canción eliminada de favoritos: " + cancion.getTitulo());
+        System.out.println("[OK] Canción eliminada de favoritos: " + cancion.getTitulo());
     }
 
     public List<Cancion> obtenerFavoritos(Usuario usuario) {
@@ -524,8 +593,11 @@ public class SyncUpService {
         return usuario.getListaFavoritosPlaylist();
     }
 
-    // ==================== MÉTODOS DE DESCUBRIMIENTO Y RADIO ====================
+    // ==================== MÉTODOS DE DESCUBRIMIENTO Y RADIO (RF-005, RF-006) ====================
 
+    /**
+     * RF-005: Genera descubrimiento semanal usando el grafo de similitud.
+     */
     public Playlist generarDescubrimientoSemanal(Usuario usuario) {
         Playlist descubrimiento = new Playlist("Descubrimiento Semanal", usuario);
 
@@ -556,10 +628,13 @@ public class SyncUpService {
             descubrimiento.agregarCancion(listaRecomendadas.get(i));
         }
 
-        System.out.println("[OK] " + " Descubrimiento semanal generado con " + descubrimiento.getCanciones().size() + " canciones");
+        System.out.println("[OK] Descubrimiento semanal generado con " + descubrimiento.getCanciones().size() + " canciones");
         return descubrimiento;
     }
 
+    /**
+     * RF-006: Inicia una radio basada en una canción semilla.
+     */
     public Radio iniciarRadio(Usuario usuario, Cancion cancionSemilla) {
         Radio radio = new Radio("Radio de " + cancionSemilla.getTitulo(), cancionSemilla);
 
@@ -571,7 +646,7 @@ public class SyncUpService {
 
         usuario.setRadioActual(radio);
 
-        System.out.println("[OK] " + " Radio iniciada con " + radio.getColaReproduccion().size() + " canciones");
+        System.out.println("[OK] Radio iniciada con " + radio.getColaReproduccion().size() + " canciones");
         return radio;
     }
 
@@ -582,24 +657,10 @@ public class SyncUpService {
     // ==================== MÉTODOS AUXILIARES ====================
 
     public void guardarUsuarios() {
-        System.out.println("[OK] " + " Datos guardados (en memoria)");
+        System.out.println("[OK] Datos guardados (en memoria)");
     }
 
     public void exportarPlaylist(Playlist playlist, String formato) {
-        System.out.println("[OK] " + " Playlist '" + playlist.getNombre() + "' exportada en formato: " + formato);
+        System.out.println("[OK] Playlist '" + playlist.getNombre() + "' exportada en formato: " + formato);
     }
-    /**
-     * Obtiene un usuario por su username.
-     * RF-014: Acceso O(1) mediante HashMap
-     *
-     * @param username Username del usuario a buscar (no puede ser null ni vacío)
-     * @return Usuario encontrado o null si no existe
-     */
-    public Usuario obtenerUsuarioPorUsername(String username) {
-        if (username == null || username.trim().isEmpty()) {
-            return null;
-        }
-        return usuarios.get(username);
-    }
-
 }

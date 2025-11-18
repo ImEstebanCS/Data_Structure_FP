@@ -15,7 +15,7 @@ import java.io.IOException;
 public class MainViewController {
 
     @FXML private VBox sidebar;
-    @FXML private BorderPane contentArea;  // ✅ CORREGIDO: Es BorderPane no StackPane
+    @FXML private BorderPane contentArea;
     @FXML private HBox musicPlayerBar;
     @FXML private Label usernameLabel;
     @FXML private Label currentSongLabel;
