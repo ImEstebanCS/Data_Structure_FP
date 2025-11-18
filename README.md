@@ -2,6 +2,8 @@
 
 **SyncUp** es una aplicación de streaming musical desarrollada en Java con JavaFX que implementa estructuras de datos avanzadas y algoritmos para proporcionar recomendaciones inteligentes y funcionalidades sociales.
 
+### Autores : Nicol Marin - Maicol Paez - Esteban Carmona 
+
 ## 📋 Características Principales
 
 ### 🎯 Funcionalidades del Usuario
