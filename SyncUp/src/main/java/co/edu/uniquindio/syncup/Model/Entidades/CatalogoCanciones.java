@@ -3,62 +3,92 @@ package co.edu.uniquindio.syncup.Model.Entidades;
 import java.util.*;
 import java.util.concurrent.*;
 
-/**
- * Catálogo central de canciones del sistema.
- * Proporciona búsquedas eficientes y concurrentes.
- */
 public class CatalogoCanciones {
-    private Map<Integer, Cancion> canciones;
+    private List<Cancion> canciones;
 
     public CatalogoCanciones() {
-        this.canciones = new HashMap<>();
+        this.canciones = new ArrayList<>();
     }
 
     public void agregarCancion(Cancion cancion) {
-        canciones.put(cancion.getId(), cancion);
+        if (!canciones.contains(cancion)) {
+            canciones.add(cancion);
+        }
     }
 
-    public void eliminarCancion(int id) {
-        canciones.remove(id);
+    public void eliminarCancion(Cancion cancion) {
+        canciones.remove(cancion);
+    }
+
+    public void actualizarCancion(Cancion cancion) {
+        for (int i = 0; i < canciones.size(); i++) {
+            if (canciones.get(i).getId() == cancion.getId()) {
+                canciones.set(i, cancion);
+                break;
+            }
+        }
+    }
+
+    public List<Cancion> getCanciones() {
+        return new ArrayList<>(canciones);
     }
 
     public Cancion buscarPorId(int id) {
-        return canciones.get(id);
+        for (Cancion cancion : canciones) {
+            if (cancion.getId() == id) {
+                return cancion;
+            }
+        }
+        return null;
     }
 
     public List<Cancion> buscarPorTitulo(String titulo) {
-        List<Cancion> resultados = new ArrayList<>();
-        for (Cancion cancion : canciones.values()) {
+        List<Cancion> resultado = new ArrayList<>();
+        for (Cancion cancion : canciones) {
             if (cancion.getTitulo().toLowerCase().contains(titulo.toLowerCase())) {
-                resultados.add(cancion);
+                resultado.add(cancion);
             }
         }
-        return resultados;
+        return resultado;
     }
 
     public List<Cancion> buscarPorArtista(String artista) {
-        List<Cancion> resultados = new ArrayList<>();
-        for (Cancion cancion : canciones.values()) {
+        List<Cancion> resultado = new ArrayList<>();
+        for (Cancion cancion : canciones) {
             if (cancion.getArtista().toLowerCase().contains(artista.toLowerCase())) {
-                resultados.add(cancion);
+                resultado.add(cancion);
             }
+
         }
-        return resultados;
+        return resultado;
     }
 
     public List<Cancion> buscarPorGenero(String genero) {
-        List<Cancion> resultados = new ArrayList<>();
-        for (Cancion cancion : canciones.values()) {
-            if (cancion.getGenero().equalsIgnoreCase(genero)) {
-                resultados.add(cancion);
+        List<Cancion> resultado = new ArrayList<>();
+        for (Cancion cancion : canciones) {
+            if (cancion.getGenero().toLowerCase().contains(genero.toLowerCase())) {
+                resultado.add(cancion);
             }
         }
-        return resultados;
+        return resultado;
+    }
+
+    public int getTamaño() {
+        return canciones.size();
+    }
+
+    public List<Cancion> obtenerTodasLasCanciones() {
+        return new ArrayList<>(canciones);
+    }
+
+    public int obtenerTotal() {
+        return canciones.size();
     }
 
     /**
-     * RF-027: Búsqueda avanzada con hilos de ejecución.
+     * RF-004 y RF-027: Búsqueda avanzada con hilos de ejecución.
      * Busca canciones usando múltiples hilos para optimizar el rendimiento.
+     * Soporta operadores lógicos AND y OR según RF-004.
      *
      * @param artista Artista a buscar (null o vacío para ignorar)
      * @param genero Género a buscar (null o vacío para ignorar)
@@ -67,85 +97,115 @@ public class CatalogoCanciones {
      * @return Lista de canciones que cumplen los criterios
      */
     public List<Cancion> busquedaAvanzada(String artista, String genero, int año, boolean usarOR) {
-        List<Cancion> todasLasCanciones = new ArrayList<>(canciones.values());
-
-        if (todasLasCanciones.isEmpty()) {
+        if (canciones.isEmpty()) {
             return new ArrayList<>();
         }
 
+        // RF-027: Usar Collections.synchronizedList para acceso thread-safe
         List<Cancion> resultados = Collections.synchronizedList(new ArrayList<>());
 
-        int numHilos = Math.min(4, todasLasCanciones.size());
-        int cancionesPorHilo = (int) Math.ceil((double) todasLasCanciones.size() / numHilos);
+        // RF-027: Dividir trabajo en múltiples hilos (máximo 4)
+        int numHilos = Math.min(4, canciones.size());
+        int cancionesPorHilo = (int) Math.ceil((double) canciones.size() / numHilos);
 
         ExecutorService executor = Executors.newFixedThreadPool(numHilos);
         List<Future<?>> futures = new ArrayList<>();
 
         for (int i = 0; i < numHilos; i++) {
             int inicio = i * cancionesPorHilo;
-            int fin = Math.min((i + 1) * cancionesPorHilo, todasLasCanciones.size());
+            int fin = Math.min((i + 1) * cancionesPorHilo, canciones.size());
 
-            if (inicio >= todasLasCanciones.size()) {
+            if (inicio >= canciones.size()) {
                 break;
             }
 
-            List<Cancion> sublista = todasLasCanciones.subList(inicio, fin);
+            // RF-027: Crear copia real de la sublista para evitar problemas de concurrencia
+            final List<Cancion> sublista = new ArrayList<>(canciones.subList(inicio, fin));
 
             Future<?> future = executor.submit(() -> {
-                for (Cancion cancion : sublista) {
-                    if (evaluarCriterios(cancion, artista, genero, año, usarOR)) {
-                        resultados.add(cancion);
+                try {
+                    for (Cancion cancion : sublista) {
+                        if (evaluarCriterios(cancion, artista, genero, año, usarOR)) {
+                            resultados.add(cancion);
+                        }
                     }
+                } catch (Exception e) {
+                    System.err.println("Error en hilo de búsqueda: " + e.getMessage());
+                    e.printStackTrace();
                 }
             });
 
             futures.add(future);
         }
 
+        // RF-027: Esperar a que todos los hilos terminen
         for (Future<?> future : futures) {
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
                 System.err.println("Error en búsqueda concurrente: " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
         executor.shutdown();
         try {
-            executor.awaitTermination(5, TimeUnit.SECONDS);
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    System.err.println("El ExecutorService no terminó correctamente");
+                }
+            }
         } catch (InterruptedException e) {
             executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
 
         return new ArrayList<>(resultados);
     }
 
     /**
-     * Evalúa si una canción cumple con los criterios de búsqueda.
+     * RF-004: Evalúa si una canción cumple con los criterios de búsqueda.
+     * Soporta operadores lógicos AND y OR.
+     * Solo evalúa los criterios que se proporcionaron realmente.
      */
     private boolean evaluarCriterios(Cancion cancion, String artista, String genero, int año, boolean usarOR) {
-        boolean cumpleArtista = (artista == null || artista.trim().isEmpty() ||
-                cancion.getArtista().toLowerCase().contains(artista.toLowerCase()));
-        boolean cumpleGenero = (genero == null || genero.trim().isEmpty() ||
-                cancion.getGenero().equalsIgnoreCase(genero));
-        boolean cumpleAño = (año == 0 || cancion.getAño() == año);
+        // Determinar qué criterios se proporcionaron realmente
+        boolean tieneArtista = (artista != null && !artista.trim().isEmpty());
+        boolean tieneGenero = (genero != null && !genero.trim().isEmpty());
+        boolean tieneAño = (año > 0);
 
-        if (usarOR) {
-            return cumpleArtista || cumpleGenero || cumpleAño;
-        } else {
-            return cumpleArtista && cumpleGenero && cumpleAño;
+        // Si no se proporcionó ningún criterio, retornar todas las canciones
+        if (!tieneArtista && !tieneGenero && !tieneAño) {
+            return true;
         }
-    }
 
-    public List<Cancion> obtenerTodasLasCanciones() {
-        return new ArrayList<>(canciones.values());
-    }
+        // Lista para almacenar los resultados de cada criterio proporcionado
+        List<Boolean> resultadosCriterios = new ArrayList<>();
 
-    public int obtenerTotal() {
-        return canciones.size();
-    }
+        // Evaluar solo los criterios que se proporcionaron
+        if (tieneArtista) {
+            boolean cumple = cancion.getArtista().toLowerCase().contains(artista.toLowerCase());
+            resultadosCriterios.add(cumple);
+        }
 
-    public Map<Integer, Cancion> getCanciones() {
-        return canciones;
+        if (tieneGenero) {
+            boolean cumple = cancion.getGenero().equalsIgnoreCase(genero);
+            resultadosCriterios.add(cumple);
+        }
+
+        if (tieneAño) {
+            boolean cumple = cancion.getAño() == año;
+            resultadosCriterios.add(cumple);
+        }
+
+        // RF-004: Aplicar lógica OR o AND según corresponda
+        if (usarOR) {
+            // OR: al menos uno de los criterios proporcionados debe cumplirse
+            return resultadosCriterios.stream().anyMatch(b -> b);
+        } else {
+            // AND: todos los criterios proporcionados deben cumplirse
+            return resultadosCriterios.stream().allMatch(b -> b);
+        }
     }
 }
